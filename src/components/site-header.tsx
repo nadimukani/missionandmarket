@@ -24,8 +24,13 @@ export function SiteHeader({ settings }: { settings: SiteSettings | null }) {
     return () => window.removeEventListener('scroll', onScroll)
   }, [overlay])
 
-  // Close the mobile sheet on navigation.
-  useEffect(() => setOpen(false), [pathname])
+  // Close the mobile sheet on navigation. Adjusted during render rather than
+  // in an effect so the sheet never paints open on the new route.
+  const [lastPath, setLastPath] = useState(pathname)
+  if (pathname !== lastPath) {
+    setLastPath(pathname)
+    setOpen(false)
+  }
 
   // Lock body scroll while the sheet is open.
   useEffect(() => {
