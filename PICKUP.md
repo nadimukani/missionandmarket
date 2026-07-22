@@ -1,7 +1,7 @@
 # PICKUP — Mission + Market
 
-**Date:** 2026-07-22 · **Branch:** main (no remote) · **Tree:** clean at `856e31a`
-**Resume keyword:** `mm-redesign-landed-2026-07-22`
+**Date:** 2026-07-22 · **Branch:** main (no remote) · **Tree:** clean at `a8a84d7`
+**Resume keyword:** `mm-chef-paul-added-2026-07-22`
 
 ---
 
@@ -24,7 +24,7 @@ under Orion. Replacing a WordPress/Elementor site built by Resto Experience.
 | Address | 3550 Lenox Rd NE, Suite 550, Atlanta GA 30326 |
 | Phone | 404.948.2927 |
 | Socials | instagram.com/missionandmkt · facebook.com/missionandmkt |
-| Chef / partners | Ian Winslade; Jonathan + Tony Akly |
+| Chef / partners | **Executive Chef Paul (surname UNKNOWN)** — replaced Ian Winslade, confirmed by client 2026-07-22. Partners: Jonathan + Tony Akly |
 | Tagline | "Flavor + Fusion" |
 
 ## Brand system — RECOVERED FROM THEIR ACTUAL ASSETS
@@ -132,12 +132,31 @@ Evidence was lopsided and the honest split matters:
 claim tested (why diners abandon sites, menu readability, booking friction,
 mobile traffic share). Present those choices as design judgment, not data.
 
-## Gotcha discovered
+## Gotcha — Next 16 dev cache (hit twice, cost real time)
 
-Next's data cache persists **outside** `.next/cache`. After a CMS write, the
-site kept rendering pre-upload (empty) content until `rm -rf .next`. Deleting
-only `.next/cache` was not enough. In production the Sanity webhook handles
-this; in dev, wipe `.next` after seeding or uploading.
+Next 16 keeps its dev data cache in **`.next/dev`**, not `.next/cache`. After
+any CMS write the dev server keeps serving the old data for the full
+`revalidate` window (1h).
+
+**You must kill the dev server BEFORE deleting**, or the running process
+rewrites the directory from memory and nothing changes:
+
+```
+pkill -f "next dev"; pkill -f next-server; sleep 2
+find .next -mindepth 1 -delete; rmdir .next
+```
+
+Production is unaffected — the Sanity webhook revalidates by tag.
+
+## Team / chef
+
+`person` document type, "Team" in the Studio. Featured people get the
+editorial spread in `src/components/team-section.tsx`; others fall into a
+compact row. Portraits need a **hotspot on the face** — the source frames are
+tall and any 4:5 crop beheads the subject without it.
+
+Chef Paul added via `pnpm chef` (`scripts/add-chef.ts`, idempotent). That
+script also rewrites the About and homepage copy to drop Winslade.
 
 ## Open items
 
@@ -145,8 +164,12 @@ this; in dev, wipe `.next` after seeding or uploading.
    wide (most are ~390px). Full-bleed use needs originals from the
    photographer. This gates how good the site can look.
 2. Dessert + drinks menus — image-only on the old site, never extracted.
-3. Chef portrait needs a signed release; several frames show identifiable
-   guests/staff and were excluded from the gallery.
+3. **Chef Paul's surname and a real biography are still missing.** He is
+   published as "Chef Paul" with a bio that states only what is already true
+   of the restaurant's cooking — no career history was invented. The pull
+   quote is also ours, not his; get it confirmed or replaced.
+   The old Winslade portrait remains excluded from the gallery. Several
+   frames show identifiable guests/staff and were excluded.
 4. **Mobile still not visually verified** — browser resize would not take
    effect in this environment. The sticky reserve bar and mobile nav are
    built but unseen. Verify before showing the client.
