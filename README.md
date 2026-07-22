@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mission + Market
 
-## Getting Started
+Rebuild of missionandmarketatl.com — Buckhead, Atlanta.
 
-First, run the development server:
+Next.js 16 (App Router, Turbopack) · Tailwind CSS 4 · Sanity CMS · TypeScript.
+
+## Running locally
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
+pnpm dev          # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The Studio is embedded at `/studio` — no separate deploy.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Copy `.env.example` to `.env.local`. The Sanity project is `x2izrrun`,
+dataset `production`.
 
-## Learn More
+| Variable | Needed for |
+| --- | --- |
+| `NEXT_PUBLIC_SANITY_PROJECT_ID` | always |
+| `NEXT_PUBLIC_SANITY_DATASET` | always |
+| `SANITY_REVALIDATE_SECRET` | publish-to-live webhook |
+| `SANITY_API_WRITE_TOKEN` | `pnpm seed` only |
 
-To learn more about Next.js, take a look at the following resources:
+## Content
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Everything a manager needs to change is in the Studio — menus, hours, specials,
+gift card and ordering links, the sitewide notice banner, and the OpenTable ID.
+No deploy required for any of it.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+`pnpm seed` re-imports the content migrated from the old WordPress site. It is
+idempotent (fixed `_id`s, `createOrReplace`), so re-running overwrites rather
+than duplicating — but it will also overwrite client edits to those documents.
 
-## Deploy on Vercel
+## Reservations
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The site does not embed OpenTable's iframe widget. `src/lib/opentable.ts` builds
+a deep link into OpenTable's `restref` endpoint with party size, date and time
+prefilled, so the guest lands on the confirmation step. `ot_source` is set so
+covers attribute to the restaurant's own site in OpenTable reporting.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The restaurant ID lives in the CMS (Restaurant Info → Reservations), not in code.
+
+## Publishing changes live
+
+Sanity webhook → `POST /api/revalidate`, HMAC-verified with
+`SANITY_REVALIDATE_SECRET`. Configure at sanity.io/manage → API → Webhooks with
+trigger on create/update/delete. Queries also carry a 1-hour ISR floor so a
+missed webhook self-heals.

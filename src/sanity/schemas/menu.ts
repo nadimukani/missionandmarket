@@ -1,0 +1,183 @@
+import { defineArrayMember, defineField, defineType } from 'sanity'
+
+export const DIETARY_TAGS = [
+  { title: 'Vegetarian', value: 'vegetarian' },
+  { title: 'Vegan', value: 'vegan' },
+  { title: 'Gluten-free', value: 'gluten-free' },
+  { title: 'Spicy', value: 'spicy' },
+  { title: 'Raw', value: 'raw' },
+  { title: 'Signature', value: 'signature' },
+] as const
+
+/**
+ * Prices are strings, not numbers, on purpose. Real menus carry "MP",
+ * "6 pc. $24 | 12 pc. $42" and "+$5" — forcing a number field would make the
+ * client fight the CMS every time the oyster count changes.
+ */
+const menuItem = defineType({
+  name: 'menuItem',
+  title: 'Dish',
+  type: 'object',
+  fields: [
+    defineField({
+      name: 'name',
+      type: 'string',
+      validation: (r) => r.required(),
+    }),
+    defineField({
+      name: 'description',
+      title: 'Description',
+      type: 'text',
+      rows: 2,
+      description: 'The ingredient line, e.g. "Spicy Mango Chutney".',
+    }),
+    defineField({
+      name: 'price',
+      type: 'string',
+      description: 'Include the $. Use "MP" for market price.',
+    }),
+    defineField({
+      name: 'tags',
+      title: 'Dietary tags',
+      type: 'array',
+      of: [{ type: 'string' }],
+      options: { list: [...DIETARY_TAGS], layout: 'grid' },
+    }),
+    defineField({
+      name: 'addOns',
+      title: 'Add-ons',
+      type: 'array',
+      description: 'Per-dish supplements, e.g. "Add bacon +$5".',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          fields: [
+            defineField({ name: 'label', type: 'string' }),
+            defineField({ name: 'price', type: 'string' }),
+          ],
+          preview: {
+            select: { title: 'label', subtitle: 'price' },
+          },
+        }),
+      ],
+    }),
+    defineField({
+      name: 'soldOut',
+      title: 'Temporarily unavailable',
+      type: 'boolean',
+      description: 'Greys the dish out without deleting it.',
+      initialValue: false,
+    }),
+  ],
+  preview: {
+    select: { title: 'name', subtitle: 'price', desc: 'description' },
+    prepare: ({ title, subtitle, desc }) => ({
+      title,
+      subtitle: [subtitle, desc].filter(Boolean).join(' — '),
+    }),
+  },
+})
+
+const menuSection = defineType({
+  name: 'menuSection',
+  title: 'Section',
+  type: 'object',
+  fields: [
+    defineField({
+      name: 'title',
+      type: 'string',
+      description: 'e.g. Appetizers, Market Steaks, Sides',
+      validation: (r) => r.required(),
+    }),
+    defineField({
+      name: 'note',
+      type: 'text',
+      rows: 2,
+      description:
+        'Optional line under the heading, e.g. "Choose Sauce: Chimichurri, Whiskey, Green Peppercorn".',
+    }),
+    defineField({
+      name: 'items',
+      type: 'array',
+      of: [defineArrayMember({ type: 'menuItem' })],
+    }),
+  ],
+  preview: {
+    select: { title: 'title', items: 'items' },
+    prepare: ({ title, items }) => ({
+      title,
+      subtitle: `${items?.length ?? 0} dishes`,
+    }),
+  },
+})
+
+const menu = defineType({
+  name: 'menu',
+  title: 'Menu',
+  type: 'document',
+  fields: [
+    defineField({
+      name: 'title',
+      type: 'string',
+      description: 'e.g. Dinner, Lunch, Brunch, Dessert',
+      validation: (r) => r.required(),
+    }),
+    defineField({
+      name: 'slug',
+      type: 'slug',
+      options: { source: 'title', maxLength: 64 },
+      validation: (r) => r.required(),
+    }),
+    defineField({
+      name: 'order',
+      title: 'Display order',
+      type: 'number',
+      description: 'Lower numbers appear first in the menu switcher.',
+      initialValue: 0,
+    }),
+    defineField({
+      name: 'availability',
+      title: 'Served',
+      type: 'string',
+      description: 'e.g. "Monday – Friday, 11:30am – 3:00pm"',
+    }),
+    defineField({
+      name: 'intro',
+      type: 'text',
+      rows: 3,
+      description: 'Optional paragraph above the dishes.',
+    }),
+    defineField({
+      name: 'sections',
+      type: 'array',
+      of: [defineArrayMember({ type: 'menuSection' })],
+    }),
+    defineField({
+      name: 'footnote',
+      type: 'text',
+      rows: 2,
+      description:
+        'Allergen or gratuity notice printed at the bottom of the menu.',
+    }),
+    defineField({
+      name: 'pdf',
+      title: 'Printable PDF (optional)',
+      type: 'file',
+      description:
+        'Only if you want a downloadable version. The web menu above is what guests and Google actually read.',
+      options: { accept: '.pdf' },
+    }),
+  ],
+  orderings: [
+    {
+      title: 'Display order',
+      name: 'orderAsc',
+      by: [{ field: 'order', direction: 'asc' }],
+    },
+  ],
+  preview: {
+    select: { title: 'title', subtitle: 'availability' },
+  },
+})
+
+export const menuSchemas = [menu, menuSection, menuItem]

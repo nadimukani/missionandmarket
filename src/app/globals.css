@@ -1,26 +1,110 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * Mission + Market — Buckhead.
+ *
+ * The room is warm, low-lit, brass and dark wood, with a bright open patio.
+ * The palette follows the room rather than defaulting to restaurant-black:
+ * a deep espresso ground, bone-white type, and a single burnt-amber accent
+ * used only for actions the guest can take (reserve, order, call).
+ *
+ * There is no dark-mode variant. The site is one committed look on every
+ * device — a restaurant's identity shouldn't flip with an OS setting.
+ */
+@theme {
+  --color-ink: #17120f;
+  --color-ink-soft: #241c18;
+  --color-ink-line: #33272010;
+
+  --color-bone: #f7f2ea;
+  --color-bone-dim: #e6ddd0;
+  --color-bone-muted: #a89a89;
+
+  --color-ember: #c2703c;
+  --color-ember-bright: #d98a55;
+  --color-olive: #6b7256;
+
+  --color-background: var(--color-bone);
+  --color-foreground: var(--color-ink);
+
+  --font-display: var(--font-display), ui-serif, Georgia, serif;
+  --font-sans: var(--font-sans-body), ui-sans-serif, system-ui, sans-serif;
+
+  --tracking-eyebrow: 0.18em;
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    /* Sticky header shouldn't cover anchor targets. */
+    scroll-padding-top: 6rem;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  body {
+    background-color: var(--color-bone);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Visible, on-brand focus ring for keyboard users everywhere. */
+  :focus-visible {
+    outline: 2px solid var(--color-ember);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background-color: var(--color-ember);
+    color: var(--color-bone);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  /* Small caps label used above section headings. */
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: var(--tracking-eyebrow);
+    text-transform: uppercase;
+  }
+
+  /* The dotted leader between a dish and its price, as on a printed menu.
+     Built with a flex row so it reflows correctly at any width. */
+  .menu-leader {
+    flex: 1 1 auto;
+    margin: 0 0.5rem;
+    border-bottom: 1px dotted color-mix(in srgb, currentColor 30%, transparent);
+    transform: translateY(-0.3em);
+  }
 }
