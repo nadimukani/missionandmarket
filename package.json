@@ -13,7 +13,8 @@
     "chef": "node --env-file=.env.local --experimental-strip-types scripts/add-chef.ts",
     "happy-hour": "node --env-file=.env.local --experimental-strip-types scripts/add-happy-hour.ts",
     "food": "node --env-file=.env.local --experimental-strip-types scripts/add-food-photography.ts",
-    "fix-content": "node --env-file=.env.local --experimental-strip-types scripts/fix-content.ts"
+    "fix-content": "node --env-file=.env.local --experimental-strip-types scripts/fix-content.ts",
+    "defaults": "node --env-file=.env.local --experimental-strip-types scripts/fill-defaults.ts"
   },
   "dependencies": {
     "@sanity/client": "^7.24.0",

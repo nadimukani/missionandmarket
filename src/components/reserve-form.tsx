@@ -2,6 +2,8 @@
 
 import { useMemo, useState, useSyncExternalStore } from 'react'
 
+import { TextLink } from '@/components/ui'
+
 import {
   buildReservationUrl,
   formatDateLabel,
@@ -89,11 +91,18 @@ export function ReserveForm({
             onChange={(e) => setPartySize(Number(e.target.value))}
             className={selectClass}
           >
-            {Array.from({ length: 20 }, (_, i) => i + 1).map((n) => (
-              <option key={n} value={n}>
-                {n === 1 ? '1 guest' : `${n} guests`}
-              </option>
-            ))}
+            {Array.from({ length: MAX_ONLINE_PARTY }, (_, i) => i + 1).map(
+              (n) => (
+                <option key={n} value={n}>
+                  {n === 1 ? '1 guest' : `${n} guests`}
+                </option>
+              ),
+            )}
+            {/* Offering 20 while the copy said "call for 9 or more" invited
+                guests to build a booking OpenTable would refuse. */}
+            <option value={MAX_ONLINE_PARTY + 1}>
+              {MAX_ONLINE_PARTY + 1}+ guests — please call
+            </option>
           </select>
         </label>
 
@@ -151,12 +160,9 @@ export function ReserveForm({
             {largePartyNote ??
               `For parties over ${MAX_ONLINE_PARTY}, please call us`}{' '}
             {phone ? (
-              <a
-                href={`tel:${phone.replace(/[^\d+]/g, '')}`}
-                className="text-brass-ondark underline underline-offset-4 hover:text-cream"
-              >
+              <TextLink href={`tel:${phone.replace(/[^\d+]/g, '')}`} tone="dark">
                 {phone}
-              </a>
+              </TextLink>
             ) : null}
           </>
         ) : (

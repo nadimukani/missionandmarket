@@ -20,7 +20,7 @@ export default async function MenusPage() {
   return (
     <PageHeader
       title="Menus"
-      intro="Our menus are being updated. Please call us for today's offering."
+      intro="Our menus are being updated. Please call us for today’s offering."
     />
   )
 }

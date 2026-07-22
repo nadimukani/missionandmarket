@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
+
+import { TextLink } from '@/components/ui'
 
 import { PageHeader } from '@/components/page-header'
 import { SanityImage } from '@/components/sanity-image'
@@ -67,21 +68,13 @@ export default async function SpecialsPage() {
 
                   <div className="mt-6 pt-2">
                     {special.ctaUrl ? (
-                      <a
-                        href={special.ctaUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="font-sans text-sm text-brass underline underline-offset-4 hover:text-ink"
-                      >
+                      <TextLink href={special.ctaUrl}>
                         {special.ctaLabel ?? 'Learn more'} →
-                      </a>
+                      </TextLink>
                     ) : (
-                      <Link
-                        href="/reservations"
-                        className="font-sans text-sm text-brass underline underline-offset-4 hover:text-ink"
-                      >
+                      <TextLink href="/reservations">
                         {special.ctaLabel ?? 'Reserve a table'} →
-                      </Link>
+                      </TextLink>
                     )}
                   </div>
                 </div>

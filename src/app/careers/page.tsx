@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+
+import { ButtonLink, TextLink } from '@/components/ui'
 import { PortableText } from 'next-sanity'
 
 import { PageHeader } from '@/components/page-header'
@@ -24,7 +26,7 @@ export default async function CareersPage() {
         intro={
           jobs.length
             ? 'We hire for warmth first. Everything else we can teach.'
-            : "No openings posted right now — we're always glad to hear from good people."
+            : "No openings posted right now — we’re always glad to hear from good people."
         }
       />
 
@@ -51,33 +53,27 @@ export default async function CareersPage() {
                   </div>
                 ) : null}
 
-                <a
+                <ButtonLink
                   href={
                     job.applyUrl ??
-                    (careersEmail
-                      ? `mailto:${careersEmail}?subject=${encodeURIComponent(
-                          `Application — ${job.title}`,
-                        )}`
-                      : '#')
+                    `mailto:${careersEmail}?subject=${encodeURIComponent(
+                      `Application — ${job.title}`,
+                    )}`
                   }
-                  target={job.applyUrl ? '_blank' : undefined}
-                  rel={job.applyUrl ? 'noopener noreferrer' : undefined}
-                  className="mt-5 inline-block rounded-xs bg-ink px-6 py-3 font-sans text-sm font-medium text-cream transition-colors hover:bg-moss"
+                  variant="solid"
+                  className="mt-5"
                 >
                   Apply
-                </a>
+                </ButtonLink>
               </li>
             ))}
           </ul>
         ) : careersEmail ? (
           <p className="text-center font-sans text-base text-ink-muted">
             Send a note and your résumé to{' '}
-            <a
-              href={`mailto:${careersEmail}`}
-              className="text-brass underline underline-offset-4 hover:text-ink"
-            >
+            <TextLink href={`mailto:${careersEmail}`}>
               {careersEmail}
-            </a>
+            </TextLink>
             .
           </p>
         ) : null}

@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+
+import { ButtonLink } from '@/components/ui'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
@@ -75,13 +77,13 @@ export default async function MenuPage({ params }: Props) {
         <MenuJsonLd menu={menu} />
 
         <div className="mt-16 flex flex-col items-center gap-4 border-t border-rule pt-12 sm:flex-row sm:justify-center">
-          <Link
+          <ButtonLink
             href="/reservations"
-            className="w-full rounded-xs bg-ink px-8 py-3.5 text-center font-sans
-                       text-sm font-medium text-cream transition-colors hover:bg-moss sm:w-auto"
+            className="w-full sm:w-auto"
+            variant="solid"
           >
             Reserve a table
-          </Link>
+          </ButtonLink>
           {settings?.orderUrl ? (
             <a
               href={settings.orderUrl}

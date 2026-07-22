@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
+
+import { TextLink } from '@/components/ui'
 
 import { PageHeader } from '@/components/page-header'
 import { ReserveForm } from '@/components/reserve-form'
@@ -38,12 +39,9 @@ export default async function ReservationsPage() {
         ) : (
           <p className="mt-10 font-sans text-sm text-cream-muted">
             Please call{' '}
-            <a
-              href={telHref(settings?.phone)}
-              className="text-brass-ondark underline underline-offset-4 hover:text-cream"
-            >
+            <TextLink href={telHref(settings?.phone)} tone="dark">
               {settings?.phone}
-            </a>{' '}
+            </TextLink>{' '}
             to book.
           </p>
         )}
@@ -58,12 +56,9 @@ export default async function ReservationsPage() {
                 'For parties of nine or more, our team will build the evening around you.'}
             </p>
             <p className="mt-4 font-sans text-sm">
-              <Link
-                href="/private-events"
-                className="text-brass underline underline-offset-4 hover:text-ink"
-              >
+              <TextLink href="/private-events">
                 Private dining & events
-              </Link>
+              </TextLink>
             </p>
           </section>
 
@@ -81,14 +76,9 @@ export default async function ReservationsPage() {
             ) : null}
             {settings?.mapsUrl ? (
               <p className="mt-4 font-sans text-sm">
-                <a
-                  href={settings.mapsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-brass underline underline-offset-4 hover:text-ink"
-                >
+                <TextLink href={settings.mapsUrl}>
                   Get directions
-                </a>
+                </TextLink>
               </p>
             ) : null}
           </section>

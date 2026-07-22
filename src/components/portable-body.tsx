@@ -1,5 +1,7 @@
 import type { PortableTextComponents } from 'next-sanity'
 
+import { TextLink } from '@/components/ui'
+
 import { SanityImage } from './sanity-image'
 
 /** Maps CMS rich text onto the design system so client edits can't drift
@@ -27,16 +29,10 @@ export const PortableBody: PortableTextComponents = {
   marks: {
     link: ({ children, value }) => {
       const href = value?.href ?? '#'
-      const external = href.startsWith('http')
       return (
-        <a
-          href={href}
-          target={external ? '_blank' : undefined}
-          rel={external ? 'noopener noreferrer' : undefined}
-          className="text-brass underline underline-offset-4 hover:text-ink"
-        >
+        <TextLink href={href}>
           {children}
-        </a>
+        </TextLink>
       )
     },
   },

@@ -11,7 +11,7 @@ export function NoticeBanner({
 
   return (
     <div className="bg-brass-button text-cream">
-      <p className="mx-auto max-w-7xl px-5 py-2.5 text-center font-sans text-sm lg:px-8">
+      <p className="mx-auto max-w-[88rem] px-5 py-2.5 text-center font-sans text-sm lg:px-10">
         {notice.message}
         {notice.linkUrl && notice.linkLabel ? (
           <>

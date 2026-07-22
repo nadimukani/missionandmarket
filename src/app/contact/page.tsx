@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+
+import { TextLink } from '@/components/ui'
 import Link from 'next/link'
 
 import { PageHeader } from '@/components/page-header'
@@ -43,14 +45,9 @@ export default async function ContactPage() {
               ) : null}
               {settings?.mapsUrl ? (
                 <p className="mt-3">
-                  <a
-                    href={settings.mapsUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-sans text-sm text-brass underline underline-offset-4 hover:text-ink"
-                  >
+                  <TextLink href={settings.mapsUrl}>
                     Open in Google Maps
-                  </a>
+                  </TextLink>
                 </p>
               ) : null}
             </section>

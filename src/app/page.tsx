@@ -1,4 +1,6 @@
 import Link from 'next/link'
+
+import { TextLink } from '@/components/ui'
 import { PortableText } from 'next-sanity'
 
 import { OpenStatus } from '@/components/open-status'
@@ -123,14 +125,9 @@ export default async function HomePage() {
               </h2>
             </div>
             {settings?.orderUrl ? (
-              <a
-                href={settings.orderUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-sans text-sm text-brass underline underline-offset-4 hover:text-ink"
-              >
+              <TextLink href={settings.orderUrl}>
                 Order takeout
-              </a>
+              </TextLink>
             ) : null}
           </div>
 
@@ -184,22 +181,14 @@ export default async function HomePage() {
 
               <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-2">
                 {settings?.phone ? (
-                  <a
-                    href={telHref(settings.phone)}
-                    className="font-sans text-base text-brass-ondark underline underline-offset-4 hover:text-cream"
-                  >
+                  <TextLink href={telHref(settings.phone)} tone="dark">
                     {settings.phone}
-                  </a>
+                  </TextLink>
                 ) : null}
                 {settings?.mapsUrl ? (
-                  <a
-                    href={settings.mapsUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-sans text-base text-brass-ondark underline underline-offset-4 hover:text-cream"
-                  >
+                  <TextLink href={settings.mapsUrl} tone="dark">
                     Directions
-                  </a>
+                  </TextLink>
                 ) : null}
               </div>
 
@@ -262,12 +251,9 @@ export default async function HomePage() {
               <div className="mt-8 space-y-5 font-sans text-base leading-relaxed text-ink-muted">
                 <PortableText value={home.storyBody} components={PortableBody} />
               </div>
-              <Link
-                href="/about"
-                className="mt-8 inline-block font-sans text-sm text-brass underline underline-offset-4 hover:text-ink"
-              >
+              <TextLink href="/about">
                 More about us
-              </Link>
+              </TextLink>
             </div>
           </div>
         </section>
@@ -354,12 +340,9 @@ export default async function HomePage() {
                 What&rsquo;s on
               </h2>
             </div>
-            <Link
-              href="/specials"
-              className="font-sans text-sm text-brass underline underline-offset-4 hover:text-ink"
-            >
+            <TextLink href="/specials">
               All specials
-            </Link>
+            </TextLink>
           </div>
 
           <ul className="mt-12 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
@@ -390,12 +373,9 @@ export default async function HomePage() {
               <h2 className="font-display text-4xl font-light text-ink lg:text-5xl">
                 The room
               </h2>
-              <Link
-                href="/gallery"
-                className="font-sans text-sm text-brass underline underline-offset-4 hover:text-ink"
-              >
+              <TextLink href="/gallery">
                 See the gallery
-              </Link>
+              </TextLink>
             </div>
           </div>
 

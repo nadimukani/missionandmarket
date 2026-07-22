@@ -1,5 +1,6 @@
 import Link from 'next/link'
 
+import { HoursList, Shell, TextLink } from '@/components/ui'
 import { NAV_LINKS, formatAddress, telHref } from '@/lib/site'
 import type { SiteSettings } from '@/sanity/types'
 
@@ -12,7 +13,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings | null }) {
     // making them unreachable — the page cannot scroll past its own end.
     // This clears the bar's height plus the iOS home indicator.
     <footer className="bg-ink pb-[calc(6rem+env(safe-area-inset-bottom))] text-cream-muted lg:pb-0">
-      <div className="mx-auto max-w-7xl px-5 py-16 lg:px-8 lg:py-20">
+      <Shell className="py-16 lg:py-20">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-1">
             <p className="font-display text-2xl text-cream">
@@ -53,14 +54,9 @@ export function SiteFooter({ settings }: { settings: SiteSettings | null }) {
               ) : null}
               {settings?.mapsUrl ? (
                 <p>
-                  <a
-                    href={settings.mapsUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-brass-ondark underline underline-offset-4 hover:text-cream"
-                  >
+                  <TextLink href={settings.mapsUrl} tone="dark">
                     Get directions
-                  </a>
+                  </TextLink>
                 </p>
               ) : null}
             </address>
@@ -68,16 +64,9 @@ export function SiteFooter({ settings }: { settings: SiteSettings | null }) {
 
           <div>
             <h2 className="eyebrow text-cream-muted">Hours</h2>
-            <dl className="mt-4 space-y-2 font-sans text-sm">
-              {settings?.hours?.map((row) => (
-                <div key={`${row.service}-${row.days}`}>
-                  <dt className="text-cream">{row.service}</dt>
-                  <dd className="text-cream-muted">
-                    {[row.days, row.time].filter(Boolean).join(' · ')}
-                  </dd>
-                </div>
-              ))}
-            </dl>
+            <div className="mt-4">
+              <HoursList hours={settings?.hours} tone="dark" />
+            </div>
           </div>
 
           <div>
@@ -158,7 +147,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings | null }) {
             </ul>
           ) : null}
         </div>
-      </div>
+      </Shell>
     </footer>
   )
 }

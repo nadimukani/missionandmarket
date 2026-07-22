@@ -1,5 +1,7 @@
 import type { Menu, MenuItem } from '@/sanity/types'
 
+import { TextLink } from '@/components/ui'
+
 const TAG_LABEL: Record<string, string> = {
   vegetarian: 'Vegetarian',
   vegan: 'Vegan',
@@ -101,14 +103,9 @@ export function MenuView({ menu }: { menu: Menu }) {
 
       {menu.pdfUrl ? (
         <p className="mt-8 text-center">
-          <a
-            href={menu.pdfUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-sans text-sm text-brass underline underline-offset-4 hover:text-ink"
-          >
+          <TextLink href={menu.pdfUrl}>
             Download printable menu (PDF)
-          </a>
+          </TextLink>
         </p>
       ) : null}
     </article>
