@@ -33,7 +33,7 @@ export default async function SpecialsPage() {
             {specials.map((special) => (
               <li
                 key={special._id}
-                className="flex flex-col overflow-hidden rounded-sm border border-ink/10"
+                className="flex flex-col overflow-hidden rounded-xs border border-rule"
               >
                 {special.image ? (
                   <div className="aspect-16/9 overflow-hidden bg-ink/5">
@@ -49,18 +49,18 @@ export default async function SpecialsPage() {
 
                 <div className="flex flex-1 flex-col p-7">
                   {special.schedule ? (
-                    <p className="eyebrow text-ember">{special.schedule}</p>
+                    <p className="eyebrow text-brass">{special.schedule}</p>
                   ) : null}
                   <h2 className="mt-3 font-display text-2xl text-ink">
                     {special.title}
                   </h2>
                   {special.price ? (
-                    <p className="mt-1 font-sans text-sm text-ink/70">
+                    <p className="mt-1 font-sans text-sm text-ink-muted">
                       {special.price}
                     </p>
                   ) : null}
                   {special.description ? (
-                    <p className="mt-3 font-sans text-sm leading-relaxed text-ink/60">
+                    <p className="mt-3 font-sans text-sm leading-relaxed text-ink-muted">
                       {special.description}
                     </p>
                   ) : null}
@@ -71,14 +71,14 @@ export default async function SpecialsPage() {
                         href={special.ctaUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="font-sans text-sm text-ember underline underline-offset-4 hover:text-ember-bright"
+                        className="font-sans text-sm text-brass underline underline-offset-4 hover:text-ink"
                       >
                         {special.ctaLabel ?? 'Learn more'} →
                       </a>
                     ) : (
                       <Link
                         href="/reservations"
-                        className="font-sans text-sm text-ember underline underline-offset-4 hover:text-ember-bright"
+                        className="font-sans text-sm text-brass underline underline-offset-4 hover:text-ink"
                       >
                         {special.ctaLabel ?? 'Reserve a table'} →
                       </Link>

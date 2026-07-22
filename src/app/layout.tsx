@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
-import { Fraunces, Inter } from 'next/font/google'
+import { Cormorant_Garamond, Instrument_Sans } from 'next/font/google'
 
 import { NoticeBanner } from '@/components/notice-banner'
+import { ReserveBar } from '@/components/reserve-bar'
 import { RestaurantJsonLd } from '@/components/restaurant-json-ld'
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
@@ -10,15 +11,20 @@ import { getSettings } from '@/sanity/queries'
 
 import './globals.css'
 
-const display = Fraunces({
+/** Echoes the wordmark: a thin, high-elegance serif. Only the weights the
+ *  design actually uses, so we ship two files rather than a variable range. */
+const display = Cormorant_Garamond({
   subsets: ['latin'],
+  weight: ['300', '400'],
+  style: ['normal', 'italic'],
   variable: '--font-display',
   display: 'swap',
 })
 
-const sans = Inter({
+/** The one webfont the restaurant already loads — the UI voice carries over. */
+const body = Instrument_Sans({
   subsets: ['latin'],
-  variable: '--font-sans-body',
+  variable: '--font-body',
   display: 'swap',
 })
 
@@ -54,11 +60,11 @@ export default async function RootLayout({
   const settings = await getSettings()
 
   return (
-    <html lang="en" className={`${display.variable} ${sans.variable}`}>
-      <body className="flex min-h-dvh flex-col bg-bone text-ink">
+    <html lang="en" className={`${display.variable} ${body.variable}`}>
+      <body className="flex min-h-dvh flex-col bg-paper text-ink">
         <a
           href="#main"
-          className="sr-only rounded-sm bg-ink px-4 py-2 text-bone focus:not-sr-only
+          className="sr-only rounded-xs bg-ink px-4 py-2 text-cream focus:not-sr-only
                      focus:absolute focus:top-3 focus:left-3 focus:z-100"
         >
           Skip to content
@@ -72,6 +78,7 @@ export default async function RootLayout({
         </main>
 
         <SiteFooter settings={settings} />
+        <ReserveBar settings={settings} />
         <RestaurantJsonLd settings={settings} />
       </body>
     </html>

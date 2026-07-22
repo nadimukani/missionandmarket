@@ -35,7 +35,7 @@ export default async function ContactPage() {
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-20">
           <div className="space-y-10">
             <section>
-              <h2 className="eyebrow text-ember">Address</h2>
+              <h2 className="eyebrow text-brass">Address</h2>
               {address ? (
                 <address className="mt-4 font-sans text-lg leading-relaxed text-ink not-italic">
                   {formatAddress(address)}
@@ -47,7 +47,7 @@ export default async function ContactPage() {
                     href={settings.mapsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-sans text-sm text-ember underline underline-offset-4 hover:text-ember-bright"
+                    className="font-sans text-sm text-brass underline underline-offset-4 hover:text-ink"
                   >
                     Open in Google Maps
                   </a>
@@ -56,13 +56,13 @@ export default async function ContactPage() {
             </section>
 
             <section>
-              <h2 className="eyebrow text-ember">Contact</h2>
+              <h2 className="eyebrow text-brass">Contact</h2>
               <ul className="mt-4 space-y-2 font-sans text-base">
                 {settings?.phone ? (
                   <li>
                     <a
                       href={telHref(settings.phone)}
-                      className="text-ink underline underline-offset-4 hover:text-ember"
+                      className="text-ink underline underline-offset-4 hover:text-ink"
                     >
                       {settings.phone}
                     </a>
@@ -72,18 +72,18 @@ export default async function ContactPage() {
                   <li>
                     <a
                       href={`mailto:${settings.email}`}
-                      className="text-ink underline underline-offset-4 hover:text-ember"
+                      className="text-ink underline underline-offset-4 hover:text-ink"
                     >
                       {settings.email}
                     </a>
                   </li>
                 ) : null}
                 {settings?.privateEventsEmail ? (
-                  <li className="text-ink/60">
+                  <li className="text-ink-muted">
                     Private events:{' '}
                     <a
                       href={`mailto:${settings.privateEventsEmail}`}
-                      className="text-ink underline underline-offset-4 hover:text-ember"
+                      className="text-ink underline underline-offset-4 hover:text-ink"
                     >
                       {settings.privateEventsEmail}
                     </a>
@@ -94,28 +94,28 @@ export default async function ContactPage() {
 
             {settings?.parkingNote ? (
               <section>
-                <h2 className="eyebrow text-ember">Parking</h2>
-                <p className="mt-4 max-w-prose font-sans text-base leading-relaxed text-ink/70">
+                <h2 className="eyebrow text-brass">Parking</h2>
+                <p className="mt-4 max-w-prose font-sans text-base leading-relaxed text-ink-muted">
                   {settings.parkingNote}
                 </p>
               </section>
             ) : null}
 
             <section>
-              <h2 className="eyebrow text-ember">Hours</h2>
+              <h2 className="eyebrow text-brass">Hours</h2>
               <dl className="mt-4 space-y-3 font-sans text-sm">
                 {settings?.hours?.map((row) => (
                   <div
                     key={`${row.service}-${row.days}`}
-                    className="flex flex-wrap justify-between gap-x-6 border-b border-ink/10 pb-2"
+                    className="flex flex-wrap justify-between gap-x-6 border-b border-rule pb-2"
                   >
                     <dt className="text-ink">
                       {row.service}
                       {row.days ? (
-                        <span className="text-ink/50"> · {row.days}</span>
+                        <span className="text-ink-faint"> · {row.days}</span>
                       ) : null}
                     </dt>
-                    <dd className="text-ink/70 tabular-nums">{row.time}</dd>
+                    <dd className="text-ink-muted tabular-nums">{row.time}</dd>
                   </div>
                 ))}
               </dl>
@@ -123,14 +123,14 @@ export default async function ContactPage() {
 
             <Link
               href="/reservations"
-              className="inline-block rounded-sm bg-ink px-8 py-3.5 font-sans text-sm font-medium text-bone transition-colors hover:bg-ink-soft"
+              className="inline-block rounded-xs bg-ink px-8 py-3.5 font-sans text-sm font-medium text-cream transition-colors hover:bg-moss"
             >
               Reserve a table
             </Link>
           </div>
 
           {mapQuery ? (
-            <div className="min-h-80 overflow-hidden rounded-sm bg-ink/5 lg:min-h-full">
+            <div className="min-h-80 overflow-hidden rounded-xs bg-ink/5 lg:min-h-full">
               <iframe
                 title={`Map to ${settings?.name ?? 'the restaurant'}`}
                 src={`https://www.google.com/maps?q=${mapQuery}&output=embed`}

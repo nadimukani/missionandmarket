@@ -30,12 +30,12 @@ export default async function CareersPage() {
 
       <div className="mx-auto max-w-3xl px-5 py-16 lg:px-8 lg:py-24">
         {jobs.length ? (
-          <ul className="divide-y divide-ink/10">
+          <ul className="divide-y divide-rule">
             {jobs.map((job) => (
               <li key={job._id} className="py-8 first:pt-0">
                 <div className="flex flex-wrap items-baseline justify-between gap-3">
                   <h2 className="font-display text-2xl text-ink">{job.title}</h2>
-                  <p className="font-sans text-sm text-ink/55">
+                  <p className="font-sans text-sm text-ink-muted">
                     {[job.department, job.employmentType]
                       .filter(Boolean)
                       .join(' · ')}
@@ -43,7 +43,7 @@ export default async function CareersPage() {
                 </div>
 
                 {job.description?.length ? (
-                  <div className="mt-4 font-sans text-sm text-ink/70">
+                  <div className="mt-4 font-sans text-sm text-ink-muted">
                     <PortableText
                       value={job.description}
                       components={PortableBody}
@@ -62,7 +62,7 @@ export default async function CareersPage() {
                   }
                   target={job.applyUrl ? '_blank' : undefined}
                   rel={job.applyUrl ? 'noopener noreferrer' : undefined}
-                  className="mt-5 inline-block rounded-sm bg-ink px-6 py-3 font-sans text-sm font-medium text-bone transition-colors hover:bg-ink-soft"
+                  className="mt-5 inline-block rounded-xs bg-ink px-6 py-3 font-sans text-sm font-medium text-cream transition-colors hover:bg-moss"
                 >
                   Apply
                 </a>
@@ -70,11 +70,11 @@ export default async function CareersPage() {
             ))}
           </ul>
         ) : careersEmail ? (
-          <p className="text-center font-sans text-base text-ink/70">
+          <p className="text-center font-sans text-base text-ink-muted">
             Send a note and your résumé to{' '}
             <a
               href={`mailto:${careersEmail}`}
-              className="text-ember underline underline-offset-4 hover:text-ember-bright"
+              className="text-brass underline underline-offset-4 hover:text-ink"
             >
               {careersEmail}
             </a>

@@ -7,22 +7,22 @@ export function SiteFooter({ settings }: { settings: SiteSettings | null }) {
   const year = new Date().getFullYear()
 
   return (
-    <footer className="bg-ink text-bone-dim">
+    <footer className="bg-ink text-cream-muted">
       <div className="mx-auto max-w-7xl px-5 py-16 lg:px-8 lg:py-20">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-1">
-            <p className="font-display text-2xl text-bone">
-              Mission <span className="text-ember">+</span> Market
+            <p className="font-display text-2xl text-cream">
+              Mission <span className="text-brass-ondark">+</span> Market
             </p>
             {settings?.tagline ? (
-              <p className="mt-2 font-sans text-sm text-bone-muted">
+              <p className="mt-2 font-sans text-sm text-cream-muted">
                 {settings.tagline}
               </p>
             ) : null}
           </div>
 
           <div>
-            <h2 className="eyebrow text-bone-muted">Visit</h2>
+            <h2 className="eyebrow text-cream-muted">Visit</h2>
             <address className="mt-4 space-y-2 font-sans text-sm not-italic">
               {settings?.address ? (
                 <p>{formatAddress(settings.address)}</p>
@@ -31,7 +31,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings | null }) {
                 <p>
                   <a
                     href={telHref(settings.phone)}
-                    className="transition-colors hover:text-bone"
+                    className="transition-colors hover:text-cream"
                   >
                     {settings.phone}
                   </a>
@@ -41,7 +41,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings | null }) {
                 <p>
                   <a
                     href={`mailto:${settings.email}`}
-                    className="transition-colors hover:text-bone"
+                    className="transition-colors hover:text-cream"
                   >
                     {settings.email}
                   </a>
@@ -53,7 +53,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings | null }) {
                     href={settings.mapsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-ember underline underline-offset-4 hover:text-ember-bright"
+                    className="text-brass-ondark underline underline-offset-4 hover:text-cream"
                   >
                     Get directions
                   </a>
@@ -63,12 +63,12 @@ export function SiteFooter({ settings }: { settings: SiteSettings | null }) {
           </div>
 
           <div>
-            <h2 className="eyebrow text-bone-muted">Hours</h2>
+            <h2 className="eyebrow text-cream-muted">Hours</h2>
             <dl className="mt-4 space-y-2 font-sans text-sm">
               {settings?.hours?.map((row) => (
                 <div key={`${row.service}-${row.days}`}>
-                  <dt className="text-bone">{row.service}</dt>
-                  <dd className="text-bone-muted">
+                  <dt className="text-cream">{row.service}</dt>
+                  <dd className="text-cream-muted">
                     {[row.days, row.time].filter(Boolean).join(' · ')}
                   </dd>
                 </div>
@@ -77,13 +77,13 @@ export function SiteFooter({ settings }: { settings: SiteSettings | null }) {
           </div>
 
           <div>
-            <h2 className="eyebrow text-bone-muted">Explore</h2>
+            <h2 className="eyebrow text-cream-muted">Explore</h2>
             <ul className="mt-4 space-y-2 font-sans text-sm">
               {NAV_LINKS.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="transition-colors hover:text-bone"
+                    className="transition-colors hover:text-cream"
                   >
                     {link.label}
                   </Link>
@@ -95,7 +95,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings | null }) {
                     href={settings.orderUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="transition-colors hover:text-bone"
+                    className="transition-colors hover:text-cream"
                   >
                     Order Takeout
                   </a>
@@ -107,7 +107,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings | null }) {
                     href={settings.giftCardUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="transition-colors hover:text-bone"
+                    className="transition-colors hover:text-cream"
                   >
                     Gift Cards
                   </a>
@@ -116,13 +116,13 @@ export function SiteFooter({ settings }: { settings: SiteSettings | null }) {
               <li>
                 <Link
                   href="/careers"
-                  className="transition-colors hover:text-bone"
+                  className="transition-colors hover:text-cream"
                 >
                   Careers
                 </Link>
               </li>
               <li>
-                <Link href="/press" className="transition-colors hover:text-bone">
+                <Link href="/press" className="transition-colors hover:text-cream">
                   Press
                 </Link>
               </li>
@@ -130,8 +130,8 @@ export function SiteFooter({ settings }: { settings: SiteSettings | null }) {
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col gap-6 border-t border-bone-dim/10 pt-8 sm:flex-row sm:items-center sm:justify-between">
-          <p className="font-sans text-xs text-bone-muted">
+        <div className="mt-16 flex flex-col gap-6 border-t border-cream/10 pt-8 sm:flex-row sm:items-center sm:justify-between">
+          <p className="font-sans text-xs text-cream-muted">
             © {year} {settings?.name ?? 'Mission + Market'}. All rights reserved.
           </p>
 
@@ -144,7 +144,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings | null }) {
                       href={s.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-sans text-xs tracking-wide transition-colors hover:text-bone"
+                      className="font-sans text-xs tracking-wide transition-colors hover:text-cream"
                     >
                       {s.platform}
                     </a>

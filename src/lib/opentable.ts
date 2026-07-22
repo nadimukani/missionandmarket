@@ -11,7 +11,9 @@
  * restaurant's own website and is what preserves booking attribution.
  */
 
-export const RESTAURANT_TIME_ZONE = 'America/New_York'
+import { RESTAURANT_TIME_ZONE } from './hours'
+
+export { RESTAURANT_TIME_ZONE }
 
 export type ReservationParams = {
   rid: string

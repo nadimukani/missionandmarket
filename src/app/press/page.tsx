@@ -34,10 +34,10 @@ export default async function PressPage() {
 
       {items.length ? (
         <div className="mx-auto max-w-3xl px-5 py-16 lg:px-8 lg:py-24">
-          <ul className="divide-y divide-ink/10">
+          <ul className="divide-y divide-rule">
             {items.map((item) => (
               <li key={item._id} className="py-8 first:pt-0">
-                <p className="eyebrow text-ember">
+                <p className="eyebrow text-brass">
                   {[item.publication, formatDate(item.date)]
                     .filter(Boolean)
                     .join(' · ')}
@@ -57,7 +57,7 @@ export default async function PressPage() {
                   )}
                 </h2>
                 {item.excerpt ? (
-                  <p className="mt-3 font-sans text-sm leading-relaxed text-ink/60">
+                  <p className="mt-3 font-sans text-sm leading-relaxed text-ink-muted">
                     {item.excerpt}
                   </p>
                 ) : null}

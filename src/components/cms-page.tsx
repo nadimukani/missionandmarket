@@ -39,7 +39,7 @@ export async function CmsPage({
 
       {page.heroImage ? (
         <div className="mx-auto max-w-7xl px-5 lg:px-8">
-          <div className="-mt-10 aspect-16/7 overflow-hidden rounded-sm lg:-mt-14">
+          <div className="-mt-10 aspect-16/7 overflow-hidden rounded-xs lg:-mt-14">
             <SanityImage
               image={page.heroImage}
               width={2000}
@@ -53,7 +53,7 @@ export async function CmsPage({
       ) : null}
 
       {page.body?.length ? (
-        <div className="mx-auto max-w-3xl px-5 py-16 font-sans text-base text-ink/80 lg:px-8 lg:py-24">
+        <div className="mx-auto max-w-3xl px-5 py-16 font-sans text-base text-ink-muted lg:px-8 lg:py-24">
           <PortableText value={page.body} components={PortableBody} />
         </div>
       ) : null}

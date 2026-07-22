@@ -25,13 +25,13 @@ function Dish({ item }: { item: MenuItem }) {
       </div>
 
       {item.description ? (
-        <p className="mt-1 max-w-prose font-sans text-sm leading-relaxed text-ink/60">
+        <p className="mt-1 max-w-prose font-sans text-sm leading-relaxed text-ink-muted">
           {item.description}
         </p>
       ) : null}
 
       {item.addOns?.length ? (
-        <p className="mt-1 font-sans text-xs text-ink/50">
+        <p className="mt-1 font-sans text-xs text-ink-faint">
           {item.addOns
             .map((a) => [a.label, a.price].filter(Boolean).join(' '))
             .join(' · ')}
@@ -41,7 +41,7 @@ function Dish({ item }: { item: MenuItem }) {
       {(item.tags?.length || item.soldOut) ? (
         <p className="mt-2 flex flex-wrap gap-2">
           {item.soldOut ? (
-            <span className="eyebrow rounded-full border border-ink/20 px-2 py-0.5 text-ink/50">
+            <span className="eyebrow rounded-full border border-ink/20 px-2 py-0.5 text-ink-faint">
               Unavailable
             </span>
           ) : null}
@@ -63,7 +63,7 @@ export function MenuView({ menu }: { menu: Menu }) {
   return (
     <article>
       {menu.intro ? (
-        <p className="mx-auto max-w-2xl text-center font-sans text-base leading-relaxed text-ink/70">
+        <p className="mx-auto max-w-2xl text-center font-sans text-base leading-relaxed text-ink-muted">
           {menu.intro}
         </p>
       ) : null}
@@ -76,11 +76,11 @@ export function MenuView({ menu }: { menu: Menu }) {
             key={section.title}
             className="mb-14 break-inside-avoid-column"
           >
-            <h2 className="eyebrow border-b border-ink/15 pb-3 text-ember">
+            <h2 className="eyebrow border-b border-ink/15 pb-3 text-brass">
               {section.title}
             </h2>
             {section.note ? (
-              <p className="mt-3 font-sans text-xs text-ink/50 italic">
+              <p className="mt-3 font-sans text-xs text-ink-faint italic">
                 {section.note}
               </p>
             ) : null}
@@ -94,7 +94,7 @@ export function MenuView({ menu }: { menu: Menu }) {
       </div>
 
       {menu.footnote ? (
-        <p className="mt-8 border-t border-ink/10 pt-8 text-center font-sans text-xs text-ink/50">
+        <p className="mt-8 border-t border-rule pt-8 text-center font-sans text-xs text-ink-faint">
           {menu.footnote}
         </p>
       ) : null}
@@ -105,7 +105,7 @@ export function MenuView({ menu }: { menu: Menu }) {
             href={menu.pdfUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="font-sans text-sm text-ember underline underline-offset-4 hover:text-ember-bright"
+            className="font-sans text-sm text-brass underline underline-offset-4 hover:text-ink"
           >
             Download printable menu (PDF)
           </a>

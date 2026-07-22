@@ -33,7 +33,7 @@ export const PortableBody: PortableTextComponents = {
           href={href}
           target={external ? '_blank' : undefined}
           rel={external ? 'noopener noreferrer' : undefined}
-          className="text-ember underline underline-offset-4 hover:text-ember-bright"
+          className="text-brass underline underline-offset-4 hover:text-ink"
         >
           {children}
         </a>
@@ -47,7 +47,7 @@ export const PortableBody: PortableTextComponents = {
           image={value}
           width={1400}
           sizes="(min-width: 1024px) 60vw, 100vw"
-          className="w-full rounded-sm"
+          className="w-full rounded-xs"
         />
         {value?.alt ? (
           <figcaption className="mt-3 font-sans text-xs text-current/60">

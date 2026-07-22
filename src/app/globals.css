@@ -1,45 +1,69 @@
 @import "tailwindcss";
 
 /*
- * Mission + Market — Buckhead.
+ * Mission + Market — design tokens.
  *
- * The room is warm, low-lit, brass and dark wood, with a bright open patio.
- * The palette follows the room rather than defaulting to restaurant-black:
- * a deep espresso ground, bone-white type, and a single burnt-amber accent
- * used only for actions the guest can take (reserve, order, call).
+ * Every colour here was recovered from the restaurant's own brand assets
+ * (their logo files and the inline styles on the existing site), not invented.
+ * The palette turns out to be a description of the room itself: a chartreuse
+ * moss wall behind the bar, brass sconces and chair frames, walnut tables,
+ * polished concrete, and a lot of daylight through floor-to-ceiling glass.
  *
- * There is no dark-mode variant. The site is one committed look on every
- * device — a restaurant's identity shouldn't flip with an OS setting.
+ * The site is therefore LIGHT by default. A dark-by-default restaurant site
+ * would be the genre cliché and would misrepresent a room whose defining
+ * feature is daylight. Dark bands (ink, moss) are used deliberately and
+ * sparingly, for the hero and the footer, to frame the photography.
  */
 @theme {
-  --color-ink: #17120f;
-  --color-ink-soft: #241c18;
-  --color-ink-line: #33272010;
+  /* --- Core brand ------------------------------------------------------- */
+  --color-ink: #231f1f;        /* dominant colour in their CSS (19 uses)     */
+  --color-moss: #464b20;       /* the moss wall (10 uses) — signature colour */
+  --color-cream: #f0e9d7;      /* the logo's own colour (5 uses)             */
+  --color-brass: #8a6445;      /* sconces + chair frames (3 uses)            */
 
-  --color-bone: #f7f2ea;
-  --color-bone-dim: #e6ddd0;
-  --color-bone-muted: #a89a89;
+  /* --- Derived surfaces --------------------------------------------------
+   * Tints and shades of the four brand colours. Nothing here introduces a
+   * new hue; each is the brand colour moved along lightness only.          */
+  --color-paper: #faf8f4;      /* page ground — cream lifted toward white    */
+  --color-paper-warm: #f4efe4; /* alternating section band                   */
+  --color-rule: #231f1f1f;     /* hairlines — ink at 12%                     */
+  --color-rule-strong: #231f1f38;
 
-  --color-ember: #c2703c;
-  --color-ember-bright: #d98a55;
-  --color-olive: #6b7256;
+  /* Text tints. Every value below was solved against WCAG 2.1 AA (4.5:1) on
+   * its intended ground rather than picked by eye — see scripts/contrast.mjs.
+   * Raw brand brass fails on ink (3.10:1), so dark grounds get a lifted tint
+   * and buttons get a slightly darkened fill. Do not substitute --color-brass
+   * for these on dark backgrounds. */
+  --color-ink-muted: #231f1fa6; /* 65% ink on paper — 4.98:1                 */
+  --color-ink-faint: #231f1f9e; /* 62% ink on paper — 4.53:1 (was 44%, 2.7)  */
 
-  --color-background: var(--color-bone);
-  --color-foreground: var(--color-ink);
+  --color-cream-muted: #f0e9d7b3; /* 70% cream on ink — 7.24:1               */
 
+  --color-moss-deep: #333719;
+  --color-brass-ondark: #a08165;  /* brass + 22% cream — 4.54:1 on ink       */
+  --color-brass-button: #866143;  /* cream on it — 4.56:1                     */
+
+  /* --- Type -------------------------------------------------------------
+   * Display echoes the wordmark: a thin, uniform-stroke serif set in caps
+   * with wide tracking. Body is Instrument Sans — the one webfont the
+   * restaurant actually loads today, so the voice carries over.            */
   --font-display: var(--font-display), ui-serif, Georgia, serif;
-  --font-sans: var(--font-sans-body), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
 
-  --tracking-eyebrow: 0.18em;
+  --tracking-wordmark: 0.24em;
+  --tracking-eyebrow: 0.2em;
 
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Header height — the hero pulls itself up by exactly this. */
+  --spacing-header: 5.5rem;
 }
 
 @layer base {
   html {
     scroll-behavior: smooth;
-    /* Sticky header shouldn't cover anchor targets. */
-    scroll-padding-top: 6rem;
+    scroll-padding-top: calc(var(--spacing-header) + 1rem);
+    -webkit-tap-highlight-color: transparent;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -56,9 +80,10 @@
   }
 
   body {
-    background-color: var(--color-bone);
+    background-color: var(--color-paper);
     color: var(--color-ink);
     font-family: var(--font-sans);
+    font-synthesis-weight: none;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
@@ -67,8 +92,8 @@
   h2,
   h3 {
     font-family: var(--font-display);
-    font-weight: 400;
-    letter-spacing: -0.015em;
+    font-weight: 300;
+    letter-spacing: -0.01em;
     text-wrap: balance;
   }
 
@@ -76,21 +101,30 @@
     text-wrap: pretty;
   }
 
-  /* Visible, on-brand focus ring for keyboard users everywhere. */
+  /* Keyboard focus must be visible on both the light ground and the dark
+     bands, so the ring carries its own contrasting offset. */
   :focus-visible {
-    outline: 2px solid var(--color-ember);
+    outline: 2px solid var(--color-brass);
     outline-offset: 3px;
-    border-radius: 2px;
+    border-radius: 1px;
   }
 
   ::selection {
-    background-color: var(--color-ember);
-    color: var(--color-bone);
+    background-color: var(--color-moss);
+    color: var(--color-cream);
   }
 }
 
 @layer components {
-  /* Small caps label used above section headings. */
+  /* The wordmark treatment: caps, hairline serif, very wide tracking. */
+  .wordmark {
+    font-family: var(--font-display);
+    font-weight: 300;
+    letter-spacing: var(--tracking-wordmark);
+    text-transform: uppercase;
+  }
+
+  /* Small label above a section heading. */
   .eyebrow {
     font-family: var(--font-sans);
     font-size: 0.6875rem;
@@ -99,12 +133,18 @@
     text-transform: uppercase;
   }
 
-  /* The dotted leader between a dish and its price, as on a printed menu.
-     Built with a flex row so it reflows correctly at any width. */
+  /* Dotted leader between a dish and its price, as on a printed menu.
+     A flex spacer rather than a background image, so it reflows at any width
+     and disappears cleanly when the price wraps. */
   .menu-leader {
     flex: 1 1 auto;
-    margin: 0 0.5rem;
-    border-bottom: 1px dotted color-mix(in srgb, currentColor 30%, transparent);
-    transform: translateY(-0.3em);
+    min-width: 1.5rem;
+    margin: 0 0.625rem;
+    border-bottom: 1px dotted var(--color-rule-strong);
+    transform: translateY(-0.32em);
   }
+}
+
+@utility text-balance-none {
+  text-wrap: initial;
 }

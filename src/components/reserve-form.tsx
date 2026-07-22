@@ -23,9 +23,9 @@ type Props = {
 const MAX_ONLINE_PARTY = 8
 
 const selectClass =
-  'w-full appearance-none rounded-sm border border-bone-dim/40 bg-transparent ' +
-  'px-3 py-3 font-sans text-sm text-bone outline-none transition-colors ' +
-  'hover:border-ember focus:border-ember [&>option]:bg-ink [&>option]:text-bone'
+  'w-full appearance-none rounded-xs border border-cream/40 bg-transparent ' +
+  'px-3 py-3 font-sans text-sm text-cream outline-none transition-colors ' +
+  'hover:border-ember focus:border-ember [&>option]:bg-ink [&>option]:text-cream'
 
 export function ReserveForm({
   rid,
@@ -59,7 +59,7 @@ export function ReserveForm({
         className="grid grid-cols-2 gap-3 sm:grid-cols-4"
       >
         <label className="flex flex-col gap-1.5">
-          <span className="eyebrow text-bone-muted">Party</span>
+          <span className="eyebrow text-cream-muted">Party</span>
           <select
             value={partySize}
             onChange={(e) => setPartySize(Number(e.target.value))}
@@ -74,7 +74,7 @@ export function ReserveForm({
         </label>
 
         <label className="flex flex-col gap-1.5">
-          <span className="eyebrow text-bone-muted">Date</span>
+          <span className="eyebrow text-cream-muted">Date</span>
           <select
             value={date}
             onChange={(e) => setDate(e.target.value)}
@@ -89,7 +89,7 @@ export function ReserveForm({
         </label>
 
         <label className="flex flex-col gap-1.5">
-          <span className="eyebrow text-bone-muted">Time</span>
+          <span className="eyebrow text-cream-muted">Time</span>
           <select
             value={time}
             onChange={(e) => setTime(e.target.value)}
@@ -106,16 +106,16 @@ export function ReserveForm({
         <div className="col-span-2 flex flex-col justify-end sm:col-span-1">
           <button
             type="submit"
-            className="w-full cursor-pointer rounded-sm bg-ember px-5 py-3 font-sans text-sm
-                       font-medium tracking-wide text-bone transition-colors
-                       hover:bg-ember-bright"
+            className="w-full cursor-pointer rounded-xs bg-brass-button px-5 py-3 font-sans text-sm
+                       font-medium tracking-wide text-cream transition-colors
+                       hover:bg-brass-button-bright"
           >
             Find a table
           </button>
         </div>
       </form>
 
-      <p className="mt-3 text-xs text-bone-muted">
+      <p className="mt-3 text-xs text-cream-muted">
         {isLargeParty ? (
           <>
             {largePartyNote ??
@@ -123,7 +123,7 @@ export function ReserveForm({
             {phone ? (
               <a
                 href={`tel:${phone.replace(/[^\d+]/g, '')}`}
-                className="text-ember underline underline-offset-4 hover:text-ember-bright"
+                className="text-brass underline underline-offset-4 hover:text-ink"
               >
                 {phone}
               </a>
@@ -137,7 +137,7 @@ export function ReserveForm({
                 href={fallbackUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline underline-offset-4 hover:text-bone"
+                className="underline underline-offset-4 hover:text-cream"
               >
                 View full availability
               </a>

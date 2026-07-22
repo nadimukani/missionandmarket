@@ -36,11 +36,11 @@ export default async function ReservationsPage() {
             />
           </div>
         ) : (
-          <p className="mt-10 font-sans text-sm text-bone-dim">
+          <p className="mt-10 font-sans text-sm text-cream-muted">
             Please call{' '}
             <a
               href={telHref(settings?.phone)}
-              className="text-ember underline underline-offset-4"
+              className="text-brass underline underline-offset-4"
             >
               {settings?.phone}
             </a>{' '}
@@ -52,15 +52,15 @@ export default async function ReservationsPage() {
       <div className="mx-auto max-w-5xl px-5 py-16 lg:px-8 lg:py-24">
         <div className="grid gap-12 md:grid-cols-3">
           <section>
-            <h2 className="eyebrow text-ember">Large parties</h2>
-            <p className="mt-4 font-sans text-sm leading-relaxed text-ink/70">
+            <h2 className="eyebrow text-brass">Large parties</h2>
+            <p className="mt-4 font-sans text-sm leading-relaxed text-ink-muted">
               {settings?.largePartyNote ??
                 'For parties of nine or more, our team will build the evening around you.'}
             </p>
             <p className="mt-4 font-sans text-sm">
               <Link
                 href="/private-events"
-                className="text-ember underline underline-offset-4 hover:text-ember-bright"
+                className="text-brass underline underline-offset-4 hover:text-ink"
               >
                 Private dining & events
               </Link>
@@ -68,14 +68,14 @@ export default async function ReservationsPage() {
           </section>
 
           <section>
-            <h2 className="eyebrow text-ember">Getting here</h2>
+            <h2 className="eyebrow text-brass">Getting here</h2>
             {settings?.address ? (
-              <address className="mt-4 font-sans text-sm leading-relaxed text-ink/70 not-italic">
+              <address className="mt-4 font-sans text-sm leading-relaxed text-ink-muted not-italic">
                 {formatAddress(settings.address)}
               </address>
             ) : null}
             {settings?.parkingNote ? (
-              <p className="mt-3 font-sans text-sm leading-relaxed text-ink/70">
+              <p className="mt-3 font-sans text-sm leading-relaxed text-ink-muted">
                 {settings.parkingNote}
               </p>
             ) : null}
@@ -85,7 +85,7 @@ export default async function ReservationsPage() {
                   href={settings.mapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-ember underline underline-offset-4 hover:text-ember-bright"
+                  className="text-brass underline underline-offset-4 hover:text-ink"
                 >
                   Get directions
                 </a>
@@ -94,12 +94,12 @@ export default async function ReservationsPage() {
           </section>
 
           <section>
-            <h2 className="eyebrow text-ember">Hours</h2>
+            <h2 className="eyebrow text-brass">Hours</h2>
             <dl className="mt-4 space-y-3 font-sans text-sm">
               {settings?.hours?.map((row) => (
                 <div key={`${row.service}-${row.days}`}>
                   <dt className="text-ink">{row.service}</dt>
-                  <dd className="text-ink/60">
+                  <dd className="text-ink-muted">
                     {[row.days, row.time].filter(Boolean).join(' · ')}
                   </dd>
                 </div>

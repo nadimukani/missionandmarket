@@ -10,7 +10,7 @@ export function NoticeBanner({
   if (!notice?.enabled || !notice.message) return null
 
   return (
-    <div className="bg-ember text-bone">
+    <div className="bg-brass-button text-cream">
       <p className="mx-auto max-w-7xl px-5 py-2.5 text-center font-sans text-sm lg:px-8">
         {notice.message}
         {notice.linkUrl && notice.linkLabel ? (

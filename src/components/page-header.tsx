@@ -15,13 +15,13 @@ export function PageHeader({
     <div className="bg-ink pt-10 pb-16 lg:pt-16 lg:pb-24">
       <div className="mx-auto max-w-7xl px-5 text-center lg:px-8">
         {eyebrow ? (
-          <p className="eyebrow text-ember">{eyebrow}</p>
+          <p className="eyebrow text-brass-ondark">{eyebrow}</p>
         ) : null}
-        <h1 className="mt-4 font-display text-4xl text-bone lg:text-6xl">
+        <h1 className="mt-4 font-display text-4xl text-cream lg:text-6xl">
           {title}
         </h1>
         {intro ? (
-          <p className="mx-auto mt-5 max-w-2xl font-sans text-base leading-relaxed text-bone-dim">
+          <p className="mx-auto mt-5 max-w-2xl font-sans text-base leading-relaxed text-cream-muted">
             {intro}
           </p>
         ) : null}
