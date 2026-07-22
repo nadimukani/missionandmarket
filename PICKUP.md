@@ -1,7 +1,7 @@
 # PICKUP — Mission + Market
 
-**Date:** 2026-07-22 · **Branch:** main (no remote) · **Tree:** clean at `cf51ac3`
-**Resume keyword:** `mm-brand-grounded-rebuild-2026-07-22`
+**Date:** 2026-07-22 · **Branch:** main (no remote) · **Tree:** clean at `856e31a`
+**Resume keyword:** `mm-redesign-landed-2026-07-22`
 
 ---
 
@@ -87,25 +87,69 @@ Next.js 16 App Router + Turbopack · Tailwind 4 · Sanity CMS · TypeScript.
 - Restaurant JSON-LD, 301s from all old WP URLs, sitemap, robots.
 - Revalidation webhook at `/api/revalidate` (HMAC-verified).
 
-## Current task (in flight)
+## Redesign — LANDED (`856e31a`)
 
-User asked for a **full ground-up redesign** — no preset guidelines — using the
-brand logo's colours and typography, optimised around: why does a patron visit a
-restaurant site, and how do we get them to a reservation.
+Design system rebuilt on the recovered brand values. Build, lint, contrast
+audit and hours check all green. 19 routes prerendered.
 
-- `/deep-research` workflow running (run `wf_ce6928c0-eb4`) on restaurant web
-  best practice: patron intent ranking, booking conversion, menu presentation,
-  local SEO/schema, WCAG exposure, best-in-class examples.
-- Next slice after research lands: rebuild the design system on the real palette
-  (ink/moss/cream/brass), replace Fraunces with a thin wide-tracked serif that
-  echoes the wordmark + Instrument Sans for UI, upload photography to Sanity,
-  and rebuild every page around the reservation path.
+New in this pass:
+- `src/app/globals.css` — tokens; light by default, dark bands deliberate.
+- `scripts/contrast.mjs` — WCAG AA audit, **exits non-zero on failure**.
+  15/15 pass. Wire into CI before launch. Four pairs failed first run and
+  were solved numerically: raw brass fails on ink (3.10:1) and as a button
+  fill (4.35:1); old ink-faint was 2.68:1. **Brass on moss is impossible at
+  any tint (max 2.55:1) — moss bands use cream accents only.**
+- `src/components/wordmark.tsx` — stacked-M column + M+M monogram as SVG.
+- `src/lib/hours.ts` + `scripts/hours-check.ts` — open/closed from CMS hours,
+  handles past-midnight services. 6 cases verified.
+- `src/components/open-status.tsx` — live status, computed after mount to
+  avoid baking a stale time into the static build.
+- `src/components/menu-json-ld.tsx` — schema.org Menu / hasMenuSection /
+  hasMenuItem. Prices parsed conservatively (skips "MP", multi-price rows).
+- `src/components/reserve-bar.tsx` — sticky mobile booking bar, `inert` when
+  hidden so it cannot trap focus.
+- `scripts/upload-images.ts` (`pnpm images`) — client photography into Sanity
+  with hand-written alt text. Idempotent (matches on originalFilename).
 
-## Caveats
+## Research base (workflow `wf_ce6928c0-eb4`, 106 agents)
 
-- Mobile layout has **never been visually verified** — a browser resize failed
-  to take effect. Do not claim it works.
-- Dessert + drinks menus are image-only on the old site; text never extracted.
-- `pnpm seed` overwrites client edits — one-time migration tool from here on.
-- A Sanity auth token was printed to terminal scrollback early in the session;
-  recommended rotation. The write token in `.env.local` is separate and gitignored.
+Evidence was lopsided and the honest split matters:
+
+**Holds up (high confidence, primary sources):**
+- Accessibility is the real legal exposure. Federal web-accessibility filings
+  3,117 in 2025, +27% YoY. Restaurants expressly enumerated under
+  42 U.S.C. 12181(7)(B). *Robles v. Domino's* — Title III reaches the site.
+  No DOJ technical standard; WCAG 2.0 AA is the de facto remedy benchmark.
+- schema.org `Menu`/`hasMenuSection`/`hasMenuItem` is core vocabulary.
+- Google documents only a `menu` URL and **publishes no menu rich result** —
+  do not sell HTML menus to the client as a rich-result win.
+- Correct schema confers eligibility, not entitlement.
+- **Core Web Vitals do NOT drive local/map-pack ranking** per Google's own
+  docs (relevance, distance, prominence). Do not oversell performance as SEO.
+- GBP ingests menus separately; the "Menu link" field is the alignment point.
+
+**Collapsed under verification — do not cite:** every quantitative consumer
+claim tested (why diners abandon sites, menu readability, booking friction,
+mobile traffic share). Present those choices as design judgment, not data.
+
+## Gotcha discovered
+
+Next's data cache persists **outside** `.next/cache`. After a CMS write, the
+site kept rendering pre-upload (empty) content until `rm -rf .next`. Deleting
+only `.next/cache` was not enough. In production the Sanity webhook handles
+this; in dev, wipe `.next` after seeding or uploading.
+
+## Open items
+
+1. **Photography is the binding constraint.** Only 2 of 34 files exceed 700px
+   wide (most are ~390px). Full-bleed use needs originals from the
+   photographer. This gates how good the site can look.
+2. Dessert + drinks menus — image-only on the old site, never extracted.
+3. Chef portrait needs a signed release; several frames show identifiable
+   guests/staff and were excluded from the gallery.
+4. **Mobile still not visually verified** — browser resize would not take
+   effect in this environment. The sticky reserve bar and mobile nav are
+   built but unseen. Verify before showing the client.
+5. Hero PNG is ~1.9MB source; watch LCP once deployed.
+6. `missionandmarket.com` ownership still unconfirmed.
+7. Rotate the Sanity auth token printed to scrollback early in the session.
