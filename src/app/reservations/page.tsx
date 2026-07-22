@@ -22,10 +22,7 @@ export default async function ReservationsPage() {
       <PageHeader
         eyebrow="Reservations"
         title="Book a table"
-        intro={
-          settings?.largePartyNote ??
-          'We hold tables for walk-ins at the bar every evening.'
-        }
+        intro="Book below, or call us — we keep seats at the bar for walk-ins every evening."
       >
         {settings?.openTableRid ? (
           <div className="mt-12 flex justify-center">
@@ -54,6 +51,14 @@ export default async function ReservationsPage() {
             <p className="mt-4 font-sans text-sm leading-relaxed text-ink-muted">
               {settings?.largePartyNote ??
                 'For parties of nine or more, our team will build the evening around you.'}
+              {settings?.phone ? (
+                <>
+                  {' '}
+                  <TextLink href={telHref(settings.phone)}>
+                    {settings.phone}
+                  </TextLink>
+                </>
+              ) : null}
             </p>
             <p className="mt-4 font-sans text-sm">
               <TextLink href="/private-events">
