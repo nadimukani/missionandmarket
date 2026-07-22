@@ -87,6 +87,8 @@ export type HomePage = {
   storyHeading?: string
   storyBody?: PortableTextBlock[]
   storyImage?: SanityImage
+  bandImage?: SanityImage
+  bandCaption?: string
   featuredDishes?: {
     name?: string
     description?: string

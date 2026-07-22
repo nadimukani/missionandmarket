@@ -62,6 +62,8 @@ const HOME_QUERY = groq`*[_type == "homePage"][0]{
   heroImages[]${IMAGE},
   heroHeading, heroSubheading, storyHeading, storyBody,
   storyImage${IMAGE},
+  bandImage${IMAGE},
+  bandCaption,
   featuredDishes[]{ name, description, image${IMAGE} },
   seo
 }`

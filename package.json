@@ -11,7 +11,8 @@
     "contrast": "node scripts/contrast.mjs",
     "images": "node --env-file=.env.local --experimental-strip-types scripts/upload-images.ts",
     "chef": "node --env-file=.env.local --experimental-strip-types scripts/add-chef.ts",
-    "happy-hour": "node --env-file=.env.local --experimental-strip-types scripts/add-happy-hour.ts"
+    "happy-hour": "node --env-file=.env.local --experimental-strip-types scripts/add-happy-hour.ts",
+    "food": "node --env-file=.env.local --experimental-strip-types scripts/add-food-photography.ts"
   },
   "dependencies": {
     "@sanity/client": "^7.24.0",

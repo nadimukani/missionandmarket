@@ -348,6 +348,21 @@ export const homePage = defineType({
       fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
     }),
     defineField({
+      name: 'bandImage',
+      title: 'Full-width band image',
+      type: 'image',
+      options: { hotspot: true },
+      description:
+        'A wide, landscape photograph shown edge-to-edge between sections. Use the widest frame you have — it runs the full width of the screen.',
+      fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
+    }),
+    defineField({
+      name: 'bandCaption',
+      title: 'Band caption',
+      type: 'string',
+      description: 'Optional line set over the band image.',
+    }),
+    defineField({
       name: 'featuredDishes',
       title: 'Featured dishes',
       type: 'array',

@@ -1,7 +1,7 @@
 # PICKUP — Mission + Market
 
-**Date:** 2026-07-22 · **Branch:** main (no remote) · **Tree:** clean at `2a87241`
-**Resume keyword:** `mm-happy-hour-added-2026-07-22`
+**Date:** 2026-07-22 · **Branch:** main (no remote) · **Tree:** clean at (see git log)
+**Resume keyword:** `mm-food-photography-2026-07-22`
 
 ---
 
@@ -59,7 +59,33 @@ brass frames, live greenery, and a chartreuse moss wall by the bar. The site
 should be **light and warm-neutral by default**, with ink/moss used as deliberate
 dark bands — not a dark-by-default restaurant cliché.
 
-## Photography — SOLVED, no longer a blocker
+## Photography — SOLVED (2026-07-22 shoot)
+
+A professional 2026 shoot (13 frames, 1367x2048, one landscape at 2048x1367,
+same shoot as the chef portrait) was supplied by the client and is live:
+homepage Signatures, a full-width band, and the gallery. `pnpm food`
+re-imports it. **The earlier note that only 2 images exceeded 700px no longer
+applies to food** — it still applies to the room/patio frames scraped from
+WordPress.
+
+### CRITICAL: the photographed plates contradict the published menus
+
+The 2026 photography shows dishes that do not match the menu text migrated
+from WordPress:
+
+| Photograph | Migrated menu says |
+| --- | --- |
+| Salmon on pearl couscous, peppers, capers | "Spinach Scented Rice Grits" |
+| Chicken over white puree, frisee, green beans | "Tomato Risotto" |
+| Burrata with strawberry + rhubarb, brioche | "Heirloom Cherry Tomatoes, Aged Raspberry Balsamic" |
+| Seared sliced tuna, avocado, pickled veg | only a tuna *tartare* exists |
+
+**The dinner/lunch/brunch menus on the site are probably stale.** Homepage
+featured dishes are therefore named from the plate, not the menu. Get the
+current menus confirmed before launch — this is a content-accuracy risk, not
+a cosmetic one.
+
+## Older photography (WordPress scrape)
 
 51 full-size images pulled from their WordPress uploads into scratchpad
 `brand/photos/`. Client's own assets, appropriate for a rebuild. Best of set:
@@ -132,34 +158,30 @@ Evidence was lopsided and the honest split matters:
 claim tested (why diners abandon sites, menu readability, booking friction,
 mobile traffic share). Present those choices as design judgment, not data.
 
-## Gotcha — Next 16 dev cache (hit twice, cost real time)
+## Gotcha — ZOMBIE DEV SERVERS (corrected 2026-07-22)
 
-Next 16 keeps its dev data cache in **`.next/dev`**, not `.next/cache`. After
-any CMS write the dev server keeps serving the old data for the full
-`revalidate` window (1h).
+**An earlier version of this file blamed a Next 16 dev cache in `.next/dev`.
+That diagnosis was wrong.** The real cause of every "the site is serving stale
+content" episode was **multiple `next dev` processes bound to port 4310**.
+`pkill -f "next dev"` and `pkill -f next-server` did not reliably kill them, so
+an old server — holding pre-change data in memory — kept answering requests
+while the newly started one sat idle.
 
-**You must kill the dev server BEFORE deleting**, or the running process
-rewrites the directory from memory and nothing changes:
+Symptom: Sanity returns correct data via both `useCdn: true` and `false`, the
+project builds clean, `.next` has been deleted, and the page *still* renders
+old content.
+
+Diagnose and fix by port, not by process name:
 
 ```
-pkill -f "next dev"; pkill -f next-server; sleep 2
-find .next -mindepth 1 -delete; rmdir .next
+lsof -ti:4310                      # more than one PID means a zombie
+kill -9 $(lsof -ti:4310); sleep 3
+lsof -ti:4310 || echo "port free"  # confirm BEFORE restarting
 ```
 
-Production is unaffected — the Sanity webhook revalidates by tag.
-
-## Menus
-
-Four menus live: Dinner, Lunch, Brunch, **Happy Hour** (added 2026-07-22 from
-`New Happy Hour 2026.pdf` via `pnpm happy-hour`). All are real HTML with
-schema.org MenuItem markup; the happy-hour PDF is attached only as an optional
-printable version. Menus are picked up automatically by the switcher and the
-homepage grid — the grid uses auto-fit, so adding a fifth will not strand a tile.
-
-**Open transcription questions for the client:**
-- PDF reads "HOT SAUSE BUTTER" — published as "Hot Sauce Butter".
-- PDF reads "MARGARITA PIZETTE" — published verbatim, but the dinner menu
-  says "Margherita Pizza". Likely "Margherita Pizzette". Unconfirmed.
+Deleting `.next` is neither necessary nor sufficient on its own. Always confirm
+the port is free before starting a new dev server, and after starting one
+confirm only the expected PIDs are listening.
 
 ## Team / chef
 

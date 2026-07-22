@@ -311,6 +311,37 @@ export default async function HomePage() {
         </section>
       ) : null}
 
+      {/* --------------------------------------------------------------- Band */}
+      {home?.bandImage ? (
+        <section className="relative isolate overflow-hidden bg-ink">
+          {/* The only landscape frame in the shoot, run edge-to-edge. Fixed
+              aspect ratios rather than a viewport height so it can't become a
+              letterbox slot on a short laptop screen. */}
+          {/* The source is 3:2. A 2.4:1 band cropped ~40% off it and cut the
+              table in half, so the widescreen ratio stops at 2:1. */}
+          <div className="relative aspect-4/5 sm:aspect-3/2 lg:aspect-[2/1]">
+            <SanityImage
+              image={home.bandImage}
+              width={2400}
+              height={1000}
+              sizes="100vw"
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            {home.bandCaption ? (
+              <>
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-ink/85 to-transparent"
+                />
+                <p className="absolute inset-x-0 bottom-0 mx-auto max-w-[88rem] px-5 pb-8 font-display text-2xl font-light text-cream lg:px-10 lg:pb-12 lg:text-4xl">
+                  {home.bandCaption}
+                </p>
+              </>
+            ) : null}
+          </div>
+        </section>
+      ) : null}
+
       {/* ------------------------------------------------------------ Specials */}
       {specials.length ? (
         <section className="mx-auto max-w-[88rem] px-5 py-20 lg:px-10 lg:py-28">
