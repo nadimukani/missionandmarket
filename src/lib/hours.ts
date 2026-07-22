@@ -77,25 +77,38 @@ export function getOpenState(
   const todayIndex = DAY_ORDER.indexOf(weekday as (typeof DAY_ORDER)[number])
   if (todayIndex === -1) return { status: 'unknown' }
 
-  const byDay = new Map(hours.map((h) => [h.day, h]))
+  // A day can have SEVERAL services — Saturday is brunch 11:00-15:00 and then
+  // dinner 17:00-23:00, with the kitchen shut in between. Keying by day would
+  // silently drop all but one row and report "Open now" through the gap.
+  const byDay = new Map<string, MachineHours[]>()
+  for (const row of hours) {
+    const list = byDay.get(row.day)
+    if (list) list.push(row)
+    else byDay.set(row.day, [row])
+  }
+
+  const intervals = (day: string) =>
+    (byDay.get(day) ?? [])
+      .map((r) => ({ opens: toMinutes(r.opens), closes: toMinutes(r.closes) }))
+      .filter(
+        (r): r is { opens: number; closes: number } =>
+          r.opens !== null && r.closes !== null,
+      )
 
   // A service that started yesterday and runs past midnight still counts.
   const yesterday = DAY_ORDER[(todayIndex + 6) % 7]
-  const yRow = byDay.get(yesterday)
-  const yOpens = toMinutes(yRow?.opens)
-  const yCloses = toMinutes(yRow?.closes)
-  if (yOpens !== null && yCloses !== null && yCloses < yOpens && minutes < yCloses) {
-    const left = yCloses - minutes
-    return left <= CLOSING_SOON_MINUTES
-      ? { status: 'closing-soon', until: label(yCloses), minutesLeft: left }
-      : { status: 'open', until: label(yCloses) }
+  for (const { opens, closes } of intervals(yesterday)) {
+    if (closes < opens && minutes < closes) {
+      const left = closes - minutes
+      return left <= CLOSING_SOON_MINUTES
+        ? { status: 'closing-soon', until: label(closes), minutesLeft: left }
+        : { status: 'open', until: label(closes) }
+    }
   }
 
-  const today = byDay.get(DAY_ORDER[todayIndex])
-  const opens = toMinutes(today?.opens)
-  const closes = toMinutes(today?.closes)
+  const today = intervals(DAY_ORDER[todayIndex]).sort((a, b) => a.opens - b.opens)
 
-  if (opens !== null && closes !== null) {
+  for (const { opens, closes } of today) {
     const closesAdjusted = closes < opens ? closes + 1440 : closes
     if (minutes >= opens && minutes < closesAdjusted) {
       const left = closesAdjusted - minutes
@@ -103,21 +116,23 @@ export function getOpenState(
         ? { status: 'closing-soon', until: label(closes), minutesLeft: left }
         : { status: 'open', until: label(closes) }
     }
-    // Before today's service starts.
-    if (minutes < opens) {
-      return { status: 'closed', opensDay: 'today', opensAt: label(opens) }
-    }
   }
 
-  // Closed for the day — find the next day that has hours.
+  // Between services, or before the first one — point at the next opening
+  // today rather than jumping to tomorrow.
+  const nextToday = today.find((i) => minutes < i.opens)
+  if (nextToday) {
+    return { status: 'closed', opensDay: 'today', opensAt: label(nextToday.opens) }
+  }
+
   for (let i = 1; i <= 7; i += 1) {
     const day = DAY_ORDER[(todayIndex + i) % 7]
-    const next = toMinutes(byDay.get(day)?.opens)
-    if (next !== null) {
+    const next = intervals(day).sort((a, b) => a.opens - b.opens)[0]
+    if (next) {
       return {
         status: 'closed',
         opensDay: i === 1 ? 'tomorrow' : day,
-        opensAt: label(next),
+        opensAt: label(next.opens),
       }
     }
   }

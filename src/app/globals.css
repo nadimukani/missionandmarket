@@ -42,6 +42,9 @@
   --color-moss-deep: #333719;
   --color-brass-ondark: #a08165;  /* brass + 22% cream — 4.54:1 on ink       */
   --color-brass-button: #866143;  /* cream on it — 4.56:1                     */
+  --color-brass-button-hover: #725239; /* darkened, not lightened: cream rises
+                                        * to 5.82:1. Lightening brass on hover
+                                        * dropped it to 4.35:1 — below AA.    */
 
   /* --- Type -------------------------------------------------------------
    * Display echoes the wordmark: a thin, uniform-stroke serif set in caps

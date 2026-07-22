@@ -40,7 +40,7 @@ export default async function ReservationsPage() {
             Please call{' '}
             <a
               href={telHref(settings?.phone)}
-              className="text-brass underline underline-offset-4"
+              className="text-brass-ondark underline underline-offset-4 hover:text-cream"
             >
               {settings?.phone}
             </a>{' '}

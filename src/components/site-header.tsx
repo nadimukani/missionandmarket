@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { OpenStatus } from '@/components/open-status'
 import { Wordmark } from '@/components/wordmark'
@@ -51,10 +51,45 @@ export function SiteHeader({ settings }: { settings: SiteSettings | null }) {
     return () => window.removeEventListener('keydown', onKey)
   }, [open])
 
+  // Publish where the header actually ends so the sheet can size itself even
+  // when the notice banner is above it.
+  const headerRef = useRef<HTMLElement>(null)
+  useEffect(() => {
+    const el = headerRef.current
+    if (!el) return
+    const publish = () => {
+      const bottom = el.getBoundingClientRect().bottom
+      document.documentElement.style.setProperty('--header-bottom', `${bottom}px`)
+    }
+    publish()
+    window.addEventListener('resize', publish)
+    window.addEventListener('scroll', publish, { passive: true })
+    return () => {
+      window.removeEventListener('resize', publish)
+      window.removeEventListener('scroll', publish)
+    }
+  }, [])
+
+  // Keep the page behind the sheet out of the tab order, so focus cannot
+  // wander onto content the guest cannot see (WCAG 2.4.3).
+  useEffect(() => {
+    if (typeof document === 'undefined') return
+    const behind = [document.getElementById('main'), document.querySelector('footer')]
+    for (const el of behind) {
+      if (!el) continue
+      if (open) el.setAttribute('inert', '')
+      else el.removeAttribute('inert')
+    }
+    return () => {
+      for (const el of behind) el?.removeAttribute('inert')
+    }
+  }, [open])
+
   const solid = !overlay || scrolled || open
 
   return (
     <header
+      ref={headerRef}
       className={`sticky top-0 z-50 transition-colors duration-500 ease-[var(--ease-out-soft)] ${
         solid ? 'bg-ink/95 backdrop-blur-md' : 'bg-transparent'
       }`}
@@ -106,7 +141,7 @@ export function SiteHeader({ settings }: { settings: SiteSettings | null }) {
           <Link
             href="/reservations"
             className="rounded-xs bg-brass-button px-5 py-2.5 font-sans text-[0.8125rem]
-                       font-medium tracking-wide text-cream transition-colors hover:bg-brass"
+                       font-medium tracking-wide text-cream transition-colors hover:bg-brass-button-hover"
           >
             Reserve
           </Link>
@@ -143,7 +178,11 @@ export function SiteHeader({ settings }: { settings: SiteSettings | null }) {
       <div
         id="mobile-nav"
         hidden={!open}
-        className="h-[calc(100dvh-var(--spacing-header))] overflow-y-auto border-t border-cream/10 bg-ink lg:hidden"
+        // Sized from the header's real bottom edge rather than a hard-coded
+        // offset: with the notice banner enabled the header does not start at
+        // y=0, and a fixed calc pushed the foot of the sheet off-screen.
+        style={{ maxHeight: 'calc(100dvh - var(--header-bottom, 5.5rem))' }}
+        className="overflow-y-auto overscroll-contain border-t border-cream/10 bg-ink lg:hidden"
       >
         <nav className="flex flex-col px-5 pt-2 pb-10" aria-label="Mobile navigation">
           {NAV_LINKS.map((link) => (
@@ -159,7 +198,7 @@ export function SiteHeader({ settings }: { settings: SiteSettings | null }) {
           <Link
             href="/reservations"
             className="mt-8 rounded-xs bg-brass-button px-5 py-4 text-center font-sans
-                       text-sm font-medium tracking-wide text-cream"
+                       text-sm font-medium tracking-wide text-cream transition-colors hover:bg-brass-button-hover"
           >
             Reserve a table
           </Link>

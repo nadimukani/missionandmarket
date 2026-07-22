@@ -33,6 +33,9 @@ export function SanityImage({
       alt={alt ?? image.alt ?? ''}
       width={width}
       height={height ?? Math.round(width * 0.66)}
+      // Sanity's CDN has already produced the exact width and format, so the
+      // Vercel optimizer would re-encode an already-optimal file.
+      unoptimized
       {...props}
     />
   )

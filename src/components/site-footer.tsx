@@ -7,7 +7,11 @@ export function SiteFooter({ settings }: { settings: SiteSettings | null }) {
   const year = new Date().getFullYear()
 
   return (
-    <footer className="bg-ink text-cream-muted">
+    // The sticky reserve bar is fixed over the bottom of the viewport on
+    // mobile and would otherwise sit permanently on top of the social links,
+    // making them unreachable — the page cannot scroll past its own end.
+    // This clears the bar's height plus the iOS home indicator.
+    <footer className="bg-ink pb-[calc(6rem+env(safe-area-inset-bottom))] text-cream-muted lg:pb-0">
       <div className="mx-auto max-w-7xl px-5 py-16 lg:px-8 lg:py-20">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-1">
@@ -31,7 +35,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings | null }) {
                 <p>
                   <a
                     href={telHref(settings.phone)}
-                    className="transition-colors hover:text-cream"
+                    className="-my-0.5 inline-block py-2 transition-colors hover:text-cream"
                   >
                     {settings.phone}
                   </a>
@@ -41,7 +45,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings | null }) {
                 <p>
                   <a
                     href={`mailto:${settings.email}`}
-                    className="transition-colors hover:text-cream"
+                    className="-my-0.5 inline-block py-2 transition-colors hover:text-cream"
                   >
                     {settings.email}
                   </a>
@@ -78,12 +82,12 @@ export function SiteFooter({ settings }: { settings: SiteSettings | null }) {
 
           <div>
             <h2 className="eyebrow text-cream-muted">Explore</h2>
-            <ul className="mt-4 space-y-2 font-sans text-sm">
+            <ul className="mt-2 font-sans text-sm">
               {NAV_LINKS.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="transition-colors hover:text-cream"
+                    className="-my-0.5 inline-block py-2 transition-colors hover:text-cream"
                   >
                     {link.label}
                   </Link>
@@ -95,7 +99,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings | null }) {
                     href={settings.orderUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="transition-colors hover:text-cream"
+                    className="-my-0.5 inline-block py-2 transition-colors hover:text-cream"
                   >
                     Order Takeout
                   </a>
@@ -107,7 +111,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings | null }) {
                     href={settings.giftCardUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="transition-colors hover:text-cream"
+                    className="-my-0.5 inline-block py-2 transition-colors hover:text-cream"
                   >
                     Gift Cards
                   </a>
@@ -116,13 +120,13 @@ export function SiteFooter({ settings }: { settings: SiteSettings | null }) {
               <li>
                 <Link
                   href="/careers"
-                  className="transition-colors hover:text-cream"
+                  className="-my-0.5 inline-block py-2 transition-colors hover:text-cream"
                 >
                   Careers
                 </Link>
               </li>
               <li>
-                <Link href="/press" className="transition-colors hover:text-cream">
+                <Link href="/press" className="-my-0.5 inline-block py-2 transition-colors hover:text-cream">
                   Press
                 </Link>
               </li>

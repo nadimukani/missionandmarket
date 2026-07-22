@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useSyncExternalStore } from 'react'
 
 import {
   buildReservationUrl,
@@ -24,8 +24,11 @@ const MAX_ONLINE_PARTY = 8
 
 const selectClass =
   'w-full appearance-none rounded-xs border border-cream/40 bg-transparent ' +
-  'px-3 py-3 font-sans text-sm text-cream outline-none transition-colors ' +
-  'hover:border-brass focus:border-brass [&>option]:bg-ink [&>option]:text-cream'
+  // 16px on touch widths: iOS Safari auto-zooms the whole page when a focused
+  // control is under 16px, which throws the guest out of the booking flow.
+  'px-3 py-3 font-sans text-base text-cream transition-colors sm:text-sm ' +
+  'hover:border-brass-ondark focus:border-brass-ondark ' +
+  '[&>option]:bg-ink [&>option]:text-cream'
 
 export function ReserveForm({
   rid,
@@ -34,13 +37,28 @@ export function ReserveForm({
   phone,
   variant = 'panel',
 }: Props) {
-  const today = useMemo(() => restaurantToday(), [])
-  const dates = useMemo(() => upcomingDates(today, 60), [today])
   const slots = useMemo(() => timeSlots(), [])
 
+  // "Today" is only knowable on the client. This component renders into
+  // statically cached HTML, so computing the date on the server would bake in
+  // whatever day the page was built and then mismatch on hydration.
+  // useSyncExternalStore is the supported way to read a client-only value:
+  // the server snapshot is null, and the date appears after hydration.
+  const today = useSyncExternalStore(
+    () => () => {},
+    () => restaurantToday(),
+    () => null,
+  )
+
+  const dates = useMemo(() => (today ? upcomingDates(today, 60) : []), [today])
+
   const [partySize, setPartySize] = useState(2)
-  const [date, setDate] = useState(today)
+  const [pickedDate, setPickedDate] = useState('')
   const [time, setTime] = useState('19:00')
+
+  // Falls back to today until the guest picks something, with no second
+  // effect to keep in sync.
+  const date = pickedDate || today || ''
 
   const href = buildReservationUrl({ rid, partySize, date, time })
   const isLargeParty = partySize > MAX_ONLINE_PARTY
@@ -50,7 +68,7 @@ export function ReserveForm({
       <form
         // A plain link submit: no JS required to book, and the URL is
         // right-clickable / shareable like any other link.
-        action={href}
+        action="https://www.opentable.com/restref/client/"
         method="get"
         onSubmit={(e) => {
           e.preventDefault()
@@ -58,9 +76,15 @@ export function ReserveForm({
         }}
         className="grid grid-cols-2 gap-3 sm:grid-cols-4"
       >
+        {/* Carried by the plain GET when JavaScript has not run. */}
+        <input type="hidden" name="rid" value={rid} />
+        <input type="hidden" name="restref" value={rid} />
+        <input type="hidden" name="lang" value="en-US" />
+        <input type="hidden" name="ot_source" value="Restaurant website" />
         <label className="flex flex-col gap-1.5">
           <span className="eyebrow text-cream-muted">Party</span>
           <select
+            name="partysize"
             value={partySize}
             onChange={(e) => setPartySize(Number(e.target.value))}
             className={selectClass}
@@ -76,21 +100,27 @@ export function ReserveForm({
         <label className="flex flex-col gap-1.5">
           <span className="eyebrow text-cream-muted">Date</span>
           <select
+            name="date"
             value={date}
-            onChange={(e) => setDate(e.target.value)}
+            onChange={(e) => setPickedDate(e.target.value)}
             className={selectClass}
           >
-            {dates.map((d) => (
-              <option key={d} value={d}>
-                {formatDateLabel(d, today)}
-              </option>
-            ))}
+            {today ? (
+              dates.map((d) => (
+                <option key={d} value={d}>
+                  {formatDateLabel(d, today)}
+                </option>
+              ))
+            ) : (
+              <option value="">Today</option>
+            )}
           </select>
         </label>
 
-        <label className="flex flex-col gap-1.5">
+        <label className="col-span-2 flex flex-col gap-1.5 sm:col-span-1">
           <span className="eyebrow text-cream-muted">Time</span>
           <select
+            name="time"
             value={time}
             onChange={(e) => setTime(e.target.value)}
             className={selectClass}
@@ -108,7 +138,7 @@ export function ReserveForm({
             type="submit"
             className="w-full cursor-pointer rounded-xs bg-brass-button px-5 py-3 font-sans text-sm
                        font-medium tracking-wide text-cream transition-colors
-                       hover:bg-brass-button-bright"
+                       hover:bg-brass-button-hover"
           >
             Find a table
           </button>
@@ -123,7 +153,7 @@ export function ReserveForm({
             {phone ? (
               <a
                 href={`tel:${phone.replace(/[^\d+]/g, '')}`}
-                className="text-brass underline underline-offset-4 hover:text-ink"
+                className="text-brass-ondark underline underline-offset-4 hover:text-cream"
               >
                 {phone}
               </a>

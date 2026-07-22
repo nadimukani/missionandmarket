@@ -10,7 +10,7 @@ import { parseBody } from 'next-sanity/webhook'
  *   sanity.io/manage → API → Webhooks
  *   URL:     https://<domain>/api/revalidate
  *   Trigger: create, update, delete
- *   Filter:  _type in ["siteSettings","homePage","menu","special","page","pressItem","jobPosting","galleryImage"]
+ *   Filter:  _type in ["siteSettings","homePage","menu","special","page","person","pressItem","jobPosting","galleryImage"]
  *   Secret:  SANITY_REVALIDATE_SECRET
  */
 type WebhookPayload = {

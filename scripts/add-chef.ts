@@ -82,7 +82,7 @@ async function run() {
       'California, the Pacific Northwest and the Pacific Rim — on a Buckhead corner.',
     bio: [
       block(
-        'Chef Paul leads the kitchen at Mission + Market, building the menu around California, Pacific Northwest and Pacific Rim influences with locally sourced ingredients at its centre.',
+        'Chef Paul leads the kitchen at Mission + Market, building the menu around California, Pacific Northwest and Pacific Rim influences with locally sourced ingredients at its center.',
         'bio-1',
       ),
       block(
@@ -113,7 +113,7 @@ async function run() {
           'about-1',
         ),
         block(
-          'Executive Chef Paul leads the kitchen, drawing on California, the Pacific Northwest and the Pacific Rim, with locally sourced ingredients at the centre of the menu. Signature dishes include grilled Spanish octopus and chilled red king crab.',
+          'Executive Chef Paul leads the kitchen, drawing on California, the Pacific Northwest and the Pacific Rim, with locally sourced ingredients at the center of the menu. Signature dishes include grilled Spanish octopus and chilled red king crab.',
           'about-2',
         ),
         block(

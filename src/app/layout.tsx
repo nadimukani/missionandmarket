@@ -46,8 +46,17 @@ export async function generateMetadata(): Promise<Metadata> {
       title: name,
       description: settings?.shortDescription,
       url: SITE_URL,
+      // Resolved from app/opengraph-image.tsx. Without this every shared link
+      // rendered as a blank card.
+      images: [{ url: '/opengraph-image', width: 1200, height: 630 }],
+      locale: 'en_US',
     },
-    twitter: { card: 'summary_large_image' },
+    twitter: {
+      card: 'summary_large_image',
+      title: name,
+      description: settings?.shortDescription,
+      images: ['/opengraph-image'],
+    },
     alternates: { canonical: '/' },
   }
 }

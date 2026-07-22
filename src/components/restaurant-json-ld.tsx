@@ -82,11 +82,24 @@ export function RestaurantJsonLd({
       : undefined,
   }
 
+  // Drop null/undefined keys — emitting "email": null is worse than
+  // omitting the property, and consumers treat it as a declared empty value.
+  const compact = (v: unknown): unknown =>
+    Array.isArray(v)
+      ? v.map(compact).filter((x) => x !== undefined && x !== null)
+      : v && typeof v === 'object'
+        ? Object.fromEntries(
+            Object.entries(v as Record<string, unknown>)
+              .map(([k, val]) => [k, compact(val)])
+              .filter(([, val]) => val !== undefined && val !== null),
+          )
+        : v
+
   return (
     <script
       type="application/ld+json"
       // Server-rendered from trusted CMS content only.
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(compact(data)) }}
     />
   )
 }

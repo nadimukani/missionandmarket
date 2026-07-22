@@ -12,7 +12,8 @@
     "images": "node --env-file=.env.local --experimental-strip-types scripts/upload-images.ts",
     "chef": "node --env-file=.env.local --experimental-strip-types scripts/add-chef.ts",
     "happy-hour": "node --env-file=.env.local --experimental-strip-types scripts/add-happy-hour.ts",
-    "food": "node --env-file=.env.local --experimental-strip-types scripts/add-food-photography.ts"
+    "food": "node --env-file=.env.local --experimental-strip-types scripts/add-food-photography.ts",
+    "fix-content": "node --env-file=.env.local --experimental-strip-types scripts/fix-content.ts"
   },
   "dependencies": {
     "@sanity/client": "^7.24.0",

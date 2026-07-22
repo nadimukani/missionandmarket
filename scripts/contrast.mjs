@@ -61,6 +61,7 @@ const PAIRS = [
   // luminance. Moss bands therefore use cream for accents, never brass.
   ['cream-muted 70% on moss', over(CREAM, 0.7, MOSS), MOSS, 'normal'],
   ['cream on brass-button', CREAM, '#866143', 'normal'],
+  ['cream on brass-button hover', CREAM, '#725239', 'normal'],
   ['paper on moss button', PAPER, MOSS, 'normal'],
   ['paper on ink button', PAPER, INK, 'normal'],
 ]

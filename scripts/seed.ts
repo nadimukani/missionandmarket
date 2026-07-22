@@ -63,7 +63,7 @@ const dinner = {
   title: 'Dinner',
   slug: { _type: 'slug', current: 'dinner' },
   order: 1,
-  availability: 'Monday – Sunday, from 3:00pm',
+  availability: 'Monday – Friday from 3:00pm · Saturday & Sunday from 5:00pm',
   sections: [
     section('Appetizers', [
       item('Yuzu Tempura Shrimp', 'Spicy Mango Chutney', '$19'),
@@ -146,12 +146,12 @@ const lunch = {
       'Sandwiches',
       [
         item('Grilled Chicken Sandwich', 'Lettuce, Tomato, Chipotle Mayo', '$18'),
-        item('Smoked Brisket Sandwich', 'Mustard, Mayonnaise, Rocket, Asiago Cheese', '$20'),
+        item('Smoked Brisket Sandwich', 'Mustard, Mayonnaise, Arugula, Asiago Cheese', '$20'),
         item('Impossible Burger', 'Asiago Cheese, Sliced Avocado, Pickled Red Onions', '$21'),
         item('Grilled Market Burger', 'American Cheese, Lettuce, Tomato, Pickles, M+M Sauce', '$19'),
         item('Seared Tuna Sandwich', 'Wasabi Mayo, Seaweed Salad', '$23'),
       ],
-      'Served with fries or salad, +$5.',
+      'Add fries or salad, +$5.',
     ),
     section(
       'Pizza',
@@ -255,8 +255,13 @@ const settings = {
     { _key: 'we', day: 'Wednesday', opens: '11:30', closes: '21:30' },
     { _key: 'th', day: 'Thursday', opens: '11:30', closes: '22:00' },
     { _key: 'fr', day: 'Friday', opens: '11:30', closes: '23:00' },
-    { _key: 'sa', day: 'Saturday', opens: '11:00', closes: '23:00' },
-    { _key: 'su', day: 'Sunday', opens: '11:00', closes: '20:00' },
+    // Weekends are two services with the kitchen shut 3–5pm. One row per
+    // day would tell Google (and the Open-now badge) the restaurant is open
+    // straight through.
+    { _key: 'sa-brunch', day: 'Saturday', opens: '11:00', closes: '15:00' },
+    { _key: 'sa-dinner', day: 'Saturday', opens: '17:00', closes: '23:00' },
+    { _key: 'su-brunch', day: 'Sunday', opens: '11:00', closes: '15:00' },
+    { _key: 'su-dinner', day: 'Sunday', opens: '17:00', closes: '20:00' },
   ],
   openTableRid: '1005016',
   openTableUrl: 'https://www.opentable.com/r/mission-and-market-atlanta',
@@ -315,7 +320,7 @@ const aboutPage = {
       'about-1',
     ),
     block(
-      'Executive Chef Paul leads the kitchen, drawing on California, the Pacific Northwest and the Pacific Rim, with locally sourced ingredients at the centre of the menu. Signature dishes include grilled Spanish octopus and chilled red king crab.',
+      'Executive Chef Paul leads the kitchen, drawing on California, the Pacific Northwest and the Pacific Rim, with locally sourced ingredients at the center of the menu. Signature dishes include the grilled Spanish octopus with hazelnut romesco and the ginger marinated duck steak.',
       'about-2',
     ),
     block(

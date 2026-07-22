@@ -94,12 +94,12 @@ const SHOTS: Shot[] = [
   },
   {
     file: 'Mission_10.JPG',
-    alt: 'Bread pudding in a cast-iron dish topped with a scoop of ice cream and dusted with icing sugar',
+    alt: 'Bread pudding in a cast-iron dish topped with a scoop of ice cream and dusted with powdered sugar',
     category: 'Food',
   },
   {
     file: 'Mission_4.JPG',
-    alt: 'Fork and knife cutting into seared white fish over a saffron-coloured purée, with tomatoes and edible flowers',
+    alt: 'Fork and knife cutting into seared white fish over a saffron-colored purée, with tomatoes and edible flowers',
     category: 'Food',
   },
   {
@@ -196,7 +196,7 @@ async function run() {
     .set({
       featuredDishes,
       bandImage: img(bandId, BAND.alt),
-      bandCaption: 'Lunch, brunch and dinner — seven days a week.',
+      bandCaption: 'Brunch, lunch and dinner — open seven days.',
     })
     .commit()
   console.log('\n  homePage: 3 featured dishes replaced, full-width band set')

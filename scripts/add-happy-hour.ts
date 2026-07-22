@@ -115,7 +115,6 @@ async function run() {
         { name: 'Crab Cake Banh Mi (2)', price: '$14' },
       ]),
     ],
-    footnote: 'Available at the bar and on the patio only.',
     ...(pdfId
       ? { pdf: { _type: 'file', asset: { _type: 'reference', _ref: pdfId } } }
       : {}),

@@ -71,7 +71,7 @@ export default async function HomePage() {
           className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-ink/60 to-transparent"
         />
 
-        <div className="relative mx-auto w-full max-w-[88rem] px-5 pt-40 pb-14 lg:px-10 lg:pb-20">
+        <div className="relative mx-auto w-full max-w-[88rem] px-5 pt-28 pb-14 sm:pt-40 lg:px-10 lg:pb-20">
           <div className="flex items-end gap-6 lg:gap-10">
             <MarkColumn
               className="hidden h-40 w-11 shrink-0 text-cream/45 lg:block"
@@ -97,7 +97,7 @@ export default async function HomePage() {
 
           {/* ------------------------------------------------------- 2. Book */}
           {settings?.openTableRid ? (
-            <div className="mt-10 max-w-3xl rounded-xs border border-cream/15 bg-ink/75 p-5 backdrop-blur-md lg:mt-12 lg:p-6">
+            <div className="mt-6 max-w-3xl rounded-xs border border-cream/15 bg-ink/75 p-5 backdrop-blur-md lg:mt-12 lg:p-6">
               <ReserveForm
                 rid={settings.openTableRid}
                 fallbackUrl={settings.openTableUrl}
@@ -318,8 +318,10 @@ export default async function HomePage() {
               aspect ratios rather than a viewport height so it can't become a
               letterbox slot on a short laptop screen. */}
           {/* The source is 3:2. A 2.4:1 band cropped ~40% off it and cut the
-              table in half, so the widescreen ratio stops at 2:1. */}
-          <div className="relative aspect-4/5 sm:aspect-3/2 lg:aspect-[2/1]">
+              table in half, so the widescreen ratio stops at 2:1 — and mobile
+              keeps the native 3:2 rather than a 4:5 portrait crop, which
+              reduced the photograph to an unreadable close-up. */}
+          <div className="relative aspect-3/2 lg:aspect-[2/1]">
             <SanityImage
               image={home.bandImage}
               width={2400}
@@ -399,7 +401,14 @@ export default async function HomePage() {
 
           {/* Edge-to-edge scroller: shows the room at a size worth looking at
               without forcing a tall grid onto the page. */}
-          <ul className="mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-4 lg:px-10">
+          {/* Focusable so a keyboard user can scroll it at all (WCAG 2.1.1),
+              and scroll-padding so snapped items respect the page gutter. */}
+          <ul
+            tabIndex={0}
+            role="region"
+            aria-label="Photographs of the dining room"
+            className="mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-4 [scroll-padding-left:1.25rem] lg:px-10 lg:[scroll-padding-left:2.5rem]"
+          >
             {gallery.slice(0, 8).map((item) => (
               <li
                 key={item._id}

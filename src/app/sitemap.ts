@@ -8,7 +8,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const staticRoutes = [
     '',
-    '/menus',
+    // '/menus' is intentionally absent — it 307s to the first menu, and a
+    // redirect in a sitemap is a crawl error.
     '/reservations',
     '/specials',
     '/gallery',

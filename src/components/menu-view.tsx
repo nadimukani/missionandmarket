@@ -48,7 +48,7 @@ function Dish({ item }: { item: MenuItem }) {
           {item.tags?.map((tag) => (
             <span
               key={tag}
-              className="eyebrow rounded-full border border-olive/40 px-2 py-0.5 text-olive"
+              className="eyebrow rounded-full border border-moss/40 px-2 py-0.5 text-moss"
             >
               {TAG_LABEL[tag] ?? tag}
             </span>
