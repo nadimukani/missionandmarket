@@ -1,7 +1,7 @@
 # PICKUP — Mission + Market
 
-**Date:** 2026-07-22 · **Branch:** main (no remote) · **Tree:** clean at `a8a84d7`
-**Resume keyword:** `mm-chef-paul-added-2026-07-22`
+**Date:** 2026-07-22 · **Branch:** main (no remote) · **Tree:** clean at `2a87241`
+**Resume keyword:** `mm-happy-hour-added-2026-07-22`
 
 ---
 
@@ -148,6 +148,19 @@ find .next -mindepth 1 -delete; rmdir .next
 
 Production is unaffected — the Sanity webhook revalidates by tag.
 
+## Menus
+
+Four menus live: Dinner, Lunch, Brunch, **Happy Hour** (added 2026-07-22 from
+`New Happy Hour 2026.pdf` via `pnpm happy-hour`). All are real HTML with
+schema.org MenuItem markup; the happy-hour PDF is attached only as an optional
+printable version. Menus are picked up automatically by the switcher and the
+homepage grid — the grid uses auto-fit, so adding a fifth will not strand a tile.
+
+**Open transcription questions for the client:**
+- PDF reads "HOT SAUSE BUTTER" — published as "Hot Sauce Butter".
+- PDF reads "MARGARITA PIZETTE" — published verbatim, but the dinner menu
+  says "Margherita Pizza". Likely "Margherita Pizzette". Unconfirmed.
+
 ## Team / chef
 
 `person` document type, "Team" in the Studio. Featured people get the
@@ -164,6 +177,7 @@ script also rewrites the About and homepage copy to drop Winslade.
    wide (most are ~390px). Full-bleed use needs originals from the
    photographer. This gates how good the site can look.
 2. Dessert + drinks menus — image-only on the old site, never extracted.
+   (Happy Hour is now done; these two remain.)
 3. **Chef Paul's surname and a real biography are still missing.** He is
    published as "Chef Paul" with a bio that states only what is already true
    of the restaurant's cooking — no career history was invented. The pull
