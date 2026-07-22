@@ -59,7 +59,7 @@ export default async function MenuPage({ params }: Props) {
                   className={`rounded-full px-5 py-2 font-sans text-sm transition-colors ${
                     active
                       ? 'bg-brass-button text-cream'
-                      : 'border border-cream/25 text-cream-muted hover:border-ember hover:text-cream'
+                      : 'border border-cream/25 text-cream-muted hover:border-brass hover:text-cream'
                   }`}
                 >
                   {m.title}

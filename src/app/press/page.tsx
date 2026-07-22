@@ -48,7 +48,7 @@ export default async function PressPage() {
                       href={item.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="underline decoration-ink/20 underline-offset-4 transition-colors hover:decoration-ember"
+                      className="underline decoration-ink/20 underline-offset-4 transition-colors hover:decoration-brass"
                     >
                       {item.title}
                     </a>

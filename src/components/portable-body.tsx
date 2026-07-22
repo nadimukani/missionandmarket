@@ -14,7 +14,7 @@ export const PortableBody: PortableTextComponents = {
       <h3 className="mt-8 font-display text-xl first:mt-0">{children}</h3>
     ),
     blockquote: ({ children }) => (
-      <blockquote className="my-8 border-l-2 border-ember pl-6 font-display text-xl italic">
+      <blockquote className="my-8 border-l-2 border-brass pl-6 font-display text-xl italic">
         {children}
       </blockquote>
     ),

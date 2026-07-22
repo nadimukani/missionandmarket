@@ -10,7 +10,8 @@
     "seed": "node --env-file=.env.local --experimental-strip-types scripts/seed.ts",
     "contrast": "node scripts/contrast.mjs",
     "images": "node --env-file=.env.local --experimental-strip-types scripts/upload-images.ts",
-    "chef": "node --env-file=.env.local --experimental-strip-types scripts/add-chef.ts"
+    "chef": "node --env-file=.env.local --experimental-strip-types scripts/add-chef.ts",
+    "happy-hour": "node --env-file=.env.local --experimental-strip-types scripts/add-happy-hour.ts"
   },
   "dependencies": {
     "@sanity/client": "^7.24.0",

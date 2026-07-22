@@ -25,7 +25,7 @@ const MAX_ONLINE_PARTY = 8
 const selectClass =
   'w-full appearance-none rounded-xs border border-cream/40 bg-transparent ' +
   'px-3 py-3 font-sans text-sm text-cream outline-none transition-colors ' +
-  'hover:border-ember focus:border-ember [&>option]:bg-ink [&>option]:text-cream'
+  'hover:border-brass focus:border-brass [&>option]:bg-ink [&>option]:text-cream'
 
 export function ReserveForm({
   rid,

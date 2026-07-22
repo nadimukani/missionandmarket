@@ -134,7 +134,10 @@ export default async function HomePage() {
             ) : null}
           </div>
 
-          <ul className="mt-12 grid gap-px overflow-hidden border border-rule bg-rule-strong sm:grid-cols-2 lg:grid-cols-3">
+          {/* auto-fit rather than a fixed column count: the client can add a
+              fifth menu (or drop to two) without the grid stranding an orphan
+              tile on its own row. */}
+          <ul className="mt-12 grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-px overflow-hidden border border-rule bg-rule-strong">
             {menus.map((menu) => (
               <li key={menu._id} className="bg-paper">
                 <Link
