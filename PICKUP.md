@@ -1,7 +1,7 @@
 # PICKUP — Mission + Market
 
-**Date:** 2026-07-22 · **Branch:** main (no remote) · **Tree:** clean at (see git log)
-**Resume keyword:** `mm-food-photography-2026-07-22`
+**Date:** 2026-07-22 · **Branch:** main (no remote) · **Tree:** clean at `0600fd5`
+**Resume keyword:** `mm-reviewed-and-mobile-verified-2026-07-22`
 
 ---
 
@@ -206,9 +206,53 @@ script also rewrites the About and homepage copy to drop Winslade.
    quote is also ours, not his; get it confirmed or replaced.
    The old Winslade portrait remains excluded from the gallery. Several
    frames show identifiable guests/staff and were excluded.
-4. **Mobile still not visually verified** — browser resize would not take
+4. ~~Mobile not visually verified~~ **DONE 2026-07-22.** Verified at 390x844:
+   homepage, menus, happy hour, about, contact, footer, sticky bar, mobile
+   nav. One real bug found and fixed (sticky bar covered the footer's social
+   links permanently). Note: `resize_window` resets on `navigate`, so resize
+   AFTER navigating, in a single browser_batch.
+   (former note: browser resize would not take
    effect in this environment. The sticky reserve bar and mobile nav are
    built but unseen. Verify before showing the client.
 5. Hero PNG is ~1.9MB source; watch LCP once deployed.
 6. `missionandmarket.com` ownership still unconfirmed.
 7. Rotate the Sanity auth token printed to scrollback early in the session.
+
+
+---
+
+## Site review — 2026-07-22 (`0600fd5`)
+
+225-agent review across content / a11y / SEO / code / design / responsive,
+every finding adversarially verified (2-of-3 refutations killed a claim).
+73 unique findings survived; the blockers and most risks are fixed.
+
+**Worst things found** (all were live and wrong):
+- Weekend `machineHours` were one continuous row → Google and the "Open now"
+  badge both claimed the restaurant was open through the 3–5pm weekend
+  closure. `getOpenState` now supports several services per day.
+- All three booking selects had **no visible focus indicator** — `outline-none`
+  in `@layer utilities` beat the `:focus-visible` ring in `@layer base`.
+- Sticky reserve bar permanently covered the footer's social links on mobile.
+- `text-olive` / `border-olive` and `hover:bg-brass-button-bright` were
+  **undefined tokens** — third time dead tokens have shipped. If you add a
+  colour class, add the token to `@theme` AND to `scripts/contrast.mjs`.
+- No `og:image` anywhere → every shared link was a blank card.
+- `/dessert-menu` 308'd into a hard 404.
+
+**Deliberately NOT changed — needs the client:**
+1. "Margarita Pizette" (happy hour + specials) vs "Margherita Pizza" (dinner).
+   Almost certainly should be "Margherita Pizzette" — not guessed.
+2. Tortellini filling differs: lunch says English pea, dinner says spinach.
+   Same price, same description otherwise.
+3. **No email address exists anywhere on the site**, so /private-events
+   promises an events team with no way to contact them. Needs an events
+   address; then add a contact block to that page.
+4. Party-size select offers up to 20 while the copy says call for 9+.
+
+**Known-remaining nits** (logged, not fixed): straight vs typographic
+apostrophes; duplicated large-party sentence on /reservations; four
+CTA paddings and four hours-table markup shapes that should be shared
+components; `max-w-7xl` vs `max-w-[88rem]` container drift in
+page-header/footer/notice-banner; ~12 hand-written brass link styles that
+should be one `<TextLink tone>` component.
