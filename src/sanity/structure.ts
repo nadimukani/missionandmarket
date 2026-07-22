@@ -31,6 +31,7 @@ export const structure: StructureResolver = (S) =>
       S.divider(),
 
       S.documentTypeListItem('page').title('Pages'),
+      S.documentTypeListItem('person').title('Team'),
       S.documentTypeListItem('galleryImage').title('Gallery'),
       S.documentTypeListItem('pressItem').title('Press'),
       S.documentTypeListItem('jobPosting').title('Job Openings'),

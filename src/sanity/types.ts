@@ -140,3 +140,14 @@ export type GalleryImage = {
   alt: string
   category?: string
 }
+
+export type Person = {
+  _id: string
+  name: string
+  displayName?: string
+  role: string
+  portrait?: SanityImage
+  bio?: PortableTextBlock[]
+  quote?: string
+  featured?: boolean
+}

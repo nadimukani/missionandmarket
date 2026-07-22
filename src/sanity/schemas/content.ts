@@ -145,6 +145,88 @@ export const special = defineType({
   },
 })
 
+export const person = defineType({
+  name: 'person',
+  title: 'Team',
+  type: 'document',
+  description: 'Chefs, owners and leadership shown on the About page.',
+  fields: [
+    defineField({
+      name: 'name',
+      title: 'Full name',
+      type: 'string',
+      description: 'As it should appear in print, e.g. "Paul Smith".',
+      validation: (r) => r.required(),
+    }),
+    defineField({
+      name: 'displayName',
+      title: 'Display name',
+      type: 'string',
+      description:
+        'Optional. How guests refer to them, e.g. "Chef Paul". Falls back to the full name.',
+    }),
+    defineField({
+      name: 'role',
+      title: 'Title',
+      type: 'string',
+      description: 'e.g. Executive Chef, Chef de Cuisine, Partner',
+      validation: (r) => r.required(),
+    }),
+    defineField({
+      name: 'portrait',
+      type: 'image',
+      options: { hotspot: true },
+      description:
+        'A portrait. Set the hotspot on the face so crops never cut the head.',
+      fields: [
+        defineField({
+          name: 'alt',
+          type: 'string',
+          title: 'Alt text',
+          description: 'Describe the person and setting for screen-reader users.',
+        }),
+      ],
+    }),
+    defineField({
+      name: 'bio',
+      title: 'Biography',
+      type: 'richText',
+    }),
+    defineField({
+      name: 'quote',
+      title: 'Pull quote',
+      type: 'text',
+      rows: 3,
+      description:
+        'Optional. One line in their own words, set large beside the portrait.',
+    }),
+    defineField({
+      name: 'featured',
+      title: 'Feature on the About page',
+      type: 'boolean',
+      description:
+        'Featured people get the full-width editorial treatment. Others appear in a compact row.',
+      initialValue: false,
+    }),
+    defineField({
+      name: 'order',
+      title: 'Display order',
+      type: 'number',
+      initialValue: 0,
+    }),
+  ],
+  orderings: [
+    { title: 'Display order', name: 'orderAsc', by: [{ field: 'order', direction: 'asc' }] },
+  ],
+  preview: {
+    select: {
+      title: 'name',
+      subtitle: 'role',
+      media: 'portrait',
+    },
+  },
+})
+
 export const pressItem = defineType({
   name: 'pressItem',
   title: 'Press',

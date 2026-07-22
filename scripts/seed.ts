@@ -293,7 +293,7 @@ const home = {
   storyHeading: 'A West Coast accent on a Buckhead corner',
   storyBody: [
     block(
-      'Mission + Market brings modern American cuisine with California and Pacific influences to the lower level of Three Alliance Center. Chef Ian Winslade builds the menu around locally sourced ingredients and the seasons, alongside a dynamic bar and lounge, seasonal cocktails and a curated wine list.',
+      'Mission + Market brings modern American cuisine with California and Pacific influences to the lower level of Three Alliance Center. The kitchen builds its menu around locally sourced ingredients and the seasons, alongside a dynamic bar and lounge, seasonal cocktails and a curated wine list.',
       'story-1',
     ),
     block(
@@ -315,11 +315,11 @@ const aboutPage = {
       'about-1',
     ),
     block(
-      'Chef Ian Winslade leads the kitchen, drawing on California, the Pacific Northwest and the Pacific Rim, with locally sourced ingredients at the centre of the menu. Signature dishes include grilled Spanish octopus and chilled red king crab.',
+      'Executive Chef Paul leads the kitchen, drawing on California, the Pacific Northwest and the Pacific Rim, with locally sourced ingredients at the centre of the menu. Signature dishes include grilled Spanish octopus and chilled red king crab.',
       'about-2',
     ),
     block(
-      'The restaurant is a collaboration between Chef Winslade and Jonathan and Tony Akly, partners in other Atlanta establishments. The 5,300 square foot space includes a dynamic bar and lounge, a covered and heated patio with fire pits, and private dining areas.',
+      'The restaurant is a collaboration with Jonathan and Tony Akly, partners in other Atlanta establishments. The 5,300 square foot space includes a dynamic bar and lounge, a covered and heated patio with fire pits, and private dining areas.',
       'about-3',
     ),
   ],

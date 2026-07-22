@@ -8,6 +8,7 @@ import type {
   Menu,
   MenuSummary,
   Page,
+  Person,
   PressItem,
   SiteSettings,
   Special,
@@ -101,6 +102,15 @@ const PAGE_SLUGS_QUERY = groq`*[_type == "page" && defined(slug.current)].slug.c
 
 export function getPageSlugs() {
   return sanityFetch<string[]>({ query: PAGE_SLUGS_QUERY, tags: ['page'] })
+}
+
+const TEAM_QUERY = groq`*[_type == "person"] | order(order asc){
+  _id, name, displayName, role, bio, quote, featured,
+  portrait${IMAGE}
+}`
+
+export function getTeam() {
+  return sanityFetch<Person[]>({ query: TEAM_QUERY, tags: ['person'] })
 }
 
 const PRESS_QUERY = groq`*[_type == "pressItem"] | order(date desc){
