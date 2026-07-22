@@ -1,7 +1,7 @@
 # PICKUP — Mission + Market
 
-**Date:** 2026-07-22 · **Branch:** main (no remote) · **Tree:** clean at `0600fd5`
-**Resume keyword:** `mm-reviewed-and-mobile-verified-2026-07-22`
+**Date:** 2026-07-22 · **Branch:** main (no remote) · **Tree:** clean at `43220df`
+**Resume keyword:** `mm-ready-to-deploy-2026-07-22`
 
 ---
 
@@ -250,9 +250,38 @@ every finding adversarially verified (2-of-3 refutations killed a claim).
    address; then add a contact block to that page.
 4. Party-size select offers up to 20 while the copy says call for 9+.
 
-**Known-remaining nits** (logged, not fixed): straight vs typographic
-apostrophes; duplicated large-party sentence on /reservations; four
-CTA paddings and four hours-table markup shapes that should be shared
-components; `max-w-7xl` vs `max-w-[88rem]` container drift in
-page-header/footer/notice-banner; ~12 hand-written brass link styles that
-should be one `<TextLink tone>` component.
+**Consolidation — DONE (`43220df`).** `src/components/ui.tsx` now holds
+`TextLink` (tone-based, so brass-on-dark is unwritable), `ButtonLink`,
+`HoursList` and `Shell`. 16 hand-written links converted, container drift
+fixed, party size capped at 8 + "9+ please call". Apostrophes normalised.
+
+Only remaining nit: the duplicated large-party sentence on /reservations
+(header intro repeats the "Large parties" section).
+
+---
+
+## READY TO DEPLOY — this is the next slice
+
+Everything buildable without the client is done. The site has never left
+this machine:
+
+1. **No Vercel project, no git remote.** All commits are local.
+2. `SANITY_REVALIDATE_SECRET` **is now generated** in `.env.local` — it must
+   be copied into Vercel env vars, and the webhook created at
+   sanity.io/manage → API → Webhooks pointing at
+   `https://<domain>/api/revalidate`. Until then the client's Publish does
+   nothing for up to an hour.
+   Filter: `_type in ["siteSettings","homePage","menu","special","page",
+   "person","pressItem","jobPosting","galleryImage"]`
+3. Domain not pointed. Target is missionandmarketatl.com (in-place rebuild).
+
+**Waiting on the client:**
+- **New menu lands 2026-07-23** — do not edit menu content before it arrives;
+  `pnpm seed` would overwrite it either way, so treat seed as retired now.
+- An email address (blocks /private-events having any contact route).
+- Chef Paul's surname + real bio; confirmation of his pull quote.
+- Dessert + drinks menus.
+- Press items, job openings.
+- High-res originals of the ROOM/PATIO frames (food photography is now good).
+- Confirm `missionandmarket.com` ownership.
+- Rotate the Sanity CLI auth token printed to scrollback early on.
