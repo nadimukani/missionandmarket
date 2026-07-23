@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import { TextLink } from '@/components/ui'
+import { HoursList, TextLink } from '@/components/ui'
 import Link from 'next/link'
 
 import { PageHeader } from '@/components/page-header'
@@ -100,22 +100,9 @@ export default async function ContactPage() {
 
             <section>
               <h2 className="eyebrow text-brass">Hours</h2>
-              <dl className="mt-4 space-y-3 font-sans text-sm">
-                {settings?.hours?.map((row) => (
-                  <div
-                    key={`${row.service}-${row.days}`}
-                    className="flex flex-wrap justify-between gap-x-6 border-b border-rule pb-2"
-                  >
-                    <dt className="text-ink">
-                      {row.service}
-                      {row.days ? (
-                        <span className="text-ink-faint"> · {row.days}</span>
-                      ) : null}
-                    </dt>
-                    <dd className="text-ink-muted tabular-nums">{row.time}</dd>
-                  </div>
-                ))}
-              </dl>
+              <div className="mt-4">
+                <HoursList hours={settings?.hours} />
+              </div>
             </section>
 
             <Link

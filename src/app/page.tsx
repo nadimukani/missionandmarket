@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-import { TextLink } from '@/components/ui'
+import { HoursList, TextLink } from '@/components/ui'
 import { PortableText } from 'next-sanity'
 
 import { OpenStatus } from '@/components/open-status'
@@ -201,26 +201,9 @@ export default async function HomePage() {
 
             <div>
               <h3 className="eyebrow text-cream-muted">Hours</h3>
-              <dl className="mt-6 grid gap-x-10 sm:grid-cols-2">
-                {settings?.hours?.map((row) => (
-                  <div
-                    key={`${row.service}-${row.days}`}
-                    className="flex justify-between gap-4 border-b border-cream/10 py-3"
-                  >
-                    <dt className="font-sans text-sm text-cream">
-                      {row.service}
-                      {row.days ? (
-                        <span className="block text-xs text-cream-muted">
-                          {row.days}
-                        </span>
-                      ) : null}
-                    </dt>
-                    <dd className="font-sans text-sm text-cream-muted tabular-nums">
-                      {row.time}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
+              <div className="mt-6">
+                <HoursList hours={settings?.hours} tone="dark" columns={2} />
+              </div>
               <OpenStatus hours={settings?.machineHours} className="mt-6" />
             </div>
           </div>

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import { TextLink } from '@/components/ui'
+import { HoursList, TextLink } from '@/components/ui'
 
 import { PageHeader } from '@/components/page-header'
 import { ReserveForm } from '@/components/reserve-form'
@@ -90,16 +90,9 @@ export default async function ReservationsPage() {
 
           <section>
             <h2 className="eyebrow text-brass">Hours</h2>
-            <dl className="mt-4 space-y-3 font-sans text-sm">
-              {settings?.hours?.map((row) => (
-                <div key={`${row.service}-${row.days}`}>
-                  <dt className="text-ink">{row.service}</dt>
-                  <dd className="text-ink-muted">
-                    {[row.days, row.time].filter(Boolean).join(' · ')}
-                  </dd>
-                </div>
-              ))}
-            </dl>
+            <div className="mt-4">
+              <HoursList hours={settings?.hours} />
+            </div>
           </section>
         </div>
       </div>

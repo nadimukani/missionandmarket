@@ -106,50 +106,64 @@ export function ButtonLink({
 }
 
 /**
- * Service hours. One markup shape, so the hours read identically in the
- * footer, on /contact, on /reservations and on the homepage — and a change to
- * how a service is presented happens once.
+ * Service hours.
+ *
+ * Grouped by service, because Dinner runs five different day/time ranges and
+ * listing each as its own "Dinner" row printed the word five times down the
+ * column — messy, and it buried the one thing a guest scans for. The service
+ * name now appears once, with its schedule beneath it.
+ *
+ * One markup shape, used by the footer, /contact, /reservations and the
+ * homepage, so the hours read identically everywhere and a change happens once.
  */
 export function HoursList({
   hours,
   tone = 'light',
-  layout = 'stacked',
+  columns = 1,
 }: {
   hours?: HoursRow[]
   tone?: Tone
-  /** `stacked` for narrow columns, `split` for a full-width two-column row. */
-  layout?: 'stacked' | 'split'
+  /** 2 lets a long list (dinner + the rest) flow into two balanced columns. */
+  columns?: 1 | 2
 }) {
   if (!hours?.length) return null
 
   const label = tone === 'dark' ? 'text-cream' : 'text-ink'
   const value = tone === 'dark' ? 'text-cream-muted' : 'text-ink-muted'
-  const rule = tone === 'dark' ? 'border-cream/10' : 'border-rule'
+
+  // Collapse consecutive rows that share a service into one group, keeping the
+  // order the client set in the CMS.
+  const groups: { service: string; rows: HoursRow[] }[] = []
+  for (const row of hours) {
+    const last = groups[groups.length - 1]
+    if (last && last.service === row.service) last.rows.push(row)
+    else groups.push({ service: row.service, rows: [row] })
+  }
 
   return (
     <dl
       className={
-        layout === 'split'
-          ? 'grid gap-x-10 sm:grid-cols-2'
-          : 'space-y-3 font-sans text-sm'
+        columns === 2
+          ? 'grid gap-x-12 gap-y-6 font-sans text-sm sm:grid-cols-2'
+          : 'space-y-5 font-sans text-sm'
       }
     >
-      {hours.map((row) => (
-        <div
-          key={`${row.service}-${row.days}-${row.time}`}
-          className={
-            layout === 'split'
-              ? `flex justify-between gap-4 border-b py-3 font-sans text-sm ${rule}`
-              : ''
-          }
-        >
-          <dt className={label}>
-            {row.service}
-            {row.days ? (
-              <span className={`block text-xs ${value}`}>{row.days}</span>
-            ) : null}
-          </dt>
-          <dd className={`${value} tabular-nums`}>{row.time}</dd>
+      {groups.map((group) => (
+        <div key={group.service} className="break-inside-avoid">
+          <dt className={`font-medium ${label}`}>{group.service}</dt>
+          <dd className="mt-1.5 space-y-1">
+            {group.rows.map((row, i) => (
+              <div
+                key={`${row.days}-${row.time}-${i}`}
+                className="flex justify-between gap-6"
+              >
+                {row.days ? <span className={value}>{row.days}</span> : null}
+                <span className={`shrink-0 tabular-nums ${value}`}>
+                  {row.time}
+                </span>
+              </div>
+            ))}
+          </dd>
         </div>
       ))}
     </dl>
