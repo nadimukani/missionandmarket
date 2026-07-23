@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 
 import { HoursList, TextLink } from '@/components/ui'
-import Link from 'next/link'
 
 import { PageHeader } from '@/components/page-header'
 import { formatAddress, telHref } from '@/lib/site'
@@ -104,13 +103,9 @@ export default async function ContactPage() {
                 <HoursList hours={settings?.hours} />
               </div>
             </section>
-
-            <Link
-              href="/reservations"
-              className="inline-block rounded-xs bg-ink px-8 py-3.5 font-sans text-sm font-medium text-cream transition-colors hover:bg-moss"
-            >
-              Reserve a table
-            </Link>
+            {/* No reserve button here — the persistent header and the sticky
+                mobile bar already carry "Reserve a table", and repeating it in
+                the body just doubled the same control on one screen. */}
           </div>
 
           {mapQuery ? (

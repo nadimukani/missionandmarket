@@ -1,11 +1,20 @@
 import Link from 'next/link'
 
-import { HoursList, Shell, TextLink } from '@/components/ui'
+import { OpenStatus } from '@/components/open-status'
+import { Shell, TextLink } from '@/components/ui'
 import { NAV_LINKS, formatAddress, telHref } from '@/lib/site'
 import type { SiteSettings } from '@/sanity/types'
 
 export function SiteFooter({ settings }: { settings: SiteSettings | null }) {
   const year = new Date().getFullYear()
+
+  // The footer sits on every page, so it carries a summary — the services and
+  // a live open/closed line — not the full per-day breakdown. Repeating the
+  // whole schedule here made the footer top-heavy and duplicated the Visit
+  // page. The detail lives one click away.
+  const services = settings?.hours
+    ? [...new Set(settings.hours.map((row) => row.service))]
+    : []
 
   return (
     // The sticky reserve bar is fixed over the bottom of the viewport on
@@ -64,9 +73,23 @@ export function SiteFooter({ settings }: { settings: SiteSettings | null }) {
 
           <div>
             <h2 className="eyebrow text-cream-muted">Hours</h2>
-            <div className="mt-4">
-              <HoursList hours={settings?.hours} tone="dark" />
-            </div>
+            <OpenStatus
+              hours={settings?.machineHours}
+              tone="dark"
+              className="mt-4"
+            />
+            {services.length ? (
+              <ul className="mt-4 space-y-1.5 font-sans text-sm text-cream-muted">
+                {services.map((service) => (
+                  <li key={service}>{service}</li>
+                ))}
+              </ul>
+            ) : null}
+            <p className="mt-5">
+              <TextLink href="/contact" tone="dark" className="text-sm">
+                Full hours &amp; directions
+              </TextLink>
+            </p>
           </div>
 
           <div>
