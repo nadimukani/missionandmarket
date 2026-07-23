@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Fragment } from 'react'
 
 import type { HoursRow } from '@/sanity/types'
 
@@ -119,12 +120,9 @@ export function ButtonLink({
 export function HoursList({
   hours,
   tone = 'light',
-  columns = 1,
 }: {
   hours?: HoursRow[]
   tone?: Tone
-  /** 2 lets a long list (dinner + the rest) flow into two balanced columns. */
-  columns?: 1 | 2
 }) {
   if (!hours?.length) return null
 
@@ -140,31 +138,27 @@ export function HoursList({
     else groups.push({ service: row.service, rows: [row] })
   }
 
+  // One grid for the whole list, with two content-sized columns. Because every
+  // row shares the same two tracks, the times all begin at the same x — the
+  // day column widens to its longest label ("Monday – Wednesday") and the time
+  // column starts after it, left-aligned. `justify-between` was pushing each
+  // time to the right edge instead, so they ended flush but started ragged.
   return (
-    <dl
-      className={
-        columns === 2
-          ? 'grid gap-x-12 gap-y-6 font-sans text-sm sm:grid-cols-2'
-          : 'space-y-5 font-sans text-sm'
-      }
-    >
-      {groups.map((group) => (
-        <div key={group.service} className="break-inside-avoid">
-          <dt className={`font-medium ${label}`}>{group.service}</dt>
-          <dd className="mt-1.5 space-y-1">
-            {group.rows.map((row, i) => (
-              <div
-                key={`${row.days}-${row.time}-${i}`}
-                className="flex justify-between gap-6"
-              >
-                {row.days ? <span className={value}>{row.days}</span> : null}
-                <span className={`shrink-0 tabular-nums ${value}`}>
-                  {row.time}
-                </span>
-              </div>
-            ))}
-          </dd>
-        </div>
+    <dl className="grid w-fit grid-cols-[auto_auto] gap-x-10 font-sans text-sm">
+      {groups.map((group, g) => (
+        <Fragment key={group.service}>
+          <dt
+            className={`col-span-2 font-medium ${label} ${g > 0 ? 'mt-5' : ''}`}
+          >
+            {group.service}
+          </dt>
+          {group.rows.map((row, i) => (
+            <Fragment key={`${row.days}-${row.time}-${i}`}>
+              <dd className={`mt-1.5 ${value}`}>{row.days}</dd>
+              <dd className={`mt-1.5 tabular-nums ${value}`}>{row.time}</dd>
+            </Fragment>
+          ))}
+        </Fragment>
       ))}
     </dl>
   )

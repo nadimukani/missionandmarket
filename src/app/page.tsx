@@ -202,7 +202,7 @@ export default async function HomePage() {
             <div>
               <h3 className="eyebrow text-cream-muted">Hours</h3>
               <div className="mt-6">
-                <HoursList hours={settings?.hours} tone="dark" columns={2} />
+                <HoursList hours={settings?.hours} tone="dark" />
               </div>
               <OpenStatus hours={settings?.machineHours} className="mt-6" />
             </div>
