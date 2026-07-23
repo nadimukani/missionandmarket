@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Fragment } from 'react'
 
 import type { HoursRow } from '@/sanity/types'
 
@@ -137,33 +138,35 @@ export function HoursList({
     else groups.push({ service: row.service, rows: [row] })
   }
 
-  // Each schedule line is one continuous phrase — "Monday – Wednesday · 3:00pm
-  // – 9:30pm" — rather than two rigid columns. Two columns cannot fit a narrow
-  // phone: the day and time were forced side by side, the time got squeezed,
-  // and "3:00pm – 9:30pm" broke across two lines. As one phrase the line wraps
-  // gracefully if it must, and the time itself is kept whole (whitespace-nowrap)
-  // so a clock reading is never split. Reads the same on a phone and a desktop.
+  // Two aligned columns — day left, time in a shared column so every time
+  // begins at the same x and the list scans top-to-bottom. The layout is
+  // capped at a comfortable reading width so day and time stay close together
+  // on a desktop instead of drifting to opposite edges, and that same cap is
+  // wider than a phone, so the columns render identically at both sizes.
+  //
+  // `auto` sizes the day column to its longest label ("Monday – Wednesday");
+  // the time keeps `whitespace-nowrap` so a clock reading is never split, and
+  // the widest day + time comfortably fit within the cap on a 360px phone.
   return (
-    <dl className="space-y-5 font-sans text-sm">
-      {groups.map((group) => (
-        <div key={group.service}>
-          <dt className={`font-medium ${label}`}>{group.service}</dt>
-          <dd className={`mt-1.5 space-y-1 ${value}`}>
-            {group.rows.map((row, i) => (
-              <p key={`${row.days}-${row.time}-${i}`} className="leading-snug">
-                {row.days ? <span>{row.days}</span> : null}
-                {row.days && row.time ? (
-                  <span className="px-1.5 opacity-40">·</span>
-                ) : null}
-                {row.time ? (
-                  <span className="tabular-nums whitespace-nowrap">
-                    {row.time}
-                  </span>
-                ) : null}
-              </p>
-            ))}
-          </dd>
-        </div>
+    <dl className="grid max-w-xs grid-cols-[auto_1fr] gap-x-6 font-sans text-sm">
+      {groups.map((group, g) => (
+        <Fragment key={group.service}>
+          <dt
+            className={`col-span-2 font-medium ${label} ${g > 0 ? 'mt-5' : ''}`}
+          >
+            {group.service}
+          </dt>
+          {group.rows.map((row, i) => (
+            <Fragment key={`${row.days}-${row.time}-${i}`}>
+              <dd className={`mt-1.5 ${value}`}>{row.days}</dd>
+              <dd
+                className={`mt-1.5 tabular-nums whitespace-nowrap ${value}`}
+              >
+                {row.time}
+              </dd>
+            </Fragment>
+          ))}
+        </Fragment>
       ))}
     </dl>
   )
