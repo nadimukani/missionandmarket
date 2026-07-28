@@ -1,7 +1,9 @@
 import type { PortableTextBlock } from 'next-sanity'
 import type { Image } from 'sanity'
 
-export type SanityImage = Image & { alt?: string }
+/** `lqip` is Sanity's base64 blur thumbnail, projected by the IMAGE fragment
+ *  in queries.ts and used as the placeholder while the real file loads. */
+export type SanityImage = Image & { alt?: string; lqip?: string }
 
 export type Address = {
   street?: string

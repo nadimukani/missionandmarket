@@ -14,7 +14,21 @@ import type {
   Special,
 } from './types'
 
-const IMAGE = groq`{ ..., "alt": coalesce(alt, "") }`
+/**
+ * Every image projection goes through this.
+ *
+ * `lqip` is a ~500-byte base64 thumbnail Sanity generates for each asset on
+ * upload. It costs nothing to ask for and it is what stops a photograph
+ * snapping in from blank — the blur is on screen at first paint, holding the
+ * exact frame the real file will occupy, and dissolves when it arrives. On a
+ * photography-led page like the gallery that is the difference between the
+ * page assembling itself as you scroll and it just being there.
+ */
+const IMAGE = groq`{
+  ...,
+  "alt": coalesce(alt, ""),
+  "lqip": asset->metadata.lqip
+}`
 
 const SETTINGS_QUERY = groq`*[_type == "siteSettings"][0]{
   name, tagline, shortDescription, phone, email, neighborhood, mapsUrl,
@@ -116,7 +130,7 @@ export function getTeam() {
 }
 
 const PRESS_QUERY = groq`*[_type == "pressItem"] | order(date desc){
-  _id, title, publication, date, url, excerpt, logo
+  _id, title, publication, date, url, excerpt, logo${IMAGE}
 }`
 
 export function getPress() {
@@ -132,7 +146,7 @@ export function getJobs() {
 }
 
 const GALLERY_QUERY = groq`*[_type == "galleryImage"] | order(order asc){
-  _id, image, alt, category
+  _id, image${IMAGE}, alt, category
 }`
 
 export function getGallery() {

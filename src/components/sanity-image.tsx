@@ -57,6 +57,13 @@ export function SanityImage({
       // Sanity's CDN has already produced the exact width and format, so the
       // Vercel optimizer would re-encode an already-optimal file.
       unoptimized
+      // The blur thumbnail ships inside the HTML, so it is on screen at first
+      // paint and dissolves into the real file rather than the photograph
+      // snapping in from blank. Only when the CMS actually returned one —
+      // passing placeholder="blur" without a blurDataURL throws.
+      {...(image.lqip
+        ? { placeholder: 'blur' as const, blurDataURL: image.lqip }
+        : {})}
       {...props}
     />
   )
