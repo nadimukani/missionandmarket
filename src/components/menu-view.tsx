@@ -27,7 +27,7 @@ function Dish({ item }: { item: MenuItem }) {
       </div>
 
       {item.description ? (
-        <p className="mt-1 max-w-prose font-sans text-sm leading-relaxed text-ink-muted">
+        <p className="mt-1 max-w-prose font-sans text-sm text-ink-muted">
           {item.description}
         </p>
       ) : null}
@@ -65,7 +65,7 @@ export function MenuView({ menu }: { menu: Menu }) {
   return (
     <article>
       {menu.intro ? (
-        <p className="mx-auto max-w-2xl text-center font-sans text-base leading-relaxed text-ink-muted">
+        <p className="mx-auto max-w-2xl text-center font-sans text-base text-ink-muted">
           {menu.intro}
         </p>
       ) : null}

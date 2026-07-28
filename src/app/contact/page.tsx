@@ -38,7 +38,7 @@ export default async function ContactPage() {
             <section>
               <h2 className="eyebrow text-brass">Address</h2>
               {address ? (
-                <address className="mt-4 font-sans text-lg leading-relaxed text-ink not-italic">
+                <address className="mt-4 font-sans text-lg text-ink not-italic">
                   {formatAddress(address)}
                 </address>
               ) : null}
@@ -91,7 +91,7 @@ export default async function ContactPage() {
             {settings?.parkingNote ? (
               <section>
                 <h2 className="eyebrow text-brass">Parking</h2>
-                <p className="mt-4 max-w-prose font-sans text-base leading-relaxed text-ink-muted">
+                <p className="mt-4 max-w-prose font-sans text-base text-ink-muted">
                   {settings.parkingNote}
                 </p>
               </section>

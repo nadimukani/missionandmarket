@@ -50,7 +50,7 @@ export default async function PrivateEventsPage() {
           <Shell className="band">
             <div>
               <p className="eyebrow text-brass">The spaces</p>
-              <h2 className="mt-3 font-display text-lead text-ink">
+              <h2 className="mt-3 font-display text-section text-ink">
                 Where you&rsquo;ll sit
               </h2>
             </div>
@@ -72,7 +72,7 @@ export default async function PrivateEventsPage() {
                     <p className="eyebrow mt-4 text-brass">{item.category}</p>
                   ) : null}
                   {item.alt ? (
-                    <p className="mt-2 font-sans text-sm leading-relaxed text-ink-muted">
+                    <p className="mt-2 font-sans text-sm text-ink-muted">
                       {item.alt}
                     </p>
                   ) : null}
@@ -89,10 +89,10 @@ export default async function PrivateEventsPage() {
         <Shell className="band">
           <div className="mx-auto max-w-[40rem] text-center">
             <p className="eyebrow text-brass-ondark">Plan your event</p>
-            <h2 className="mt-3 font-display text-lead text-cream">
+            <h2 className="mt-3 font-display text-section text-cream">
               Tell us the occasion
             </h2>
-            <p className="mt-5 font-sans text-base leading-relaxed text-cream-muted">
+            <p className="mt-5 font-sans text-base text-cream-muted">
               Every event is quoted on the date, the headcount and what you want
               to eat, so the fastest way to a real answer is to talk to us.
             </p>

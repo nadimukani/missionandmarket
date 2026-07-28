@@ -70,7 +70,7 @@ export default async function PressPage() {
                   )}
                 </h2>
                 {item.excerpt ? (
-                  <p className="mt-3 font-sans text-sm leading-relaxed text-ink-muted">
+                  <p className="mt-3 font-sans text-sm text-ink-muted">
                     {item.excerpt}
                   </p>
                 ) : null}

@@ -48,7 +48,7 @@ export default async function ReservationsPage() {
         <div className="grid grid-cols-[repeat(auto-fit,minmax(16rem,1fr))] gap-12">
           <section>
             <h2 className="eyebrow text-brass">Large parties</h2>
-            <p className="mt-4 font-sans text-sm leading-relaxed text-ink-muted">
+            <p className="mt-4 font-sans text-sm text-ink-muted">
               {settings?.largePartyNote ??
                 'For parties of nine or more, our team will build the evening around you.'}
               {settings?.phone ? (
@@ -70,12 +70,12 @@ export default async function ReservationsPage() {
           <section>
             <h2 className="eyebrow text-brass">Getting here</h2>
             {settings?.address ? (
-              <address className="mt-4 font-sans text-sm leading-relaxed text-ink-muted not-italic">
+              <address className="mt-4 font-sans text-sm text-ink-muted not-italic">
                 {formatAddress(settings.address)}
               </address>
             ) : null}
             {settings?.parkingNote ? (
-              <p className="mt-3 font-sans text-sm leading-relaxed text-ink-muted">
+              <p className="mt-3 font-sans text-sm text-ink-muted">
                 {settings.parkingNote}
               </p>
             ) : null}

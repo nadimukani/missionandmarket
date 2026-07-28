@@ -61,7 +61,7 @@ export default async function SpecialsPage() {
                     </p>
                   ) : null}
                   {special.description ? (
-                    <p className="mt-3 font-sans text-sm leading-relaxed text-ink-muted">
+                    <p className="mt-3 font-sans text-sm text-ink-muted">
                       {special.description}
                     </p>
                   ) : null}

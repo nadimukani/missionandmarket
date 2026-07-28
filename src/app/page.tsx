@@ -112,7 +112,7 @@ export default async function HomePage() {
           </h1>
 
           {home?.heroSubheading ? (
-            <p className="load-in mt-6 max-w-xl font-sans text-base leading-relaxed text-cream-muted [--load-delay:160ms] lg:text-lg">
+            <p className="load-in mt-6 max-w-xl font-sans text-base text-cream-muted [--load-delay:160ms] lg:text-lg">
               {home.heroSubheading}
             </p>
           ) : null}
@@ -143,7 +143,7 @@ export default async function HomePage() {
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
               <p className="eyebrow text-brass">The food</p>
-              <h2 className="mt-3 font-display text-lead text-ink">
+              <h2 className="mt-3 font-display text-section text-ink">
                 Menus
               </h2>
             </div>
@@ -202,10 +202,10 @@ export default async function HomePage() {
 
               <div>
                 <p className="eyebrow text-brass">Our story</p>
-                <h2 className="mt-3 font-display text-lead text-ink">
+                <h2 className="mt-3 font-display text-section text-ink">
                   {home.storyHeading ?? 'Flavor + Fusion'}
                 </h2>
-                <div className="mt-8 space-y-5 font-sans text-base leading-relaxed text-ink-muted">
+                <div className="mt-8 space-y-5 font-sans text-base text-ink-muted">
                   <PortableText
                     value={home.storyBody}
                     components={PortableBody}
@@ -223,7 +223,7 @@ export default async function HomePage() {
         <Shell className="band-lg">
           <div>
             <p className="eyebrow text-brass">From the kitchen</p>
-            <h2 className="mt-3 font-display text-lead text-ink">
+            <h2 className="mt-3 font-display text-section text-ink">
               Signatures
             </h2>
           </div>
@@ -246,7 +246,7 @@ export default async function HomePage() {
                   {dish.name}
                 </h3>
                 {dish.description ? (
-                  <p className="mt-1.5 font-sans text-sm leading-relaxed text-ink-muted">
+                  <p className="mt-1.5 font-sans text-sm text-ink-muted">
                     {dish.description}
                   </p>
                 ) : null}
@@ -302,7 +302,7 @@ export default async function HomePage() {
             <div className="flex flex-wrap items-end justify-between gap-6">
               <div>
                 <p className="eyebrow text-brass">Every week</p>
-                <h2 className="mt-3 font-display text-lead text-ink">
+                <h2 className="mt-3 font-display text-section text-ink">
                   What&rsquo;s on
                 </h2>
               </div>
@@ -319,7 +319,7 @@ export default async function HomePage() {
                     {special.title}
                   </h3>
                   {special.description ? (
-                    <p className="mt-2 font-sans text-sm leading-relaxed text-ink-muted">
+                    <p className="mt-2 font-sans text-sm text-ink-muted">
                       {special.description}
                     </p>
                   ) : null}
@@ -335,7 +335,7 @@ export default async function HomePage() {
         <section className="pb-[var(--section-lg)]">
           <Shell>
             <div className="flex flex-wrap items-end justify-between gap-6">
-              <h2 className="font-display text-lead text-ink">
+              <h2 className="font-display text-section text-ink">
                 The room
               </h2>
               <TextLink href="/gallery">See the gallery</TextLink>
@@ -388,14 +388,14 @@ export default async function HomePage() {
           <div className="grid gap-14 lg:grid-cols-[1fr_1.1fr] lg:gap-24">
             <div>
               <p className="eyebrow text-brass-ondark">Visit</p>
-              <h2 className="mt-3 font-display text-lead text-cream">
+              <h2 className="mt-3 font-display text-section text-cream">
                 Three Alliance Center,
                 <br />
                 {settings?.neighborhood ?? 'Buckhead'}
               </h2>
 
               {settings?.address ? (
-                <address className="mt-8 font-sans text-base leading-relaxed text-cream-muted not-italic">
+                <address className="mt-8 font-sans text-base text-cream-muted not-italic">
                   {formatAddress(settings.address)}
                 </address>
               ) : null}
@@ -414,7 +414,7 @@ export default async function HomePage() {
               </div>
 
               {settings?.parkingNote ? (
-                <p className="mt-8 max-w-md font-sans text-sm leading-relaxed text-cream-muted">
+                <p className="mt-8 max-w-md font-sans text-sm text-cream-muted">
                   {settings.parkingNote}
                 </p>
               ) : null}
@@ -436,7 +436,7 @@ export default async function HomePage() {
         <Shell className="band-lg">
           <div className="flex flex-col items-center text-center">
             <MarkColumn className="h-28 w-8 text-cream/50" chevrons={3} />
-            <h2 className="mt-8 max-w-2xl font-display text-lead text-cream">
+            <h2 className="mt-8 max-w-2xl font-display text-section text-cream">
               We&rsquo;ll keep a table for you
             </h2>
             <div className="mt-10 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">

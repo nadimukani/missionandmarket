@@ -55,7 +55,7 @@ function FeaturedPerson({ person }: { person: Person }) {
         ) : null}
 
         {person.bio?.length ? (
-          <div className="mt-8 space-y-5 font-sans text-base leading-relaxed text-ink-muted">
+          <div className="mt-8 space-y-5 font-sans text-base text-ink-muted">
             <PortableText value={person.bio} components={PortableBody} />
           </div>
         ) : null}
