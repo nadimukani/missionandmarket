@@ -85,9 +85,39 @@ the interiors are low-res exports lifted from a design deck. Reordering the
 library bought a real improvement; it does not buy a great hero. An evening
 shoot with guests in the room, shot wide at full resolution, is the fix.
 
-## Next best slice
-Deploy to Vercel on a preview URL + `SANITY_REVALIDATE_SECRET` in env + the
-Sanity webhook. Then re-verify at 390px and in Safari.
+## SHIPPED — git + Vercel
+- **Repo:** https://github.com/nadimukani/missionandmarket — **PUBLIC** (user's
+  explicit call; verified no secrets anywhere in history). Default branch
+  `master`. A second private repo `nadimukani/mission-and-market` still exists
+  and should be deleted — needs `gh auth refresh -h github.com -s delete_repo`.
+- **Live:** https://missionandmarket-nadimukanis-projects.vercel.app
+  Project `missionandmarket` under `nadimukanis-projects`, GitHub-connected so
+  pushes to `master` auto-deploy. Env set for prod/preview/dev:
+  PROJECT_ID, DATASET, API_VERSION, REVALIDATE_SECRET.
+  `SANITY_API_READ_TOKEN` **not set — empty locally** (draft previews only).
+- **To transfer to Foster:** Vercel project transfer keeps deployment history.
+  Do it before pointing the real domain, so billing + domain live with him.
+
+## CURRENT BRIEF — craft pass (user: "it looks like a WordPress site")
+User picked **"cheap / generic execution"**, NOT the page structure, and asked
+for **all pages, thorough**. So: do NOT go restructure the page templates.
+The work is surface craft:
+- **Type scale — DONE** (`8044213`). Six fluid roles in `globals.css`
+  (`text-display/lead/section/sub/lede/caption`) with per-size tracking and
+  line height; headings default to weight 400, only display sizes drop to 300.
+- **Spacing is still too even.** Every band uses the same `band-lg`. Vary it.
+- **Everything is a box.** Bordered specials cards, the hard-bordered menus
+  grid, uniform masonry. De-box; use rules and space instead of borders.
+- **No asymmetry.** Every section is centered or a 50/50 grid. Offset the
+  story image, let some images bleed past the rail, stagger the signatures.
+- **Crops are uniform** (4:5 everywhere). Art-direct per position.
+
+## Not verified
+- **The type pass has NOT been looked at in a browser** — Chrome extension
+  disconnected right after it built. Lint + build green only. **Look at it
+  first thing.**
+- Reduced-motion path, Safari, Firefox: never exercised.
+- Mobile 390px not re-checked since the rail change.
 
 ## Resume keyword
-`mm-rails-hero-defects-2026-07-28`
+`mm-craft-pass-2026-07-28`
