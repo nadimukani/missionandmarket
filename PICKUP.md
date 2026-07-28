@@ -1,78 +1,93 @@
 # PICKUP — Mission + Market @ master
 
-_Updated: 2026-07-28 — checkpoint BEFORE the fix phase_
+_Updated: 2026-07-28_
 
 ## Where we left off
-Full review of the build under Opus 5 + ultracode. Verdict: **do not rebuild**.
-The engineering is sound; the problems are a half-consolidated layout system,
-art direction, missing motion, and the fact that this has **never been
-deployed**. Now executing the fix pass.
+Full review + fix pass under Opus 5. Verdict was **do not rebuild** — the
+engineering was sound; the problems were a half-consolidated layout system,
+art direction, no motion, and never having been deployed. The first three are
+now fixed and committed at `ceee9e3`. **Deploy is the remaining milestone.**
 
 ## State
-- **Branch:** `master` @ `7abcad4` — **clean**, no remote, all commits local
-- Dev: `pnpm dev -p 4310` running
-- `pnpm lint` clean · `pnpm build` **fully green with network — 21 routes incl.
-  `/opengraph-image`** (the old "og build fails" caveat was sandbox-only)
+- **Branch:** `master` @ `ceee9e3` — clean except two dead files (below)
+- `pnpm lint` clean · `pnpm build` green — 21 routes incl. `/opengraph-image`
+- Dev: `pnpm dev -p 4310`
 
 ## Hard facts (verified — do not re-derive)
 | | |
 | --- | --- |
-| Live site being replaced | missionandmarketatl.com (WordPress + Elementor) |
 | Sanity | project `x2izrrun`, dataset `production`, Studio at `/studio` |
-| OpenTable rid | **1005016** — deep link verified end-to-end |
+| OpenTable rid | **1005016** |
 | Address / phone | 3550 Lenox Rd NE, Suite 550, Atlanta GA 30326 · 404.948.2927 |
 | Chef | **Executive Chef Paul** (surname UNKNOWN) |
 | Palette | ink #231F1F · moss #464B20 · cream #F0E9D7 · brass #8A6445 |
-| Fonts | Cormorant Garamond (display) + Instrument Sans (body) |
-| **User's review viewport** | **3440×1440 ultrawide** — always verify here |
+| **User's review viewport** | **3440×1440 ultrawide — always verify here** |
 
-## Findings from this review (evidence-backed)
-1. **Never deployed.** No Vercel project, no git remote. The real blocker.
-2. **Five rail widths, two gutter scales.** `Shell` (`src/components/ui.tsx:180`)
-   was built to be the single rail and is used in only 3 places. The rest
-   hand-roll: `max-w-[88rem]` (home/header/footer), `max-w-7xl`
-   (gallery/specials/contact), `max-w-6xl` (`menus/[slug]`), `max-w-5xl`
-   (`reservations`), `max-w-3xl` (careers/press/cms body). Gutters split
-   `lg:px-10` vs `lg:px-8`. Navigating Home → Gallery shifts the rail 64px.
-3. **Ultrawide.** 1408px cap = **41% of a 3440px viewport**. Prior sessions only
-   ever verified at 1440/1024/390.
-4. **Hero tells the wrong story** — empty chairs behind sheer curtains; subject
-   of the frame is drapery. Reads corporate-lobby, which is this restaurant's
-   actual perception risk (it is inside an office tower). Headline also sits
-   over the brightest part of the frame at only ~35% scrim.
-5. **`/private-events` is one image + two paragraphs** — highest-margin page.
-   No capacities, no rooms, no enquiry route. `settings.email` is empty, which
-   also silently guts `/careers`.
-6. **No motion anywhere.** Client asked for minimal visual flow.
-7. Menu content still the migrated WordPress text; client's new menu was due
-   **2026-07-23** and has not landed.
+## What landed (`ceee9e3`)
+- **Two rails, both fluid.** `rail` (108rem cap) + `measure` (40rem content),
+  `--gutter` / `--section` / `--section-lg` clamps in `globals.css`. Replaced
+  six widths × two gutters across 24 hand-rolled containers. Fixed grids →
+  `auto-fit`; `columns-2/3` → `columns-[26rem]/[22rem]`.
+  Rail at 3440 is now **1728px (50%)**, was 1408 (41%).
+- **Homepage reordered** — hours band moved from 3rd to 2nd-last; grounds
+  alternate paper / paper-warm.
+- **Hero re-cast** in Sanity onto the plated-food frame; og image too;
+  multi-image cross-fade implemented (`components/hero-images.tsx`).
+  Scrim deepened to hold ≥5:1 on the headline.
+- **Motion:** load-in stagger (hero + every masthead) + hero cross-fade +
+  hover refinements. All CSS, no JS.
+- **/private-events** rebuilt: spaces grid from real categorised photography,
+  working enquiry CTA. **No capacity or room name is asserted** — none exist.
+- **~15 defects fixed** (see commit body), incl. two blockers: mobile menu
+  locking the page at the lg crossover, and `mailto:undefined` on Apply.
 
-**Checked and NOT a bug:** hero is a 7.8 MB PNG at origin but Sanity
-`auto=format` serves **98 KB AVIF** to real browsers.
+## Sanity writes made this session (reversible)
+`homePage.heroImages`, `homePage.bandImage`, `siteSettings.ogImage`.
+Backup of previous values:
+`<scratchpad>/sanity-backup.json` — **copy it somewhere durable if it still
+matters**, the scratchpad is session-scoped.
 
-## In flight
-Investigation workflow `wf_18fed0af-79c` (4 parallel agents: layout audit, CMS
-asset inventory, motion research, defect sweep). Transcript + journal under
-`~/.claude/projects/.../subagents/workflows/wf_18fed0af-79c/`.
+## Not verified
+- Reduced-motion path not exercised in-browser (code path is a media query
+  around every animation; not visually confirmed).
+- Firefox / Safari not opened at all. Chrome only.
+- Mobile (390px) not re-checked after the rail change — **do this before
+  showing the client**.
+- The two `columns-[Xrem]` masonry changes were not eyeballed at 3440.
 
-Task list (TaskCreate #1–#5): rails → motion → hero/order → private events →
-swept defects.
+## Dead files pending deletion approval
+`src/components/reveal-observer.tsx` and `src/lib/reveal.ts` — abandoned
+scroll-reveal attempts, untracked, safe to `rm`.
 
 ## Caveats
-- **Chrome MCP screenshots fire before images paint.** A black hero in a
-  screenshot is a timing artifact, not a broken image — re-`zoom` to confirm.
-- `resize_window` is refused while the window is maximized; the viewport stays
-  3440. Measure with `javascript_tool` rather than trusting the shot size.
-- Headless-shell `Page.captureScreenshot` hangs on this machine
-  (`captureBeyondViewport` and full-height both). Use the Chrome MCP.
-- Watch the exit-code trap: `pnpm build | tail` reports **tail's** exit code.
-- **`pnpm seed` is retired** — do not reseed menus until the new menu lands.
+- **Scroll-reveal: do not retry casually.** Two implementations failed by
+  leaving sections invisible; `animation-timeline: view()` also froze the
+  renderer >45s on the homepage. Full notes in `globals.css` motion block.
+- **Chrome MCP screenshots fire before images paint** — a dark hero in a shot
+  is a timing artifact. Re-`zoom` to confirm.
+- `resize_window` is refused while maximized; viewport stays 3440. Measure
+  with `javascript_tool`.
+- Headless-shell `Page.captureScreenshot` hangs on this machine.
+- `pnpm build | tail` reports **tail's** exit code.
+- **`pnpm seed` is retired** — do not reseed menus.
+- Careless regex sweeps over `src/**/*.tsx` damaged prose in comments this
+  session. If doing a bulk rename, anchor on `className="..."` only.
 
 ## Client-pending (none guessable)
-Deploy target · new menu · **an email address** · Chef Paul surname + bio ·
-dessert & drinks menus · press · jobs · private-dining capacities · high-res
-ROOM/PATIO originals · confirm `missionandmarket.com` ownership · rotate the
-Sanity CLI token printed to scrollback in an earlier session.
+Deploy target · new menu (was due 2026-07-23, still not landed) · **an email
+address** · Chef Paul surname + bio · private-dining capacities + room names ·
+dessert & drinks menus · press · jobs · high-res ROOM/PATIO originals ·
+confirm `missionandmarket.com` ownership · rotate the Sanity CLI token printed
+to scrollback in an earlier session.
+
+**Photography is the ceiling.** Of 24 assets exactly one clears 2048px; half
+the interiors are low-res exports lifted from a design deck. Reordering the
+library bought a real improvement; it does not buy a great hero. An evening
+shoot with guests in the room, shot wide at full resolution, is the fix.
+
+## Next best slice
+Deploy to Vercel on a preview URL + `SANITY_REVALIDATE_SECRET` in env + the
+Sanity webhook. Then re-verify at 390px and in Safari.
 
 ## Resume keyword
-`mm-fix-pass-2026-07-28`
+`mm-rails-hero-defects-2026-07-28`
