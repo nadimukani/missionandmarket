@@ -1,0 +1,52 @@
+{
+  "home": {
+    "_id": "homePage",
+    "bandImage": {
+      "_type": "image",
+      "alt": "A full table — roast chicken, rigatoni bolognese, seared tuna and bread pudding with a pink cocktail, against a blue velvet banquette",
+      "asset": {
+        "_ref": "image-1939d67ea996764ec9020e38d733b204c236a625-2048x1367-jpg",
+        "_type": "reference"
+      }
+    },
+    "heroImages": [
+      {
+        "_key": "hero-0",
+        "_type": "image",
+        "alt": "Sunlit dining room with sheer linen curtains, walnut tables, navy leather armchairs and a lit glass wine cabinet",
+        "asset": {
+          "_ref": "image-f7d48fa1787a2ba2b3ec186b8ac11e2a188a9af5-1378x994-png",
+          "_type": "reference"
+        }
+      },
+      {
+        "_key": "hero-1",
+        "_type": "image",
+        "alt": "Brass globe sconce mounted on a chartreuse moss-covered column, with the lit back bar and bottle display behind",
+        "asset": {
+          "_ref": "image-08c2bba92f9ea6517aed567a44334d3367f1dcee-1416x948-png",
+          "_type": "reference"
+        }
+      }
+    ],
+    "storyImage": {
+      "_type": "image",
+      "alt": "Brass globe sconce on a moss-covered column beside the bar and its backlit bottle display",
+      "asset": {
+        "_ref": "image-08c2bba92f9ea6517aed567a44334d3367f1dcee-1416x948-png",
+        "_type": "reference"
+      }
+    }
+  },
+  "settings": {
+    "_id": "siteSettings",
+    "ogImage": {
+      "_type": "image",
+      "alt": "The sunlit dining room at Mission + Market, with sheer linen curtains and walnut tables",
+      "asset": {
+        "_ref": "image-f7d48fa1787a2ba2b3ec186b8ac11e2a188a9af5-1378x994-png",
+        "_type": "reference"
+      }
+    }
+  }
+}
