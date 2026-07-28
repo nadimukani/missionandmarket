@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 
 import { PageHeader } from '@/components/page-header'
 import { SanityImage } from '@/components/sanity-image'
+import { Shell } from '@/components/ui'
 import { getGallery } from '@/sanity/queries'
 
 export const metadata: Metadata = {
@@ -23,10 +24,13 @@ export default async function GalleryPage() {
       />
 
       {images.length ? (
-        <div className="mx-auto max-w-7xl px-5 py-16 lg:px-8 lg:py-24">
+        <Shell className="band">
           {/* Masonry via CSS columns: photos keep their native aspect ratio
-              instead of being cropped into a uniform grid. */}
-          <div className="gap-4 space-y-4 sm:columns-2 lg:columns-3">
+              instead of being cropped into a uniform grid.
+              The column COUNT is derived from a target column width rather
+              than fixed at three, so a wide display gets more columns at the
+              same comfortable size instead of three enormous ones. */}
+          <div className="columns-[22rem] gap-4 space-y-4">
             {images.map((item) => (
               <figure
                 key={item._id}
@@ -36,13 +40,13 @@ export default async function GalleryPage() {
                   image={item.image}
                   alt={item.alt}
                   width={900}
-                  sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                  sizes="(min-width: 640px) 22rem, 100vw"
                   className="w-full"
                 />
               </figure>
             ))}
           </div>
-        </div>
+        </Shell>
       ) : null}
     </>
   )

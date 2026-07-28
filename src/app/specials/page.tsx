@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import { TextLink } from '@/components/ui'
+import { Shell, TextLink } from '@/components/ui'
 
 import { PageHeader } from '@/components/page-header'
 import { SanityImage } from '@/components/sanity-image'
@@ -29,8 +29,8 @@ export default async function SpecialsPage() {
       />
 
       {specials.length ? (
-        <div className="mx-auto max-w-7xl px-5 py-16 lg:px-8 lg:py-24">
-          <ul className="grid gap-12 md:grid-cols-2">
+        <Shell className="band">
+          <ul className="grid grid-cols-[repeat(auto-fit,minmax(20rem,1fr))] gap-12">
             {specials.map((special) => (
               <li
                 key={special._id}
@@ -42,7 +42,7 @@ export default async function SpecialsPage() {
                       image={special.image}
                       width={1000}
                       height={563}
-                      sizes="(min-width: 768px) 50vw, 100vw"
+                      sizes="(min-width: 768px) 20rem, 100vw"
                       className="h-full w-full object-cover"
                     />
                   </div>
@@ -66,22 +66,25 @@ export default async function SpecialsPage() {
                     </p>
                   ) : null}
 
+                  {/* With no link, the label falls back to the generic one
+                      too. Keeping the client's bespoke label —"Book the
+                      cocktail class" — while silently pointing it at the table
+                      reservation form promises something the link does not
+                      deliver. */}
                   <div className="mt-6 pt-2">
                     {special.ctaUrl ? (
                       <TextLink href={special.ctaUrl}>
                         {special.ctaLabel ?? 'Learn more'} →
                       </TextLink>
                     ) : (
-                      <TextLink href="/reservations">
-                        {special.ctaLabel ?? 'Reserve a table'} →
-                      </TextLink>
+                      <TextLink href="/reservations">Reserve a table →</TextLink>
                     )}
                   </div>
                 </div>
               </li>
             ))}
           </ul>
-        </div>
+        </Shell>
       ) : null}
     </>
   )

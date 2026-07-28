@@ -27,14 +27,14 @@ export const PortableBody: PortableTextComponents = {
     ),
   },
   marks: {
-    link: ({ children, value }) => {
-      const href = value?.href ?? '#'
-      return (
-        <TextLink href={href}>
-          {children}
-        </TextLink>
-      )
-    },
+    // No `?? '#'`. The link annotation's href carries a scheme check but not
+    // `.required()`, so an editor can apply a link mark and publish with no
+    // URL — and TextLink already renders a plain <span> for a missing href.
+    // Defaulting to '#' defeated that and shipped a control that scrolls the
+    // guest back to the top of the page.
+    link: ({ children, value }) => (
+      <TextLink href={value?.href}>{children}</TextLink>
+    ),
   },
   types: {
     image: ({ value }) => (
@@ -46,7 +46,11 @@ export const PortableBody: PortableTextComponents = {
           className="w-full rounded-xs"
         />
         {value?.alt ? (
-          <figcaption className="mt-3 font-sans text-xs text-current/60">
+          // Not `text-current/60`: every consumer already wraps this in
+          // `text-ink-muted` (65% ink), so 60% of that is 39% ink — about
+          // 2.4:1 on paper. `text-ink-faint` is solved against the same ground
+          // and holds 4.53:1.
+          <figcaption className="mt-3 font-sans text-xs text-ink-faint">
             {value.alt}
           </figcaption>
         ) : null}

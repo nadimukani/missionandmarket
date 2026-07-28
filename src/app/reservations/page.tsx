@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import { HoursList, TextLink } from '@/components/ui'
+import { HoursList, Shell, TextLink } from '@/components/ui'
 
 import { PageHeader } from '@/components/page-header'
 import { ReserveForm } from '@/components/reserve-form'
@@ -44,8 +44,8 @@ export default async function ReservationsPage() {
         )}
       </PageHeader>
 
-      <div className="mx-auto max-w-5xl px-5 py-16 lg:px-8 lg:py-24">
-        <div className="grid gap-12 md:grid-cols-3">
+      <Shell className="band">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(16rem,1fr))] gap-12">
           <section>
             <h2 className="eyebrow text-brass">Large parties</h2>
             <p className="mt-4 font-sans text-sm leading-relaxed text-ink-muted">
@@ -95,7 +95,7 @@ export default async function ReservationsPage() {
             </div>
           </section>
         </div>
-      </div>
+      </Shell>
     </>
   )
 }

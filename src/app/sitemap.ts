@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next'
 
-import { SITE_URL } from '@/lib/site'
+import { CMS_ROUTED_SLUGS, SITE_URL } from '@/lib/site'
 import { getMenuList, getPageSlugs } from '@/sanity/queries'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -29,10 +29,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'weekly' as const,
       priority: 0.9,
     })),
-    ...pageSlugs.map((slug) => ({
-      url: `${SITE_URL}/${slug}`,
-      changeFrequency: 'monthly' as const,
-      priority: 0.6,
-    })),
+    // Only the CMS pages that have a route. A slug the client invents in the
+    // Studio has no page to serve, so listing it would submit a 404.
+    ...pageSlugs
+      .filter((slug) =>
+        (CMS_ROUTED_SLUGS as readonly string[]).includes(slug),
+      )
+      .map((slug) => ({
+        url: `${SITE_URL}/${slug}`,
+        changeFrequency: 'monthly' as const,
+        priority: 0.6,
+      })),
   ]
 }

@@ -2,6 +2,7 @@ import { PortableText } from 'next-sanity'
 
 import { PortableBody } from '@/components/portable-body'
 import { SanityImage } from '@/components/sanity-image'
+import { Shell } from '@/components/ui'
 import { SITE_URL } from '@/lib/site'
 import type { Person } from '@/sanity/types'
 
@@ -92,7 +93,7 @@ export function TeamSection({ team }: { team: Person[] }) {
   const rest = team.filter((p) => !p.featured)
 
   return (
-    <section className="mx-auto max-w-[88rem] px-5 py-20 lg:px-10 lg:py-28">
+    <Shell className="band-lg">
       <div className="space-y-24">
         {featured.map((person) => (
           <FeaturedPerson key={person._id} person={person} />
@@ -104,7 +105,7 @@ export function TeamSection({ team }: { team: Person[] }) {
           <h2 className="mt-24 font-display text-3xl font-light text-ink lg:text-4xl">
             The team
           </h2>
-          <ul className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10">
+          <ul className="mt-10 grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-8 lg:gap-10">
             {rest.map((person) => (
               <CompactPerson key={person._id} person={person} />
             ))}
@@ -113,7 +114,7 @@ export function TeamSection({ team }: { team: Person[] }) {
       ) : null}
 
       <TeamJsonLd team={team} />
-    </section>
+    </Shell>
   )
 }
 

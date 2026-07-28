@@ -33,6 +33,9 @@ export function ReserveBar({ settings }: { settings: SiteSettings | null }) {
 
   return (
     <div
+      // Marked so the header can make it inert alongside #main and the footer
+      // while the mobile sheet is open — it is a fixed sibling of both.
+      data-reserve-bar=""
       className={`fixed inset-x-0 bottom-0 z-40 border-t border-cream/10 bg-ink/95
                   backdrop-blur-md transition-transform duration-300 ease-[var(--ease-out-soft)]
                   lg:hidden ${visible ? 'translate-y-0' : 'translate-y-full'}`}

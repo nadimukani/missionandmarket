@@ -15,6 +15,15 @@ export const NAV_LINKS = [
   { href: '/contact', label: 'Visit' },
 ] as const
 
+/**
+ * CMS `page` documents that have a hand-written route. There is no
+ * `app/[slug]/page.tsx` catch-all, but the Studio offers the client a "Pages"
+ * list and invites them to create more — so the sitemap has to advertise only
+ * the slugs that actually resolve, or the first page they publish gets
+ * submitted to Google as a 404.
+ */
+export const CMS_ROUTED_SLUGS = ['about', 'private-events'] as const
+
 export function telHref(phone?: string) {
   return phone ? `tel:${phone.replace(/[^\d+]/g, '')}` : undefined
 }

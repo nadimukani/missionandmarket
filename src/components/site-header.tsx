@@ -44,6 +44,19 @@ export function SiteHeader({ settings }: { settings: SiteSettings | null }) {
     }
   }, [open])
 
+  // Close when the layout crosses into the desktop breakpoint. Without this
+  // an iPad opened in portrait and rotated to landscape is left scroll-locked
+  // and fully inert with nothing able to clear it: the hamburger is the only
+  // control that can close the sheet and it is `lg:hidden`, so at that width
+  // it is display:none and unfocusable.
+  useEffect(() => {
+    const desktop = window.matchMedia('(min-width: 64rem)')
+    const sync = () => desktop.matches && setOpen(false)
+    sync()
+    desktop.addEventListener('change', sync)
+    return () => desktop.removeEventListener('change', sync)
+  }, [])
+
   useEffect(() => {
     if (!open) return
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false)
@@ -54,11 +67,21 @@ export function SiteHeader({ settings }: { settings: SiteSettings | null }) {
   // Publish where the header actually ends so the sheet can size itself even
   // when the notice banner is above it.
   const headerRef = useRef<HTMLElement>(null)
+  const lastBottom = useRef<number>(-1)
   useEffect(() => {
     const el = headerRef.current
     if (!el) return
     const publish = () => {
-      const bottom = el.getBoundingClientRect().bottom
+      // Only write when the value actually changes. Setting a custom property
+      // on documentElement invalidates style for the whole document, and the
+      // page now carries scroll-driven animations whose timelines are
+      // re-evaluated on that invalidation — so writing it on every scroll
+      // event turned each frame into a full-document style recalc and pegged
+      // the main thread. The header is sticky, so once any notice banner has
+      // scrolled away this settles and stops writing entirely.
+      const bottom = Math.round(el.getBoundingClientRect().bottom)
+      if (bottom === lastBottom.current) return
+      lastBottom.current = bottom
       document.documentElement.style.setProperty('--header-bottom', `${bottom}px`)
     }
     publish()
@@ -74,7 +97,14 @@ export function SiteHeader({ settings }: { settings: SiteSettings | null }) {
   // wander onto content the guest cannot see (WCAG 2.4.3).
   useEffect(() => {
     if (typeof document === 'undefined') return
-    const behind = [document.getElementById('main'), document.querySelector('footer')]
+    // The reserve bar is a fixed sibling rendered after the footer, so it is
+    // not covered by #main or <footer>. Left out, Tab past the last link in
+    // the sheet lands on "Reserve a table" underneath it.
+    const behind = [
+      document.getElementById('main'),
+      document.querySelector('footer'),
+      document.querySelector('[data-reserve-bar]'),
+    ]
     for (const el of behind) {
       if (!el) continue
       if (open) el.setAttribute('inert', '')
@@ -94,7 +124,7 @@ export function SiteHeader({ settings }: { settings: SiteSettings | null }) {
         solid ? 'bg-ink/95 backdrop-blur-md' : 'bg-transparent'
       }`}
     >
-      <div className="mx-auto flex h-header max-w-[88rem] items-center justify-between gap-8 px-5 lg:px-10">
+      <div className="rail flex h-header items-center justify-between gap-8">
         <Link
           href="/"
           aria-label={`${settings?.name ?? 'Mission + Market'} — home`}
@@ -115,7 +145,7 @@ export function SiteHeader({ settings }: { settings: SiteSettings | null }) {
                 href={link.href}
                 aria-current={active ? 'page' : undefined}
                 className={`font-sans text-[0.8125rem] tracking-wide transition-colors
-                            hover:text-cream ${
+                            duration-200 ease-out-soft hover:text-cream ${
                               active ? 'text-cream' : 'text-cream-muted'
                             }`}
               >
@@ -130,7 +160,7 @@ export function SiteHeader({ settings }: { settings: SiteSettings | null }) {
             {settings?.phone ? (
               <a
                 href={telHref(settings.phone)}
-                className="block font-sans text-[0.8125rem] text-cream-muted transition-colors hover:text-cream"
+                className="block font-sans text-[0.8125rem] text-cream-muted transition-colors duration-200 ease-out-soft hover:text-cream"
               >
                 {settings.phone}
               </a>

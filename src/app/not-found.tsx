@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
   return (
-    <div className="mx-auto flex max-w-xl flex-col items-center px-5 py-32 text-center lg:py-48">
+    <div className="measure band-lg flex flex-col items-center text-center">
       <p className="eyebrow text-brass">404</p>
       <h1 className="mt-4 font-display text-4xl text-ink">
         We couldn&rsquo;t find that page
@@ -21,13 +21,13 @@ export default function NotFound() {
       <div className="mt-10 flex flex-wrap justify-center gap-3">
         <Link
           href="/menus"
-          className="rounded-xs bg-ink px-7 py-3.5 font-sans text-sm font-medium text-cream transition-colors hover:bg-moss"
+          className="rounded-xs bg-ink px-7 py-3.5 font-sans text-sm font-medium text-cream transition-colors duration-200 ease-out-soft hover:bg-moss"
         >
           View menus
         </Link>
         <Link
           href="/reservations"
-          className="rounded-xs border border-ink/25 px-7 py-3.5 font-sans text-sm font-medium text-ink transition-colors hover:border-ink"
+          className="rounded-xs border border-ink/25 px-7 py-3.5 font-sans text-sm font-medium text-ink transition-colors duration-200 ease-out-soft hover:border-ink"
         >
           Reserve a table
         </Link>

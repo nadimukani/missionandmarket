@@ -37,12 +37,17 @@ export function TextLink({
   external?: boolean
   className?: string
 }) {
+  // The rule resolving is the more refined affordance than the text moving:
+  // the underline starts held back and comes up to full strength on hover,
+  // while the colour stays above AA at both ends.
   const styles =
     tone === 'dark'
-      ? 'text-brass-ondark hover:text-cream'
-      : 'text-brass hover:text-ink'
+      ? 'text-brass-ondark decoration-brass-ondark/40 hover:text-cream hover:decoration-cream'
+      : 'text-brass decoration-brass/35 hover:text-ink hover:decoration-brass'
 
-  const classes = `font-sans underline underline-offset-4 transition-colors ${styles} ${className}`
+  const classes =
+    'font-sans underline underline-offset-4 transition-[color,text-decoration-color] ' +
+    `duration-300 ease-out-soft ${styles} ${className}`
 
   if (!href) return <span className={className}>{children}</span>
 
@@ -82,25 +87,37 @@ export function ButtonLink({
   variant = 'primary',
   external,
   className = '',
+  ariaLabel,
 }: {
   href: string
   children: React.ReactNode
   variant?: ButtonVariant
   external?: boolean
   className?: string
+  /** For repeated CTAs — six "Apply" links need six distinct names. */
+  ariaLabel?: string
 }) {
+  // Colour only — no lift, no scale. A call to action that jumps under the
+  // cursor reads as a landing page, not a restaurant.
   const classes =
     'inline-flex items-center justify-center rounded-xs px-8 py-3.5 text-center ' +
-    `font-sans text-sm font-medium tracking-wide transition-colors ${BUTTON_STYLES[variant]} ${className}`
+    'font-sans text-sm font-medium tracking-wide transition-colors duration-200 ' +
+    `ease-out-soft ${BUTTON_STYLES[variant]} ${className}`
 
   const isExternal = external ?? href.startsWith('http')
 
   return isExternal ? (
-    <a href={href} target="_blank" rel="noopener noreferrer" className={classes}>
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={ariaLabel}
+      className={classes}
+    >
       {children}
     </a>
   ) : (
-    <Link href={href} className={classes}>
+    <Link href={href} aria-label={ariaLabel} className={classes}>
       {children}
     </Link>
   )
@@ -173,9 +190,16 @@ export function HoursList({
 }
 
 /**
- * The page shell. Every full-width band routes through this so the header,
- * footer, notice banner and page content share one rail — three of them had
- * drifted to a narrower `max-w-7xl` and no longer lined up.
+ * The page shell. Every band-aligned surface routes through this so the
+ * header, notice banner, footer, page mastheads and page bodies share one
+ * rail.
+ *
+ * This existed before and claimed to have fixed exactly that, but was used
+ * in two places against twenty-four hand-rolled containers — so the site
+ * still ran six widths and two gutters, and every interior page's masthead
+ * sat on a different left edge from its own body. The rail is now a single
+ * CSS utility (`rail`, globals.css) rather than a class string that has to
+ * be re-typed correctly each time.
  */
 export function Shell({
   children,
@@ -184,9 +208,23 @@ export function Shell({
   children: React.ReactNode
   className?: string
 }) {
-  return (
-    <div className={`mx-auto w-full max-w-[88rem] px-5 lg:px-10 ${className}`}>
-      {children}
-    </div>
-  )
+  return <div className={`rail ${className}`}>{children}</div>
+}
+
+/**
+ * Long-form reading column — CMS bodies, job and press listings, the 404.
+ *
+ * The cap is on the content and the gutter sits outside it, so the measure
+ * holds near 72 characters at any viewport. The old `max-w-3xl` minus its
+ * padding came out at ~88 characters, which is past the point where the eye
+ * loses the start of the next line.
+ */
+export function Measure({
+  children,
+  className = '',
+}: {
+  children: React.ReactNode
+  className?: string
+}) {
+  return <div className={`measure ${className}`}>{children}</div>
 }

@@ -1,10 +1,7 @@
 import { notFound } from 'next/navigation'
-import { PortableText } from 'next-sanity'
 
-import { cmsPageMetadata } from '@/components/cms-page'
+import { CmsBody, CmsHero, cmsPageMetadata } from '@/components/cms-page'
 import { PageHeader } from '@/components/page-header'
-import { PortableBody } from '@/components/portable-body'
-import { SanityImage } from '@/components/sanity-image'
 import { TeamSection } from '@/components/team-section'
 import { getPage, getTeam } from '@/sanity/queries'
 
@@ -23,26 +20,12 @@ export default async function AboutPage() {
     <>
       <PageHeader eyebrow="Our story" title={page.title} intro={page.intro} />
 
-      {page.heroImage ? (
-        <div className="mx-auto max-w-[88rem] px-5 lg:px-10">
-          <div className="-mt-10 aspect-16/7 overflow-hidden rounded-xs lg:-mt-14">
-            <SanityImage
-              image={page.heroImage}
-              width={2000}
-              height={875}
-              priority
-              sizes="(min-width: 1408px) 1328px, 100vw"
-              className="h-full w-full object-cover"
-            />
-          </div>
-        </div>
-      ) : null}
-
-      {page.body?.length ? (
-        <div className="mx-auto max-w-3xl px-5 py-16 font-sans text-base text-ink-muted lg:px-10 lg:py-24">
-          <PortableText value={page.body} components={PortableBody} />
-        </div>
-      ) : null}
+      {/* Composed from the same pieces as every other CMS page rather than a
+          hand-copy of them: the two forks had drifted to different rails,
+          different gutters and different `sizes` attributes for what is the
+          same element. */}
+      {page.heroImage ? <CmsHero image={page.heroImage} /> : null}
+      {page.body?.length ? <CmsBody body={page.body} /> : null}
 
       {/* The kitchen is the reason people come — it gets its own band rather
           than a paragraph buried in the story copy. */}

@@ -70,12 +70,17 @@ export function MenuView({ menu }: { menu: Menu }) {
         </p>
       ) : null}
 
-      {/* Two columns on wide screens reads like a printed menu and halves the
-          scroll depth; sections never split across the gap. */}
-      <div className="mt-14 gap-x-16 lg:columns-2">
-        {menu.sections?.map((section) => (
+      {/* Reads like a printed menu and halves the scroll depth; sections never
+          split across the gap. The column COUNT follows from a target column
+          width rather than being fixed at two, so a wide display gets a third
+          column instead of two very long ones. */}
+      <div className="mt-14 columns-[26rem] gap-x-16">
+        {/* Keyed by index, not by title: two sections named"Sides", or two
+            dishes both called"Market Fish", are ordinary on a real menu and
+            produced duplicate React keys. */}
+        {menu.sections?.map((section, s) => (
           <section
-            key={section.title}
+            key={`${section.title}-${s}`}
             className="mb-14 break-inside-avoid-column"
           >
             <h2 className="eyebrow border-b border-ink/15 pb-3 text-brass">
@@ -87,8 +92,8 @@ export function MenuView({ menu }: { menu: Menu }) {
               </p>
             ) : null}
             <ul className="mt-6 space-y-6">
-              {section.items?.map((item) => (
-                <Dish key={item.name} item={item} />
+              {section.items?.map((item, i) => (
+                <Dish key={`${item.name}-${i}`} item={item} />
               ))}
             </ul>
           </section>

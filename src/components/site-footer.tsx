@@ -22,7 +22,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings | null }) {
     // making them unreachable — the page cannot scroll past its own end.
     // This clears the bar's height plus the iOS home indicator.
     <footer className="bg-ink pb-[calc(6rem+env(safe-area-inset-bottom))] text-cream-muted lg:pb-0">
-      <Shell className="py-16 lg:py-20">
+      <Shell className="band">
         <div className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-5">
           <div className="sm:col-span-2 lg:col-span-1">
             <p className="font-display text-2xl text-cream">

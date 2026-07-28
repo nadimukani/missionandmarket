@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import { HoursList, TextLink } from '@/components/ui'
+import { HoursList, Shell, TextLink } from '@/components/ui'
 
 import { PageHeader } from '@/components/page-header'
 import { formatAddress, telHref } from '@/lib/site'
@@ -32,7 +32,7 @@ export default async function ContactPage() {
         intro={settings?.neighborhood ? `${settings.neighborhood}, Atlanta` : undefined}
       />
 
-      <div className="mx-auto max-w-7xl px-5 py-16 lg:px-8 lg:py-24">
+      <Shell className="band">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-20">
           <div className="space-y-10">
             <section>
@@ -104,7 +104,7 @@ export default async function ContactPage() {
               </div>
             </section>
             {/* No reserve button here — the persistent header and the sticky
-                mobile bar already carry "Reserve a table", and repeating it in
+                mobile bar already carry a Reserve control, and repeating it in
                 the body just doubled the same control on one screen. */}
           </div>
 
@@ -120,7 +120,7 @@ export default async function ContactPage() {
             </div>
           ) : null}
         </div>
-      </div>
+      </Shell>
     </>
   )
 }

@@ -3,6 +3,7 @@
 import { useMemo, useState, useSyncExternalStore } from 'react'
 
 import { TextLink } from '@/components/ui'
+import { telHref } from '@/lib/site'
 
 import {
   buildReservationUrl,
@@ -78,7 +79,12 @@ export function ReserveForm({
         }}
         className="grid grid-cols-2 gap-3 sm:grid-cols-4"
       >
-        {/* Carried by the plain GET when JavaScript has not run. */}
+        {/* Carried by the plain GET when JavaScript has not run.
+            Date and time are deliberately NOT named, so they are not
+            submitted: OpenTable takes a single combined `datetime`, and
+            without JS there is nothing to combine them with — the date select
+            has no value until it hydrates. Sending `date=&time=19:00` looked
+            like a prefill and was simply ignored. Party size does carry. */}
         <input type="hidden" name="rid" value={rid} />
         <input type="hidden" name="restref" value={rid} />
         <input type="hidden" name="lang" value="en-US" />
@@ -109,7 +115,6 @@ export function ReserveForm({
         <label className="flex flex-col gap-1.5">
           <span className="eyebrow text-cream-muted">Date</span>
           <select
-            name="date"
             value={date}
             onChange={(e) => setPickedDate(e.target.value)}
             className={selectClass}
@@ -129,7 +134,6 @@ export function ReserveForm({
         <label className="col-span-2 flex flex-col gap-1.5 sm:col-span-1">
           <span className="eyebrow text-cream-muted">Time</span>
           <select
-            name="time"
             value={time}
             onChange={(e) => setTime(e.target.value)}
             className={selectClass}
@@ -143,14 +147,31 @@ export function ReserveForm({
         </label>
 
         <div className="col-span-2 flex flex-col justify-end sm:col-span-1">
-          <button
-            type="submit"
-            className="w-full cursor-pointer rounded-xs bg-brass-button px-5 py-3 font-sans text-sm
-                       font-medium tracking-wide text-cream transition-colors
-                       hover:bg-brass-button-hover"
-          >
-            Find a table
-          </button>
+          {/* Over the online cap the button becomes the phone. Previously the
+              copy said "please call" while the button stayed live and sent the
+              guest to OpenTable with partysize=9 — a booking OpenTable would
+              refuse, discovered two screens later. */}
+          {isLargeParty && phone ? (
+            <a
+              href={telHref(phone)}
+              className="flex w-full items-center justify-center rounded-xs bg-brass-button px-5 py-3
+                         font-sans text-sm font-medium tracking-wide text-cream transition-colors
+                         duration-200 ease-out-soft hover:bg-brass-button-hover"
+            >
+              Call {phone}
+            </a>
+          ) : (
+            <button
+              type="submit"
+              disabled={isLargeParty}
+              className="w-full cursor-pointer rounded-xs bg-brass-button px-5 py-3 font-sans text-sm
+                         font-medium tracking-wide text-cream transition-colors duration-200
+                         ease-out-soft hover:bg-brass-button-hover
+                         disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Find a table
+            </button>
+          )}
         </div>
       </form>
 
@@ -160,7 +181,7 @@ export function ReserveForm({
             {largePartyNote ??
               `For parties over ${MAX_ONLINE_PARTY}, please call us`}{' '}
             {phone ? (
-              <TextLink href={`tel:${phone.replace(/[^\d+]/g, '')}`} tone="dark">
+              <TextLink href={telHref(phone)} tone="dark">
                 {phone}
               </TextLink>
             ) : null}

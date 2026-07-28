@@ -60,6 +60,27 @@
 
   /* Header height — the hero pulls itself up by exactly this. */
   --spacing-header: 5.5rem;
+
+  /* --- Layout -----------------------------------------------------------
+   * Two rails, and only two. Before this the site had six widths (1408 /
+   * 1280 / 1152 / 1024 / 768 / 576) crossed with two desktop gutters that
+   * did not correlate with width, so every interior page's masthead sat on
+   * a different rail from its own body.
+   *
+   * Both are fluid. `lg:` (1024px) used to be the last responsive step in
+   * the codebase, which meant a 3440px display rendered identically to a
+   * laptop with a thousand dead pixels down each side. The clamps below are
+   * tuned to reproduce the old fixed values almost exactly at 1024 — the
+   * gutter lands on 40.8px against the old `lg:px-10` — so this widens the
+   * site above a laptop without redesigning it below one. */
+  --gutter: clamp(1.25rem, 0.5rem + 3.2vw, 6rem);
+  --container-rail: 108rem;    /* 1728 — band-aligned surfaces             */
+  --container-measure: 40rem;  /* 640 ≈ 72ch — long-form reading           */
+
+  /* Vertical rhythm, likewise fluid. Proportion is what makes a wide page
+   * feel considered rather than merely stretched. */
+  --section: clamp(4rem, 1rem + 4.5vw, 9rem);
+  --section-lg: clamp(5rem, 1rem + 6vw, 12rem);
 }
 
 @layer base {
@@ -76,9 +97,26 @@
     *,
     *::before,
     *::after {
+      /* `animation-timeline: auto` is the load-bearing line, and it is not
+       * belt-and-braces. On a scroll-driven animation the spec says any
+       * <time> duration is re-read as `auto` — "the duration necessary to
+       * fill the timeline" (css-animations-2 § animation-duration). So the
+       * 0.01ms below is normatively IGNORED by a view() timeline and the
+       * motion plays in full. Returning the animation to the document
+       * timeline first makes it time-based again, at which point 0.01ms
+       * genuinely ends it on the first frame and `fill-mode: both` resolves
+       * the element to its final, visible state.
+       *
+       * `animation-delay: 0s` matters for the same reason: with the duration
+       * crushed but a delay intact, fill-mode would hold an element at its
+       * opacity-0 start frame for the whole delay and then pop it in —
+       * worse than the animation it was meant to remove. */
+      animation-timeline: auto !important;
       animation-duration: 0.01ms !important;
+      animation-delay: 0s !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
+      transition-delay: 0s !important;
     }
   }
 
@@ -150,4 +188,117 @@
 
 @utility text-balance-none {
   text-wrap: initial;
+}
+
+/* --------------------------------------------------------------- Layout */
+
+/** Band-aligned surfaces: header, notice, footer, page mastheads, every
+ *  full-width section. One rail, so a masthead and the body beneath it can
+ *  never again sit on different left edges. */
+@utility rail {
+  margin-inline: auto;
+  width: 100%;
+  max-width: var(--container-rail);
+  padding-inline: var(--gutter);
+}
+
+/** Long-form reading. The cap is on the CONTENT, with the gutter added
+ *  outside it, so the measure holds at ~72ch whether the viewport is 390px
+ *  or 3440px. */
+@utility measure {
+  margin-inline: auto;
+  width: 100%;
+  max-width: calc(var(--container-measure) + 2 * var(--gutter));
+  padding-inline: var(--gutter);
+}
+
+@utility band {
+  padding-block: var(--section);
+}
+
+@utility band-lg {
+  padding-block: var(--section-lg);
+}
+
+/* --------------------------------------------------------------- Motion */
+
+/*
+ * Deliberately small. Two mechanisms, no JavaScript, nothing that moves
+ * more than 14px: a load-in stagger for the top of every page, and a slow
+ * cross-fade between hero photographs.
+ *
+ * A third — revealing each section as it scrolls into view — was built,
+ * measured and removed. Both implementations failed the same way, by leaving
+ * sections permanently invisible:
+ *
+ *   1. CSS `animation-timeline: view()`. The ViewTimeline attached but never
+ *      activated (`animation.currentTime` was null on every subject), and
+ *      with seventeen subjects a programmatic scroll froze the renderer for
+ *      over 45s — disabling only those rules took the same scroll to 3ms.
+ *      Firefox has no stable support for it either.
+ *   2. A JS observer. Position had to be tested rather than intersection
+ *      state, because a jump from 0 to 2000px moved a section from below the
+ *      viewport to above it inside one frame and crossed no threshold; and
+ *      hiding via a root class fought hydration. It never reliably ran.
+ *
+ * If it is revisited, the bar is: content must be visible when the mechanism
+ * does not run, and it must survive an anchor jump and a restored scroll
+ * position. Do not ship it without testing both.
+ *
+ * The resting state is ALWAYS the visible state — no rule anywhere sets
+ * opacity: 0 statically. Hidden is only ever a keyframe's `from`. So every
+ * failure mode (unsupported browser, print, CSS loaded but animation
+ * blocked) resolves to "the content is simply there", which is why this
+ * needs no client component and cannot strand content invisible the way an
+ * IntersectionObserver reveal can.
+ *
+ * Three gates, all fail-visible:
+ *   1. resting state is visible
+ *   2. everything sits inside prefers-reduced-motion: no-preference
+ *   3. scroll-driven rules additionally sit behind @supports
+ *
+ * NOTE for future edits: Tailwind's `animate-*` utilities emit the
+ * `animation` shorthand, which clobbers animation-timeline and is the sole
+ * owner of animation-range. Putting any `animate-*` class on a `.reveal`
+ * element silently disables the reveal.
+ */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--rise, 12px));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@layer components {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Above the fold. Time-based, not scroll-driven: the hero is already
+       fully in view at first paint, so a view() timeline would be past its
+       range and would never play. */
+    .load-in {
+      animation: rise-in 760ms var(--ease-out-soft) both;
+      animation-delay: var(--load-delay, 0ms);
+    }
+
+    /* Hero cross-fade. Keyframe percentages are generated per image count in
+       hero-images.tsx; the timing lives here. Frames after the first rest at
+       opacity 0, so with no animation attached the hero is simply the first
+       photograph — never an empty box. */
+    .hero-frame {
+      animation: mm-hero var(--cycle) linear infinite both;
+      animation-delay: calc(var(--i) * -7s);
+    }
+  }
 }

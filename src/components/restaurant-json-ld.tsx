@@ -19,8 +19,11 @@ const DAY_URIS: Record<string, string> = {
  */
 export function RestaurantJsonLd({
   settings,
+  menuUrl,
 }: {
   settings: SiteSettings | null
+  /** Absolute URL of a menu page that actually resolves 200. */
+  menuUrl?: string
 }) {
   if (!settings) return null
 
@@ -60,7 +63,9 @@ export function RestaurantJsonLd({
         }
       : undefined,
     hasMap: settings.mapsUrl,
-    menu: `${SITE_URL}/menus`,
+    // Not /menus — that 307s to the first menu, and advertising a redirect as
+    // the canonical menu URL is the same mistake the sitemap already avoids.
+    menu: menuUrl,
     openingHoursSpecification: openingHours?.length ? openingHours : undefined,
     sameAs: settings.social?.map((s) => s.url).filter(Boolean),
     acceptsReservations: settings.openTableUrl ?? true,

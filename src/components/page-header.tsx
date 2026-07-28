@@ -14,20 +14,22 @@ export function PageHeader({
   children?: React.ReactNode
 }) {
   return (
-    <div className="bg-ink pt-10 pb-16 lg:pt-16 lg:pb-24">
+    <div className="band-lg bg-ink">
       <Shell className="text-center">
         {eyebrow ? (
-          <p className="eyebrow text-brass-ondark">{eyebrow}</p>
+          <p className="eyebrow load-in text-brass-ondark">{eyebrow}</p>
         ) : null}
-        <h1 className="mt-4 font-display text-4xl text-cream lg:text-6xl">
+        <h1 className="load-in mt-4 font-display text-4xl text-cream [--load-delay:80ms] lg:text-6xl">
           {title}
         </h1>
         {intro ? (
-          <p className="mx-auto mt-5 max-w-2xl font-sans text-base leading-relaxed text-cream-muted">
+          <p className="load-in mx-auto mt-5 max-w-[40rem] font-sans text-base leading-relaxed text-cream-muted [--load-delay:160ms]">
             {intro}
           </p>
         ) : null}
-        {children}
+        {children ? (
+          <div className="load-in [--load-delay:240ms]">{children}</div>
+        ) : null}
       </Shell>
     </div>
   )

@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 
 import { PageHeader } from '@/components/page-header'
+import { SanityImage } from '@/components/sanity-image'
+import { Measure } from '@/components/ui'
 import { getPress } from '@/sanity/queries'
 
 export const metadata: Metadata = {
@@ -33,10 +35,21 @@ export default async function PressPage() {
       />
 
       {items.length ? (
-        <div className="mx-auto max-w-3xl px-5 py-16 lg:px-8 lg:py-24">
+        <Measure className="band">
           <ul className="divide-y divide-rule">
             {items.map((item) => (
               <li key={item._id} className="py-8 first:pt-0">
+                {/* The Studio offers a Publication logo field and the query
+                    has always selected it; nothing rendered it, so an uploaded
+                    masthead appeared in the Studio preview and nowhere else. */}
+                {item.logo ? (
+                  <SanityImage
+                    image={item.logo}
+                    width={320}
+                    alt={item.publication ? `${item.publication} logo` : ''}
+                    className="mb-4 h-8 w-auto opacity-70"
+                  />
+                ) : null}
                 <p className="eyebrow text-brass">
                   {[item.publication, formatDate(item.date)]
                     .filter(Boolean)
@@ -64,7 +77,7 @@ export default async function PressPage() {
               </li>
             ))}
           </ul>
-        </div>
+        </Measure>
       ) : null}
     </>
   )

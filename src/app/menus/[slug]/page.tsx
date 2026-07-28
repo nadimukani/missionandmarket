@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 
-import { ButtonLink } from '@/components/ui'
+import { ButtonLink, Shell } from '@/components/ui'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
@@ -72,7 +72,7 @@ export default async function MenuPage({ params }: Props) {
         ) : null}
       </PageHeader>
 
-      <div className="mx-auto max-w-6xl px-5 py-16 lg:px-8 lg:py-24">
+      <Shell className="band">
         <MenuView menu={menu} />
         <MenuJsonLd menu={menu} />
 
@@ -91,13 +91,13 @@ export default async function MenuPage({ params }: Props) {
               rel="noopener noreferrer"
               className="w-full rounded-xs border border-ink/25 px-8 py-3.5 text-center
                          font-sans text-sm font-medium text-ink transition-colors
-                         hover:border-ink sm:w-auto"
+                         duration-200 ease-out-soft hover:border-ink sm:w-auto"
             >
               Order takeout
             </a>
           ) : null}
         </div>
-      </div>
+      </Shell>
     </>
   )
 }
