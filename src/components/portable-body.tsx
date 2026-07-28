@@ -43,7 +43,7 @@ export const PortableBody: PortableTextComponents = {
           image={value}
           width={1400}
           sizes="(min-width: 1024px) 60vw, 100vw"
-          className="w-full rounded-xs"
+          className="w-full"
         />
         {value?.alt ? (
           // Not `text-current/60`: every consumer already wraps this in

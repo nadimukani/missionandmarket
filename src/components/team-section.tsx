@@ -22,7 +22,7 @@ function FeaturedPerson({ person }: { person: Person }) {
     <article className="grid items-center gap-12 lg:grid-cols-[minmax(0,0.85fr)_1fr] lg:gap-20">
       {person.portrait ? (
         <div className="relative">
-          <div className="aspect-4/5 overflow-hidden rounded-xs bg-paper-warm">
+          <div className="aspect-4/5 overflow-hidden bg-paper-warm">
             <SanityImage
               image={person.portrait}
               width={1100}
@@ -68,7 +68,7 @@ function CompactPerson({ person }: { person: Person }) {
   return (
     <li>
       {person.portrait ? (
-        <div className="aspect-4/5 overflow-hidden rounded-xs bg-paper-warm">
+        <div className="aspect-4/5 overflow-hidden bg-paper-warm">
           <SanityImage
             image={person.portrait}
             width={700}

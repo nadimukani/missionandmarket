@@ -100,8 +100,8 @@ export function ButtonLink({
   // Colour only — no lift, no scale. A call to action that jumps under the
   // cursor reads as a landing page, not a restaurant.
   const classes =
-    'inline-flex items-center justify-center rounded-xs px-8 py-3.5 text-center ' +
-    'font-sans text-sm font-medium tracking-wide transition-colors duration-200 ' +
+    'inline-flex items-center justify-center px-9 py-4 text-center ' +
+    'font-sans text-xs font-medium uppercase tracking-[0.16em] transition-colors duration-200 ' +
     `ease-out-soft ${BUTTON_STYLES[variant]} ${className}`
 
   const isExternal = external ?? href.startsWith('http')

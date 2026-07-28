@@ -26,7 +26,7 @@ type Props = {
 const MAX_ONLINE_PARTY = 8
 
 const selectClass =
-  'w-full appearance-none rounded-xs border border-cream/40 bg-transparent ' +
+  'w-full appearance-none border border-cream/40 bg-transparent ' +
   // 16px on touch widths: iOS Safari auto-zooms the whole page when a focused
   // control is under 16px, which throws the guest out of the booking flow.
   'px-3 py-3 font-sans text-base text-cream transition-colors sm:text-sm ' +
@@ -154,7 +154,7 @@ export function ReserveForm({
           {isLargeParty && phone ? (
             <a
               href={telHref(phone)}
-              className="flex w-full items-center justify-center rounded-xs bg-brass-button px-5 py-3
+              className="flex w-full items-center justify-center bg-brass-button px-5 py-3
                          font-sans text-sm font-medium tracking-wide text-cream transition-colors
                          duration-200 ease-out-soft hover:bg-brass-button-hover"
             >
@@ -164,7 +164,7 @@ export function ReserveForm({
             <button
               type="submit"
               disabled={isLargeParty}
-              className="w-full cursor-pointer rounded-xs bg-brass-button px-5 py-3 font-sans text-sm
+              className="w-full cursor-pointer bg-brass-button px-5 py-3 font-sans text-sm
                          font-medium tracking-wide text-cream transition-colors duration-200
                          ease-out-soft hover:bg-brass-button-hover
                          disabled:cursor-not-allowed disabled:opacity-50"

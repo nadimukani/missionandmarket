@@ -34,7 +34,7 @@ export default async function SpecialsPage() {
             {specials.map((special) => (
               <li
                 key={special._id}
-                className="flex flex-col overflow-hidden rounded-xs border border-rule"
+                className="flex flex-col border-t border-ink/25 pt-6"
               >
                 {special.image ? (
                   <div className="aspect-16/9 overflow-hidden bg-ink/5">
@@ -48,7 +48,7 @@ export default async function SpecialsPage() {
                   </div>
                 ) : null}
 
-                <div className="flex flex-1 flex-col p-7">
+                <div className="flex flex-1 flex-col pt-6">
                   {special.schedule ? (
                     <p className="eyebrow text-brass">{special.schedule}</p>
                   ) : null}

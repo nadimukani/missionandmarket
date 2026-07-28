@@ -74,7 +74,7 @@ export default async function RootLayout({
       <body className="flex min-h-dvh flex-col bg-paper text-ink">
         <a
           href="#main"
-          className="sr-only rounded-xs bg-ink px-4 py-2 text-cream focus:not-sr-only
+          className="sr-only bg-ink px-4 py-2 text-cream focus:not-sr-only
                      focus:absolute focus:top-3 focus:left-3 focus:z-100"
         >
           Skip to content

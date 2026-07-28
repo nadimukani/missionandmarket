@@ -21,13 +21,13 @@ export default function NotFound() {
       <div className="mt-10 flex flex-wrap justify-center gap-3">
         <Link
           href="/menus"
-          className="rounded-xs bg-ink px-7 py-3.5 font-sans text-sm font-medium text-cream transition-colors duration-200 ease-out-soft hover:bg-moss"
+          className="bg-ink px-7 py-3.5 font-sans text-sm font-medium text-cream transition-colors duration-200 ease-out-soft hover:bg-moss"
         >
           View menus
         </Link>
         <Link
           href="/reservations"
-          className="rounded-xs border border-ink/25 px-7 py-3.5 font-sans text-sm font-medium text-ink transition-colors duration-200 ease-out-soft hover:border-ink"
+          className="border border-ink/25 px-7 py-3.5 font-sans text-sm font-medium text-ink transition-colors duration-200 ease-out-soft hover:border-ink"
         >
           Reserve a table
         </Link>

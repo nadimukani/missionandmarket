@@ -34,7 +34,7 @@ export default async function GalleryPage() {
             {images.map((item) => (
               <figure
                 key={item._id}
-                className="break-inside-avoid overflow-hidden rounded-xs bg-ink/5"
+                className="break-inside-avoid overflow-hidden bg-ink/5"
               >
                 <SanityImage
                   image={item.image}

@@ -119,7 +119,7 @@ export default async function HomePage() {
 
           {/* ------------------------------------------------------- 2. Book */}
           {settings?.openTableRid ? (
-            <div className="load-in mt-8 max-w-3xl rounded-xs border border-cream/15 bg-ink/75 p-5 backdrop-blur-md [--load-delay:260ms] lg:mt-12 lg:p-6">
+            <div className="load-in mt-8 max-w-3xl border border-cream/15 bg-ink/75 p-5 backdrop-blur-md [--load-delay:260ms] lg:mt-12 lg:p-6">
               <ReserveForm
                 rid={settings.openTableRid}
                 fallbackUrl={settings.openTableUrl}
@@ -156,12 +156,12 @@ export default async function HomePage() {
               fifth menu (or drop to two) without the grid stranding an orphan
               tile on its own row, and a wide display gets more tiles per row
               rather than four increasingly fat ones. */}
-          <ul className="mt-12 grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-px overflow-hidden border border-rule bg-rule-strong">
+          <ul className="mt-14 grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-x-10">
             {menus.map((menu) => (
-              <li key={menu._id} className="bg-paper">
+              <li key={menu._id} className="border-t border-ink/25">
                 <Link
                   href={`/menus/${menu.slug}`}
-                  className="group flex h-full flex-col justify-between gap-10 p-8 transition-colors duration-300 ease-out-soft hover:bg-paper-warm lg:p-10"
+                  className="group flex h-full flex-col justify-between gap-14 py-7 pr-6"
                 >
                   <div>
                     <h3 className="font-display text-sub text-ink">
@@ -187,9 +187,9 @@ export default async function HomePage() {
       {home?.storyBody?.length ? (
         <section className="bg-paper-warm">
           <Shell className="band-lg">
-            <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-24">
+            <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-28">
               {home.storyImage ? (
-                <div className="aspect-4/3 overflow-hidden rounded-xs bg-paper">
+                <div className="aspect-4/3 overflow-hidden bg-paper">
                   <SanityImage
                     image={home.storyImage}
                     width={1400}
@@ -230,9 +230,9 @@ export default async function HomePage() {
 
           <ul className="mt-12 grid grid-cols-[repeat(auto-fit,minmax(17rem,1fr))] gap-8 lg:gap-10">
             {home.featuredDishes.map((dish) => (
-              <li key={dish.name} className="group">
+              <li key={dish.name} className="group lg:even:mt-16">
                 {dish.image ? (
-                  <div className="aspect-4/5 overflow-hidden rounded-xs bg-paper-warm">
+                  <div className="aspect-4/5 overflow-hidden bg-paper-warm">
                     <SanityImage
                       image={dish.image}
                       width={900}
@@ -365,7 +365,7 @@ export default async function HomePage() {
                   key={item._id}
                   className="w-[78vw] shrink-0 snap-start sm:w-[42vw] lg:w-[28vw] xl:w-[22vw]"
                 >
-                  <div className="aspect-4/3 overflow-hidden rounded-xs bg-paper-warm">
+                  <div className="aspect-4/3 overflow-hidden bg-paper-warm">
                     <SanityImage
                       image={item.image}
                       alt={item.alt}
@@ -442,14 +442,14 @@ export default async function HomePage() {
             <div className="mt-10 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
               <Link
                 href="/reservations"
-                className="rounded-xs bg-cream px-10 py-4 font-sans text-sm font-medium tracking-wide text-ink transition-colors duration-200 ease-out-soft hover:bg-paper"
+                className="bg-cream px-10 py-4 font-sans text-sm font-medium tracking-wide text-ink transition-colors duration-200 ease-out-soft hover:bg-paper"
               >
                 Reserve a table
               </Link>
               {settings?.phone ? (
                 <a
                   href={telHref(settings.phone)}
-                  className="rounded-xs border border-cream/35 px-10 py-4 font-sans text-sm font-medium tracking-wide text-cream transition-colors duration-200 ease-out-soft hover:border-cream"
+                  className="border border-cream/35 px-10 py-4 font-sans text-sm font-medium tracking-wide text-cream transition-colors duration-200 ease-out-soft hover:border-cream"
                 >
                   {settings.phone}
                 </a>

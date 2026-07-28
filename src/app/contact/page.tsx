@@ -109,7 +109,7 @@ export default async function ContactPage() {
           </div>
 
           {mapQuery ? (
-            <div className="min-h-80 overflow-hidden rounded-xs bg-ink/5 lg:min-h-full">
+            <div className="min-h-80 overflow-hidden bg-ink/5 lg:min-h-full">
               <iframe
                 title={`Map to ${settings?.name ?? 'the restaurant'}`}
                 src={`https://www.google.com/maps?q=${mapQuery}&output=embed`}

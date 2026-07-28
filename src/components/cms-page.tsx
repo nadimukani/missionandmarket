@@ -54,7 +54,7 @@ export async function cmsPageMetadata(
 export function CmsHero({ image }: { image: SanityImageType }) {
   return (
     <Shell>
-      <div className="-mt-10 aspect-16/7 overflow-hidden rounded-xs lg:-mt-14">
+      <div className="-mt-10 aspect-16/7 overflow-hidden lg:-mt-14">
         <SanityImage
           image={image}
           width={2400}

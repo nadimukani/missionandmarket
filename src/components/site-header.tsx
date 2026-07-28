@@ -170,8 +170,9 @@ export function SiteHeader({ settings }: { settings: SiteSettings | null }) {
 
           <Link
             href="/reservations"
-            className="rounded-xs bg-brass-button px-5 py-2.5 font-sans text-[0.8125rem]
-                       font-medium tracking-wide text-cream transition-colors hover:bg-brass-button-hover"
+            className="bg-brass-button px-6 py-3 font-sans text-[0.6875rem] font-medium
+                       uppercase tracking-[0.16em] text-cream transition-colors duration-200
+                       ease-out-soft hover:bg-brass-button-hover"
           >
             Reserve
           </Link>
@@ -227,8 +228,9 @@ export function SiteHeader({ settings }: { settings: SiteSettings | null }) {
 
           <Link
             href="/reservations"
-            className="mt-8 rounded-xs bg-brass-button px-5 py-4 text-center font-sans
-                       text-sm font-medium tracking-wide text-cream transition-colors hover:bg-brass-button-hover"
+            className="mt-8 bg-brass-button px-5 py-4 text-center font-sans text-xs
+                       font-medium uppercase tracking-[0.16em] text-cream transition-colors
+                       duration-200 ease-out-soft hover:bg-brass-button-hover"
           >
             Reserve a table
           </Link>

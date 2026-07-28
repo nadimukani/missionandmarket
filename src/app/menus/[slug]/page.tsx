@@ -89,7 +89,7 @@ export default async function MenuPage({ params }: Props) {
               href={settings.orderUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full rounded-xs border border-ink/25 px-8 py-3.5 text-center
+              className="w-full border border-ink/25 px-8 py-3.5 text-center
                          font-sans text-sm font-medium text-ink transition-colors
                          duration-200 ease-out-soft hover:border-ink sm:w-auto"
             >

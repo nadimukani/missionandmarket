@@ -49,7 +49,7 @@ export function ReserveBar({ settings }: { settings: SiteSettings | null }) {
         {settings?.phone ? (
           <a
             href={telHref(settings.phone)}
-            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xs
+            className="flex h-12 w-12 shrink-0 items-center justify-center
                        border border-cream/25 text-cream"
             aria-label={`Call ${settings.name ?? 'the restaurant'}`}
           >
@@ -72,7 +72,7 @@ export function ReserveBar({ settings }: { settings: SiteSettings | null }) {
 
         <Link
           href="/reservations"
-          className="flex h-12 flex-1 items-center justify-center rounded-xs bg-brass-button
+          className="flex h-12 flex-1 items-center justify-center bg-brass-button
                      font-sans text-sm font-medium tracking-wide text-cream"
         >
           Reserve a table

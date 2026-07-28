@@ -58,7 +58,7 @@ export default async function PrivateEventsPage() {
             <ul className="mt-12 grid grid-cols-[repeat(auto-fit,minmax(18rem,1fr))] gap-8 lg:gap-10">
               {spaces.map((item) => (
                 <li key={item._id}>
-                  <div className="aspect-4/3 overflow-hidden rounded-xs bg-paper">
+                  <div className="aspect-4/3 overflow-hidden bg-paper">
                     <SanityImage
                       image={item.image}
                       alt={item.alt}
