@@ -10,10 +10,10 @@ export const PortableBody: PortableTextComponents = {
   block: {
     normal: ({ children }) => <p className="leading-relaxed">{children}</p>,
     h2: ({ children }) => (
-      <h2 className="mt-12 font-display text-3xl first:mt-0">{children}</h2>
+      <h2 className="mt-12 font-display text-section first:mt-0">{children}</h2>
     ),
     h3: ({ children }) => (
-      <h3 className="mt-8 font-display text-xl first:mt-0">{children}</h3>
+      <h3 className="mt-8 font-display text-sub first:mt-0">{children}</h3>
     ),
     blockquote: ({ children }) => (
       <blockquote className="my-8 border-l-2 border-brass pl-6 font-display text-xl italic">

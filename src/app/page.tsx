@@ -107,7 +107,7 @@ export default async function HomePage() {
             </p>
           ) : null}
 
-          <h1 className="load-in mt-4 max-w-4xl font-display text-[2.75rem] leading-[1.02] font-light text-cream [--load-delay:80ms] [--rise:14px] sm:text-6xl lg:text-[5rem]">
+          <h1 className="load-in mt-4 max-w-4xl font-display text-display text-cream [--load-delay:80ms] [--rise:14px]">
             {home?.heroHeading ?? 'Modern American cooking in Buckhead'}
           </h1>
 
@@ -143,7 +143,7 @@ export default async function HomePage() {
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
               <p className="eyebrow text-brass">The food</p>
-              <h2 className="mt-3 font-display text-4xl font-light text-ink lg:text-5xl">
+              <h2 className="mt-3 font-display text-lead text-ink">
                 Menus
               </h2>
             </div>
@@ -164,7 +164,7 @@ export default async function HomePage() {
                   className="group flex h-full flex-col justify-between gap-10 p-8 transition-colors duration-300 ease-out-soft hover:bg-paper-warm lg:p-10"
                 >
                   <div>
-                    <h3 className="font-display text-3xl font-light text-ink">
+                    <h3 className="font-display text-sub text-ink">
                       {menu.title}
                     </h3>
                     {menu.availability ? (
@@ -202,7 +202,7 @@ export default async function HomePage() {
 
               <div>
                 <p className="eyebrow text-brass">Our story</p>
-                <h2 className="mt-3 font-display text-4xl font-light text-ink lg:text-5xl">
+                <h2 className="mt-3 font-display text-lead text-ink">
                   {home.storyHeading ?? 'Flavor + Fusion'}
                 </h2>
                 <div className="mt-8 space-y-5 font-sans text-base leading-relaxed text-ink-muted">
@@ -223,7 +223,7 @@ export default async function HomePage() {
         <Shell className="band-lg">
           <div>
             <p className="eyebrow text-brass">From the kitchen</p>
-            <h2 className="mt-3 font-display text-4xl font-light text-ink lg:text-5xl">
+            <h2 className="mt-3 font-display text-lead text-ink">
               Signatures
             </h2>
           </div>
@@ -242,7 +242,7 @@ export default async function HomePage() {
                     />
                   </div>
                 ) : null}
-                <h3 className="mt-5 font-display text-2xl font-light text-ink">
+                <h3 className="mt-5 font-display text-sub text-ink">
                   {dish.name}
                 </h3>
                 {dish.description ? (
@@ -284,7 +284,7 @@ export default async function HomePage() {
                 />
                 <div className="absolute inset-x-0 bottom-0">
                   <Shell className="pb-8 lg:pb-12">
-                    <p className="font-display text-2xl font-light text-cream lg:text-4xl">
+                    <p className="font-display text-section text-cream">
                       {home.bandCaption}
                     </p>
                   </Shell>
@@ -302,7 +302,7 @@ export default async function HomePage() {
             <div className="flex flex-wrap items-end justify-between gap-6">
               <div>
                 <p className="eyebrow text-brass">Every week</p>
-                <h2 className="mt-3 font-display text-4xl font-light text-ink lg:text-5xl">
+                <h2 className="mt-3 font-display text-lead text-ink">
                   What&rsquo;s on
                 </h2>
               </div>
@@ -315,7 +315,7 @@ export default async function HomePage() {
                   {special.schedule ? (
                     <p className="eyebrow text-brass">{special.schedule}</p>
                   ) : null}
-                  <h3 className="mt-3 font-display text-2xl font-light text-ink">
+                  <h3 className="mt-3 font-display text-sub text-ink">
                     {special.title}
                   </h3>
                   {special.description ? (
@@ -335,7 +335,7 @@ export default async function HomePage() {
         <section className="pb-[var(--section-lg)]">
           <Shell>
             <div className="flex flex-wrap items-end justify-between gap-6">
-              <h2 className="font-display text-4xl font-light text-ink lg:text-5xl">
+              <h2 className="font-display text-lead text-ink">
                 The room
               </h2>
               <TextLink href="/gallery">See the gallery</TextLink>
@@ -388,7 +388,7 @@ export default async function HomePage() {
           <div className="grid gap-14 lg:grid-cols-[1fr_1.1fr] lg:gap-24">
             <div>
               <p className="eyebrow text-brass-ondark">Visit</p>
-              <h2 className="mt-3 font-display text-4xl font-light text-cream lg:text-5xl">
+              <h2 className="mt-3 font-display text-lead text-cream">
                 Three Alliance Center,
                 <br />
                 {settings?.neighborhood ?? 'Buckhead'}
@@ -436,7 +436,7 @@ export default async function HomePage() {
         <Shell className="band-lg">
           <div className="flex flex-col items-center text-center">
             <MarkColumn className="h-28 w-8 text-cream/50" chevrons={3} />
-            <h2 className="mt-8 max-w-2xl font-display text-4xl font-light text-cream lg:text-5xl">
+            <h2 className="mt-8 max-w-2xl font-display text-lead text-cream">
               We&rsquo;ll keep a table for you
             </h2>
             <div className="mt-10 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">

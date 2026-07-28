@@ -50,7 +50,7 @@ export default async function PrivateEventsPage() {
           <Shell className="band">
             <div>
               <p className="eyebrow text-brass">The spaces</p>
-              <h2 className="mt-3 font-display text-4xl font-light text-ink lg:text-5xl">
+              <h2 className="mt-3 font-display text-lead text-ink">
                 Where you&rsquo;ll sit
               </h2>
             </div>
@@ -89,7 +89,7 @@ export default async function PrivateEventsPage() {
         <Shell className="band">
           <div className="mx-auto max-w-[40rem] text-center">
             <p className="eyebrow text-brass-ondark">Plan your event</p>
-            <h2 className="mt-3 font-display text-4xl font-light text-cream lg:text-5xl">
+            <h2 className="mt-3 font-display text-lead text-cream">
               Tell us the occasion
             </h2>
             <p className="mt-5 font-sans text-base leading-relaxed text-cream-muted">

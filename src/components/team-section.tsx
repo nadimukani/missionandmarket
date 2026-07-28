@@ -42,13 +42,13 @@ function FeaturedPerson({ person }: { person: Person }) {
 
       <div>
         <p className="eyebrow text-brass">{person.role}</p>
-        <h2 className="mt-3 font-display text-4xl leading-tight font-light text-ink lg:text-5xl">
+        <h2 className="mt-3 font-display text-lead text-ink">
           {person.displayName ?? person.name}
         </h2>
 
         {person.quote ? (
           <blockquote className="mt-8 border-l border-moss pl-6">
-            <p className="font-display text-2xl leading-snug font-light text-ink italic lg:text-3xl">
+            <p className="font-display text-section text-ink italic">
               {person.quote}
             </p>
           </blockquote>
@@ -78,7 +78,7 @@ function CompactPerson({ person }: { person: Person }) {
           />
         </div>
       ) : null}
-      <h3 className="mt-5 font-display text-2xl font-light text-ink">
+      <h3 className="mt-5 font-display text-sub text-ink">
         {person.displayName ?? person.name}
       </h3>
       <p className="mt-1 font-sans text-sm text-ink-muted">{person.role}</p>
@@ -102,7 +102,7 @@ export function TeamSection({ team }: { team: Person[] }) {
 
       {rest.length ? (
         <>
-          <h2 className="mt-24 font-display text-3xl font-light text-ink lg:text-4xl">
+          <h2 className="mt-24 font-display text-section text-ink">
             The team
           </h2>
           <ul className="mt-10 grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-8 lg:gap-10">

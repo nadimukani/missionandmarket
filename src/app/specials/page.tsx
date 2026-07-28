@@ -52,7 +52,7 @@ export default async function SpecialsPage() {
                   {special.schedule ? (
                     <p className="eyebrow text-brass">{special.schedule}</p>
                   ) : null}
-                  <h2 className="mt-3 font-display text-2xl text-ink">
+                  <h2 className="mt-3 font-display text-sub text-ink">
                     {special.title}
                   </h2>
                   {special.price ? (

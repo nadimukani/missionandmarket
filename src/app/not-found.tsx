@@ -12,7 +12,7 @@ export default function NotFound() {
   return (
     <div className="measure band-lg flex flex-col items-center text-center">
       <p className="eyebrow text-brass">404</p>
-      <h1 className="mt-4 font-display text-4xl text-ink">
+      <h1 className="mt-4 font-display text-lead text-ink">
         We couldn&rsquo;t find that page
       </h1>
       <p className="mt-4 font-sans text-base text-ink-muted">

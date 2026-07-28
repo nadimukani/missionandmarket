@@ -219,7 +219,7 @@ export function SiteHeader({ settings }: { settings: SiteSettings | null }) {
             <Link
               key={link.href}
               href={link.href}
-              className="border-b border-cream/10 py-5 font-display text-3xl font-light text-cream"
+              className="border-b border-cream/10 py-5 font-display text-sub text-cream"
             >
               {link.label}
             </Link>

@@ -55,7 +55,7 @@ export default async function PressPage() {
                     .filter(Boolean)
                     .join(' · ')}
                 </p>
-                <h2 className="mt-3 font-display text-2xl text-ink">
+                <h2 className="mt-3 font-display text-sub text-ink">
                   {item.url ? (
                     <a
                       href={item.url}

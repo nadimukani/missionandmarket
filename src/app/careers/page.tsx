@@ -52,7 +52,7 @@ export default async function CareersPage() {
               return (
                 <li key={job._id} className="py-8 first:pt-0">
                   <div className="flex flex-wrap items-baseline justify-between gap-3">
-                    <h2 className="font-display text-2xl text-ink">
+                    <h2 className="font-display text-sub text-ink">
                       {job.title}
                     </h2>
                     <p className="font-sans text-sm text-ink-muted">
