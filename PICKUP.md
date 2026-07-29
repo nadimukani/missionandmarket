@@ -1,123 +1,70 @@
 # PICKUP — Mission + Market @ master
 
-_Updated: 2026-07-28_
+_Updated: 2026-07-29_
 
 ## Where we left off
-Full review + fix pass under Opus 5. Verdict was **do not rebuild** — the
-engineering was sound; the problems were a half-consolidated layout system,
-art direction, no motion, and never having been deployed. The first three are
-now fixed and committed at `ceee9e3`. **Deploy is the remaining milestone.**
+Reviewed the whole build under Opus 5, verdict **do not rebuild** — then landed
+a large fix pass, shipped it to GitHub and Vercel, and finally researched what
+upscale restaurant sites actually do. That research contradicted my own craft
+work and I corrected it. The site is live and buildable; the remaining work is
+specced in `docs/DESIGN-DIRECTION.md` (items 4–12) plus three client blockers.
 
 ## State
-- **Branch:** `master` @ `ceee9e3` — clean except two dead files (below)
-- `pnpm lint` clean · `pnpm build` green — 21 routes incl. `/opengraph-image`
-- Dev: `pnpm dev -p 4310`
+- **Branch:** `master` @ `48238fd` — **clean**, pushed to origin
+- **Repo:** https://github.com/nadimukani/missionandmarket — **PUBLIC** (user's
+  explicit call; no secrets anywhere in history, verified)
+- **Live:** https://missionandmarket-nadimukanis-projects.vercel.app
+  Project `missionandmarket` / `nadimukanis-projects`, GitHub-connected so
+  pushes to `master` auto-deploy.
 
-## Hard facts (verified — do not re-derive)
-| | |
-| --- | --- |
-| Sanity | project `x2izrrun`, dataset `production`, Studio at `/studio` |
-| OpenTable rid | **1005016** |
-| Address / phone | 3550 Lenox Rd NE, Suite 550, Atlanta GA 30326 · 404.948.2927 |
-| Chef | **Executive Chef Paul** (surname UNKNOWN) |
-| Palette | ink #231F1F · moss #464B20 · cream #F0E9D7 · brass #8A6445 |
-| **User's review viewport** | **3440×1440 ultrawide — always verify here** |
+## What changed this session
+- **Layout rebuilt on two fluid rails** — `rail` + `measure` utilities replaced
+  six widths × two gutters across 24 hand-rolled containers —
+  `src/app/globals.css`, `src/components/ui.tsx:204`
+- **~15 defects fixed**, two of them blockers: mobile menu locked the page at
+  the `lg` crossover; Apply built `mailto:undefined` — `ceee9e3`
+- **Hero re-cast in Sanity** onto the plated-food frame + og image; multi-image
+  cross-fade implemented — `src/components/hero-images.tsx`
+- **LQIP blur-up on every photograph** — `src/sanity/queries.ts:17`, `2b21ef8`
+- **Craft pass**: de-boxed, corners squared, CTAs to tracked caps — `34248be`
+- **Type scale reset to researched values** after the survey contradicted the
+  values I chose by eye — `48238fd`
+- **`docs/DESIGN-DIRECTION.md`** — the survey, the ladder, sequence, blockers
 
-## What landed (`ceee9e3`)
-- **Two rails, both fluid.** `rail` (108rem cap) + `measure` (40rem content),
-  `--gutter` / `--section` / `--section-lg` clamps in `globals.css`. Replaced
-  six widths × two gutters across 24 hand-rolled containers. Fixed grids →
-  `auto-fit`; `columns-2/3` → `columns-[26rem]/[22rem]`.
-  Rail at 3440 is now **1728px (50%)**, was 1408 (41%).
-- **Homepage reordered** — hours band moved from 3rd to 2nd-last; grounds
-  alternate paper / paper-warm.
-- **Hero re-cast** in Sanity onto the plated-food frame; og image too;
-  multi-image cross-fade implemented (`components/hero-images.tsx`).
-  Scrim deepened to hold ≥5:1 on the headline.
-- **Motion:** load-in stagger (hero + every masthead) + hero cross-fade +
-  hover refinements. All CSS, no JS.
-- **/private-events** rebuilt: spaces grid from real categorised photography,
-  working enquiry CTA. **No capacity or room name is asserted** — none exist.
-- **~15 defects fixed** (see commit body), incl. two blockers: mobile menu
-  locking the page at the lg crossover, and `mailto:undefined` on Apply.
-
-## Sanity writes made this session (reversible)
-`homePage.heroImages`, `homePage.bandImage`, `siteSettings.ogImage`.
-Backup of previous values:
-`<scratchpad>/sanity-backup.json` — **copy it somewhere durable if it still
-matters**, the scratchpad is session-scoped.
+## Verified
+- `pnpm lint` → clean · `pnpm build` → green, 21 routes incl. `/opengraph-image`
+- Production deploy Ready; `/`, `/menus/dinner`, `/private-events`, `/gallery`,
+  `/contact` all 200 on the live alias
+- Rail measured in-browser at the real 3440px viewport: 1728px (was 1408)
+- No env/secret files on the remote after push
 
 ## Not verified
-- Reduced-motion path not exercised in-browser (code path is a media query
-  around every animation; not visually confirmed).
-- Firefox / Safari not opened at all. Chrome only.
-- Mobile (390px) not re-checked after the rail change — **do this before
-  showing the client**.
-- The two `columns-[Xrem]` masonry changes were not eyeballed at 3440.
-
-## Dead files pending deletion approval
-`src/components/reveal-observer.tsx` and `src/lib/reveal.ts` — abandoned
-scroll-reveal attempts, untracked, safe to `rm`.
+- **Nothing since `8044213` has been seen in a browser.** The Chrome extension
+  disconnected and never came back — type scale, craft pass and type reset are
+  build-verified only. **Look at the live URL first thing.**
+- Safari, Firefox, reduced-motion: never exercised
+- Mobile 390px not re-checked since the rail change
 
 ## Caveats
 - **Scroll-reveal: do not retry casually.** Two implementations failed by
   leaving sections invisible; `animation-timeline: view()` also froze the
-  renderer >45s on the homepage. Full notes in `globals.css` motion block.
-- **Chrome MCP screenshots fire before images paint** — a dark hero in a shot
-  is a timing artifact. Re-`zoom` to confirm.
-- `resize_window` is refused while maximized; viewport stays 3440. Measure
-  with `javascript_tool`.
-- Headless-shell `Page.captureScreenshot` hangs on this machine.
-- `pnpm build | tail` reports **tail's** exit code.
-- **`pnpm seed` is retired** — do not reseed menus.
-- Careless regex sweeps over `src/**/*.tsx` damaged prose in comments this
-  session. If doing a bulk rename, anchor on `className="..."` only.
+  renderer >45s. Notes in the `globals.css` motion block.
+- **Dead files got committed** by a `git add -A src`: `src/lib/reveal.ts` and
+  `src/components/reveal-observer.tsx` (a stub). Delete both.
+- **Duplicate repo** `nadimukani/mission-and-market` still exists — needs
+  `gh auth refresh -h github.com -s delete_repo` before it can be removed.
+- **12 Dependabot alerts** (6 high) on the public repo.
+- Sanity CMS writes made this session (hero/band/og); undo values are committed
+  at `sanity-hero-backup.json`.
+- Careless regex sweeps over `src/**/*.tsx` damaged prose in comments earlier;
+  anchor bulk edits on `className="..."` only.
+- Chrome MCP screenshots fire before images paint — a dark hero is a timing
+  artifact, re-`zoom` to confirm.
 
-## Client-pending (none guessable)
-Deploy target · new menu (was due 2026-07-23, still not landed) · **an email
-address** · Chef Paul surname + bio · private-dining capacities + room names ·
-dessert & drinks menus · press · jobs · high-res ROOM/PATIO originals ·
-confirm `missionandmarket.com` ownership · rotate the Sanity CLI token printed
-to scrollback in an earlier session.
-
-**Photography is the ceiling.** Of 24 assets exactly one clears 2048px; half
-the interiors are low-res exports lifted from a design deck. Reordering the
-library bought a real improvement; it does not buy a great hero. An evening
-shoot with guests in the room, shot wide at full resolution, is the fix.
-
-## SHIPPED — git + Vercel
-- **Repo:** https://github.com/nadimukani/missionandmarket — **PUBLIC** (user's
-  explicit call; verified no secrets anywhere in history). Default branch
-  `master`. A second private repo `nadimukani/mission-and-market` still exists
-  and should be deleted — needs `gh auth refresh -h github.com -s delete_repo`.
-- **Live:** https://missionandmarket-nadimukanis-projects.vercel.app
-  Project `missionandmarket` under `nadimukanis-projects`, GitHub-connected so
-  pushes to `master` auto-deploy. Env set for prod/preview/dev:
-  PROJECT_ID, DATASET, API_VERSION, REVALIDATE_SECRET.
-  `SANITY_API_READ_TOKEN` **not set — empty locally** (draft previews only).
-- **To transfer to Foster:** Vercel project transfer keeps deployment history.
-  Do it before pointing the real domain, so billing + domain live with him.
-
-## CURRENT BRIEF — craft pass (user: "it looks like a WordPress site")
-User picked **"cheap / generic execution"**, NOT the page structure, and asked
-for **all pages, thorough**. So: do NOT go restructure the page templates.
-The work is surface craft:
-- **Type scale — DONE** (`8044213`). Six fluid roles in `globals.css`
-  (`text-display/lead/section/sub/lede/caption`) with per-size tracking and
-  line height; headings default to weight 400, only display sizes drop to 300.
-- **Spacing is still too even.** Every band uses the same `band-lg`. Vary it.
-- **Everything is a box.** Bordered specials cards, the hard-bordered menus
-  grid, uniform masonry. De-box; use rules and space instead of borders.
-- **No asymmetry.** Every section is centered or a 50/50 grid. Offset the
-  story image, let some images bleed past the rail, stagger the signatures.
-- **Crops are uniform** (4:5 everywhere). Art-direct per position.
-
-## Not verified
-- **The type pass has NOT been looked at in a browser** — Chrome extension
-  disconnected right after it built. Lint + build green only. **Look at it
-  first thing.**
-- Reduced-motion path, Safari, Firefox: never exercised.
-- Mobile 390px not re-checked since the rail change.
+## Next best slice
+Open the live URL and check the new type ladder at 3440px, then do
+`DESIGN-DIRECTION.md` item 4 (unify the nine CTAs on one `.cta` class) — it is
+the cheapest remaining item and three treatments currently ship at once.
 
 ## Resume keyword
-`mm-craft-pass-2026-07-28`
+`mm-type-reset-design-direction-2026-07-29`
