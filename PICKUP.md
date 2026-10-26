@@ -21,6 +21,11 @@ WordPress site. On `master`:
 - **Security update** (Next 16.4.3, Sanity 6.20; Dependabot down to 2
   moderate, uuid, which needs a major bump), fonts served from the site, the
   Studio rendered in the browser only.
+- **The Studio is cut down for the restaurant** to what they asked to change
+  — menu updates, events, closure notices: a signed-in Editor sees only
+  Menus (the PDF), Happenings and Closures; the rest is read-only to them, and
+  Live preview is administrators' (`src/sanity/access.ts`). Administrators
+  see everything.
 - **Every live WordPress URL redirects** (`next.config.ts`; an audit of 538
   old paths from the sitemaps and the Wayback Machine).
 - **Speed Insights**; the banner on the same 1-minute refresh as the rest.
@@ -32,7 +37,8 @@ Three Word documents, outside the repo (on the Desktop; sources in
 answers per dish: allergens, raw/undercooked, spellings), a **Studio
 quick-start guide**, and a **content request** (13 items).
 
-Where each answer goes — in the Studio unless marked **code**:
+Where each answer goes — in the Studio (as an administrator: the restaurant
+sees only Menus, Happenings and Closures) unless marked **code**:
 
 | Answer | Where |
 | --- | --- |
@@ -49,7 +55,9 @@ Where each answer goes — in the Studio unless marked **code**:
 | Domain, Google access, printed QR codes | `docs/LAUNCH-CHECKLIST.md`. |
 
 ## Needs the account owner
-- Invite the restaurant's editors at sanity.io/manage → Members.
+- Invite the restaurant's editors at sanity.io/manage → Members, as
+  **Editor** (an Administrator sees the whole Studio). To record the demo of
+  what they'll see, sign in with an Editor account too.
 - Enable Vercel Web Analytics (then see Backlog).
 - Swap `SANITY_API_READ_TOKEN` for a Viewer token (it is the Editor robot) —
   in Vercel Production and `.env.local`.
@@ -93,8 +101,9 @@ Where each answer goes — in the Studio unless marked **code**:
 - Speed Insights in the bundle, its script served
 
 ## Not verified
-- Logged-in Studio + Live preview since the security update (needs a
-  signed-in editor)
+- The Studio signed in, as an Administrator and as an Editor, since the
+  security update and the cut-down Studio (the access rules are checked
+  against the real schemas; the screens need a signed-in user)
 - Safari / Firefox / real devices
 
 ## Caveats

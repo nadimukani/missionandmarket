@@ -56,6 +56,13 @@ with opening hours **and holiday hours** from the schedule.
 The brief: when the restaurant changes something, it must change everywhere,
 and the site must never show a stale copy.
 
+- **What the restaurant sees.** They asked to change three things
+  themselves: menu updates, events and closure notices. So a signed-in
+  **Editor** gets just **Menus** (the PDF only), **Happenings** and
+  **Closures**, in one tool; everything else is read-only to them, and Live
+  preview and the query console are for administrators
+  (`src/sanity/access.ts`). An **Administrator** sees the whole Studio —
+  invite the restaurant as Editor.
 - **Hours & Closures** (new singleton). Services with days + times picked from
   dropdowns; closures with a date, "closed" or special hours, and an optional
   banner. Everything derives from it: footer and Visit hours, each menu's
@@ -74,10 +81,10 @@ and the site must never show a stale copy.
   raw-or-undercooked notices, shown under every menu.
 - **Happenings** can take their hours from a service (Happy Hour) or their own
   wording; one-time events hide themselves after their date.
-- **Live preview.** Inside the Studio, the owner sees the real site, clicks
-  any text to open the field behind it, edits, and publishes. Published
-  changes reach the public site within a minute without any webhook (instantly
-  with it).
+- **Live preview** (administrators). Inside the Studio, the real site: click
+  any text to open the field behind it, edit, publish. Published changes
+  reach the public site within a minute without any webhook (instantly with
+  it).
 
 ## Menus (2026)
 
@@ -233,22 +240,21 @@ the documents it manages, so don't re-run it after the client starts editing.
 
 1. **Sanity CORS.** Done for `https://missionandmarket.vercel.app` (with
    credentials). The domain is added at launch — `LAUNCH-CHECKLIST.md`.
-2. **Invite the restaurant's editors** at sanity.io/manage → Members.
+2. **Invite the restaurant's editors** at sanity.io/manage → Members, with
+   the **Editor** role (an Administrator sees the whole Studio).
 3. **Revalidation webhook** — confirm sanity.io/manage → API → Webhooks points
    at the deployment's `/api/revalidate` with the filter in
-   `src/app/api/revalidate/route.ts`, or edits wait out the 5-minute floor.
+   `src/app/api/revalidate/route.ts`, or edits wait out the 1-minute floor.
 
 ## Demo script (≈2 minutes)
 
-1. `/studio` → **Live preview** → the home page appears inside the Studio.
-   Click "Signatures" or any dish name → the field opens → edit → the page
-   updates in place → Publish.
-2. **Hours & Closures** → add a closure: "Thanksgiving", Nov 26, closed →
-   Publish → the banner appears (within a week of the date), Visit lists it,
-   "Open now" and the booking panel skip the day.
-3. **Menus → Dinner** → upload the new PDF → Publish → the dinner page and
-   its zoomable view change.
-4. **Happenings → New** → a one-time event with a date and "hide after" →
+Sign in with an **Editor** account to show what the restaurant will see (an
+Administrator sees the whole Studio).
+
+1. **Menus → Dinner** → upload the new PDF → Publish → within a minute the
+   dinner page shows it.
+2. **Happenings → +** → a one-time event with a date and "hide after" →
    Publish → it appears on Happenings and the home page.
-5. **Private Dining Rooms → Semi-Private** → add a photograph → the
-   "coming soon" panel is replaced.
+3. **Closures** → add a closure: "Thanksgiving", Nov 26, closed → Publish →
+   the banner appears (within a week of the date), Visit lists it, "Open
+   now" and the booking panel skip the day.

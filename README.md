@@ -29,9 +29,11 @@ dataset `production`.
 
 ## Content
 
-Everything a manager needs to change is in the Studio — menus (the uploaded
-PDFs), hours and closures, happenings, gift card and ordering links, the
-sitewide notice banner, and the OpenTable ID. No deploy required for any of it.
+Everything is edited in the Studio; no deploy is needed for any of it. The
+restaurant's editors (Editor role) see only what they asked to change: Menus
+(upload the PDF), Happenings and Closures. Administrators see the rest — hours,
+restaurant info and links, the banner, the home page, rooms, team, gallery
+(`src/sanity/access.ts`).
 
 `pnpm seed` re-imports the content migrated from the old WordPress site. It is
 idempotent (fixed `_id`s, `createOrReplace`), so re-running overwrites rather
