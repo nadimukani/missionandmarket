@@ -60,13 +60,15 @@ redirect to `https://missionandmarketatl.com/`), and the code's fallback in
    `NEXT_PUBLIC_SITE_URL` = `https://missionandmarketatl.com`, then
    **Redeploy**. Pages are built ahead of time, so canonical links, the
    sitemap, Open Graph and structured data only switch on a new build.
-5. **Sanity webhook**, if one is set up (sanity.io/manage → API → Webhooks):
-   point it at `https://missionandmarketatl.com/api/revalidate`.
+5. **Sanity webhook** "Website refresh on publish" (sanity.io/manage → API →
+   Webhooks): point it at `https://missionandmarketatl.com/api/revalidate`.
 
 ## Check
 
 - `https://missionandmarketatl.com` is the new site; `www`, `http://` and
   `http://www` redirect to it.
+- Paste a page link (e.g. `/holiday-parties`) into the Facebook Sharing
+  Debugger or an iMessage: it previews as that page, on the domain.
 - View source on a page: the canonical link, `og:url` and the JSON-LD use the
   domain; so do `/sitemap.xml` and `/robots.txt`.
 - Old URLs redirect: `/dinner-menu/`, `/lunch-menu/`, `/private-dining/`,
@@ -87,8 +89,9 @@ redirect to `https://missionandmarketatl.com/`), and the code's fallback in
    Yelp, Instagram and other listings that link to a menu.
 3. **Hours on Google** come from the Business Profile, not the website: holiday
    closures must be set there as well as in the Studio.
-4. **The vercel.app URL** keeps working. Once nothing points at it, it can
-   redirect to the domain (Vercel → Domains).
+4. **The vercel.app URL** keeps working. Once nothing points at it (the
+   webhook included — move it to the domain first), it can redirect to the
+   domain (Vercel → Domains).
 5. **After a quiet month,** the restaurant may end the WordPress hosting — not
    the domain, not Microsoft 365. Keep the backup.
 

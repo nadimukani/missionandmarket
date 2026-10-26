@@ -32,6 +32,11 @@ WordPress site. On `master`:
   old paths from the sitemaps and the Wayback Machine).
 - **Web Analytics** (cookieless) and **Speed Insights**; the banner on the
   same 1-minute refresh as the rest.
+- **Polish:** each page previews as itself when shared (its own address,
+  title and description); photos come at the size the screen needs; a
+  publish expires the cached pages at once (once the webhook exists — see
+  below); WCAG AA contrast on every page; the home reel's still frame loads
+  first.
 - **`docs/LAUNCH-CHECKLIST.md`** — moving the domain over, step by step.
 
 ## Waiting on the client
@@ -55,11 +60,17 @@ sees only Menus, Happenings and Closures) unless marked **code**:
 | Careers | Job Openings, each with an Apply link. **Code** if they give only an email — see Backlog. |
 | Hours | Hours & Closures (confirmation only; matches the CMS today). |
 | Happy hour walk-in only | **Code:** both "Reserve a Table" buttons in `src/app/(site)/menus/[slug]/page.tsx` show on every menu. |
-| Link Zakia and TreVele | **Code:** the footer lists only Instagram and Facebook from Restaurant Info (`src/components/site-footer.tsx`). Their Instagram accounts are on the menus. |
+| Link Zakia and TreVele | Already linked: the footer's "Sister restaurants" come from Restaurant Info → "Sister restaurants on Instagram" (the handles on the menus). If they say no, empty that list. |
 | Logo vectors | **Code:** `public/brand/*.png` are used as CSS masks (`src/components/logo.tsx`; the mark in `src/components/ui.tsx` is a 53×181 PNG). |
 | Domain, Google access, printed QR codes | `docs/LAUNCH-CHECKLIST.md`. |
 
 ## Needs the account owner
+- **Create the Sanity webhook** "Website refresh on publish"
+  (sanity.io/manage → `x2izrrun` → API → Webhooks) with the settings in
+  `src/app/api/revalidate/route.ts`. Its secret is `SANITY_REVALIDATE_SECRET`
+  in `.env.local`, the value Vercel Production already has (checked
+  2026-10-26 with a signed call that changes nothing). Until it exists, a
+  publish shows within the 1-minute floor.
 - **Vercel Production → `SANITY_API_READ_TOKEN`:** replace it with the
   read-only token now in `.env.local` (Sanity token "Website preview
   (read-only)", Viewer role, created 2026-10-26), then redeploy. Until then
@@ -93,7 +104,8 @@ sees only Menus, Happenings and Closures) unless marked **code**:
   line-by-line menu data is kept, hidden in the Studio.
 - **Env (.env.local only):** `SANITY_API_WRITE_TOKEN` (Editor robot, for the
   scripts), `SANITY_API_READ_TOKEN` (Viewer, for preview),
-  `TRIPLESEAT_PUBLIC_KEY`. Vercel Production has `SANITY_API_READ_TOKEN`;
+  `TRIPLESEAT_PUBLIC_KEY`, `SANITY_REVALIDATE_SECRET` (the webhook's; the
+  same in Vercel). Vercel Production has `SANITY_API_READ_TOKEN`;
   Sanity CORS allows the vercel.app URL (with credentials) and
   `localhost:3333`.
 

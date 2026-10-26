@@ -51,10 +51,12 @@ The restaurant ID lives in the CMS (Restaurant Info → Reservations), not in co
 
 ## Publishing changes live
 
-Sanity webhook → `POST /api/revalidate`, HMAC-verified with
-`SANITY_REVALIDATE_SECRET`. Configure at sanity.io/manage → API → Webhooks with
-trigger on create/update/delete. Queries also carry a 1-minute ISR floor so a
-missed webhook self-heals.
+Sanity webhook ("Website refresh on publish") → `POST /api/revalidate`,
+HMAC-verified with `SANITY_REVALIDATE_SECRET` — the same value in the webhook
+and in Vercel Production. Its settings (trigger, filter, projection) are in
+`src/app/api/revalidate/route.ts`; the route expires the matching cache tags
+at once, so the first visit after Publish is fresh. Queries also carry a
+1-minute ISR floor so a missed webhook self-heals.
 
 ## Launch
 

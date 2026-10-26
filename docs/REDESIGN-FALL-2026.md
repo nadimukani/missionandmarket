@@ -21,8 +21,10 @@ dedicated pages for search rather than one long scroll.
 
 - **Palette is the restaurant's own** (client requirement: keep the current
   site's colours): moss `#464B20`, cream `#F0E9D7`, paper `#F7F5F0`, ink
-  `#231F1F`, bronze `#8A6445`, deep teal `#0B2F31`. The competitive scan found
-  it unoccupied in the Atlanta set (everyone else is dark-and-gold or white).
+  `#231F1F`, bronze `#8A6445` (on the site a shade darker, `#866143`, so
+  small labels pass 4.5:1 on cream), deep teal `#0B2F31`. The competitive
+  scan found it unoccupied in the Atlanta set (everyone else is dark-and-gold
+  or white).
 - **Type:** Noto Serif Display, light — the display face their current site
   already uses, wide and high-contrast — with Jost, a geometric sans that
   echoes the logo's wordmark, for labels, navigation and text.
@@ -244,9 +246,10 @@ the documents it manages, so don't re-run it after the client starts editing.
 2. **Invite the restaurant's login** at sanity.io/manage → Members, as
    Administrator (the free plan's only editing role). The Studio still shows
    them only Menus, Happenings and Closures.
-3. **Revalidation webhook** — confirm sanity.io/manage → API → Webhooks points
-   at the deployment's `/api/revalidate` with the filter in
-   `src/app/api/revalidate/route.ts`, or edits wait out the 1-minute floor.
+3. **Revalidation webhook** — create it at sanity.io/manage → API → Webhooks
+   with the settings in `src/app/api/revalidate/route.ts` (its secret is the
+   value Vercel Production already has, also in `.env.local`), or edits wait
+   out the 1-minute floor.
 
 ## Demo script (≈2 minutes)
 
