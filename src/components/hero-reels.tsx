@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { preload } from 'react-dom'
 
 const REDUCED = '(prefers-reduced-motion: reduce)'
 function subscribe(cb: () => void) {
@@ -18,10 +19,14 @@ type Reel = { src: string; poster: string }
  *
  * - One control pauses or plays them all (WCAG 2.2.2).
  * - Reduced-motion visitors get the still frames.
- * - Panels that are hidden at the current width are never asked to play.
+ * - Panels that are hidden at the current width are never asked to play,
+ *   nor loaded: on phones only the first reel is fetched.
+ * - The first reel's still frame — the largest paint on phones — is fetched
+ *   ahead of everything else, the video after it.
  */
 export function HeroReels({ reels, label }: { reels: Reel[]; label: string }) {
   const refs = useRef<(HTMLVideoElement | null)[]>([])
+  if (reels[0]) preload(reels[0].poster, { as: 'image', fetchPriority: 'high' })
   const reduced = useSyncExternalStore(
     subscribe,
     () => window.matchMedia(REDUCED).matches,
@@ -58,7 +63,7 @@ export function HeroReels({ reels, label }: { reels: Reel[]; label: string }) {
             muted
             loop
             playsInline
-            preload={i === 0 ? 'auto' : 'metadata'}
+            preload={i === 0 ? 'auto' : 'none'}
             aria-hidden="true"
             tabIndex={-1}
           />
