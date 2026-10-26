@@ -60,8 +60,9 @@ and the site must never show a stale copy.
   dropdowns; closures with a date, "closed" or special hours, and an optional
   banner. Everything derives from it: footer and Visit hours, each menu's
   "served" line, "Open now", the booking panel's times (closed days are
-  disabled), Google's opening hours and holiday hours, and an automatic
-  closure banner a week ahead.
+  disabled), the opening and holiday hours in the structured data, and an
+  automatic closure banner a week ahead. (Google Maps and Search show the
+  hours from the Google Business Profile, so closures go there too.)
 - **Menus.** The uploaded PDF is the menu: the manager updates a menu by
   uploading the designer's new PDF — nothing to retype, line by line or
   anywhere else (client decision, 26 Oct). A menu appears on the site once it
@@ -229,11 +230,8 @@ the documents it manages, so don't re-run it after the client starts editing.
 
 ## Before the client demo
 
-1. **Sanity CORS.** Only `http://localhost:3333` is allowed today — the Studio
-   has never worked on any deployed URL. At sanity.io/manage → project
-   `x2izrrun` → API → CORS origins, add the preview URL **with "Allow
-   credentials" ticked**. (An Editor token cannot do this; it needs a project
-   admin.)
+1. **Sanity CORS.** Done for `https://missionandmarket.vercel.app` (with
+   credentials). The domain is added at launch — `LAUNCH-CHECKLIST.md`.
 2. **Invite the restaurant's editors** at sanity.io/manage → Members.
 3. **Revalidation webhook** — confirm sanity.io/manage → API → Webhooks points
    at the deployment's `/api/revalidate` with the filter in

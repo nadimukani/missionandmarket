@@ -15,21 +15,23 @@ The Studio is embedded at `/studio` — no separate deploy.
 
 ## Environment
 
-Copy `.env.example` to `.env.local`. The Sanity project is `x2izrrun`,
+Put these in `.env.local` (gitignored). The Sanity project is `x2izrrun`,
 dataset `production`.
 
 | Variable | Needed for |
 | --- | --- |
 | `NEXT_PUBLIC_SANITY_PROJECT_ID` | always |
 | `NEXT_PUBLIC_SANITY_DATASET` | always |
+| `SANITY_API_READ_TOKEN` | Live preview and draft mode in the Studio (a Viewer token) |
 | `SANITY_REVALIDATE_SECRET` | publish-to-live webhook |
-| `SANITY_API_WRITE_TOKEN` | `pnpm seed` only |
+| `NEXT_PUBLIC_SITE_URL` | optional — the canonical origin; defaults to Vercel's production domain |
+| `SANITY_API_WRITE_TOKEN` | the content scripts (`pnpm seed` etc.) only |
 
 ## Content
 
-Everything a manager needs to change is in the Studio — menus, hours, specials,
-gift card and ordering links, the sitewide notice banner, and the OpenTable ID.
-No deploy required for any of it.
+Everything a manager needs to change is in the Studio — menus (the uploaded
+PDFs), hours and closures, happenings, gift card and ordering links, the
+sitewide notice banner, and the OpenTable ID. No deploy required for any of it.
 
 `pnpm seed` re-imports the content migrated from the old WordPress site. It is
 idempotent (fixed `_id`s, `createOrReplace`), so re-running overwrites rather
@@ -48,5 +50,9 @@ The restaurant ID lives in the CMS (Restaurant Info → Reservations), not in co
 
 Sanity webhook → `POST /api/revalidate`, HMAC-verified with
 `SANITY_REVALIDATE_SECRET`. Configure at sanity.io/manage → API → Webhooks with
-trigger on create/update/delete. Queries also carry a 1-hour ISR floor so a
+trigger on create/update/delete. Queries also carry a 1-minute ISR floor so a
 missed webhook self-heals.
+
+## Launch
+
+Moving missionandmarketatl.com over: `docs/LAUNCH-CHECKLIST.md`.
