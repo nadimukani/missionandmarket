@@ -1,5 +1,7 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
 
+import { adminOnly } from '../access'
+
 const DAYS = [
   { title: 'Mon', value: 'mon' },
   { title: 'Tue', value: 'tue' },
@@ -47,6 +49,8 @@ export const hours = defineType({
     defineField({
       name: 'services',
       title: 'Services',
+      // The restaurant edits closures; regular hours stay with administrators.
+      hidden: adminOnly,
       type: 'array',
       description:
         'Lunch, Happy Hour, Dinner… Add a row for each set of days that share the same hours.',

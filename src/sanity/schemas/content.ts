@@ -1,5 +1,7 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
 
+import { adminOnly } from '../access'
+
 /** Shared rich-text type. Deliberately narrow — no headings above H2, no
  *  arbitrary colours. Keeps client edits inside the design system. */
 export const richText = defineType({
@@ -70,6 +72,7 @@ export const page = defineType({
   name: 'page',
   title: 'Page',
   type: 'document',
+  readOnly: adminOnly,
   fields: [
     defineField({ name: 'title', type: 'string', validation: (r) => r.required() }),
     defineField({
@@ -116,6 +119,7 @@ export const special = defineType({
     }),
     defineField({
       name: 'service',
+      hidden: adminOnly,
       title: 'Use the hours of',
       type: 'string',
       description:
@@ -131,7 +135,7 @@ export const special = defineType({
     defineField({
       name: 'schedule',
       type: 'string',
-      description: 'e.g. "Saturday + Sunday dinner". Not needed if you picked a service above.',
+      description: 'When it happens, e.g. "Saturday + Sunday dinner".',
     }),
     defineField({
       name: 'startDate',
@@ -156,12 +160,14 @@ export const special = defineType({
     }),
     defineField({
       name: 'ctaLabel',
+      hidden: adminOnly,
       title: 'Button label',
       type: 'string',
       description: 'Leave blank to show the standard Reserve button.',
     }),
     defineField({
       name: 'ctaUrl',
+      hidden: adminOnly,
       title: 'Button link',
       type: 'url',
       description: 'A page on this site such as /private-events, or a full web address.',
@@ -177,6 +183,7 @@ export const special = defineType({
     }),
     defineField({
       name: 'order',
+      hidden: adminOnly,
       title: 'Display order',
       type: 'number',
       initialValue: 0,
@@ -199,6 +206,7 @@ export const person = defineType({
   name: 'person',
   title: 'Team',
   type: 'document',
+  readOnly: adminOnly,
   description: 'Chefs, owners and leadership shown on the About page.',
   fields: [
     defineField({
@@ -294,6 +302,7 @@ export const pressItem = defineType({
   name: 'pressItem',
   title: 'Press',
   type: 'document',
+  readOnly: adminOnly,
   fields: [
     defineField({ name: 'title', type: 'string', validation: (r) => r.required() }),
     defineField({
@@ -316,6 +325,7 @@ export const jobPosting = defineType({
   name: 'jobPosting',
   title: 'Job Opening',
   type: 'document',
+  readOnly: adminOnly,
   fields: [
     defineField({ name: 'title', type: 'string', validation: (r) => r.required() }),
     defineField({
@@ -350,6 +360,7 @@ export const galleryImage = defineType({
   name: 'galleryImage',
   title: 'Gallery Image',
   type: 'document',
+  readOnly: adminOnly,
   fields: [
     defineField({
       name: 'image',
@@ -417,6 +428,7 @@ export const homePage = defineType({
   name: 'homePage',
   title: 'Home Page',
   type: 'document',
+  readOnly: adminOnly,
   groups: [
     { name: 'hero', title: 'Opening', default: true },
     { name: 'intro', title: 'Introduction' },

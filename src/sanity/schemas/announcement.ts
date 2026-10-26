@@ -1,5 +1,7 @@
 import { defineField, defineType } from 'sanity'
 
+import { adminOnly } from '../access'
+
 /**
  * Singleton. The one-line banner across the top of every page — closures,
  * holiday hours, a buyout night. Its own Studio item rather than a field
@@ -13,6 +15,7 @@ export const announcement = defineType({
   name: 'announcement',
   title: 'Announcement Banner',
   type: 'document',
+  readOnly: adminOnly,
   fields: [
     defineField({
       name: 'enabled',

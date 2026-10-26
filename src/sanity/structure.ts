@@ -12,19 +12,54 @@ import { MenuIcon } from '@sanity/icons/Menu'
 import { PresentationIcon } from '@sanity/icons/Presentation'
 import { StarIcon } from '@sanity/icons/Star'
 import { UsersIcon } from '@sanity/icons/Users'
-import type { StructureResolver } from 'sanity/structure'
+import type { StructureBuilder, StructureResolver } from 'sanity/structure'
+
+import { isAdmin } from './access'
+import { apiVersion } from './env'
 
 /** Documents that must only ever have one instance. */
 const SINGLETONS = ['siteSettings', 'homePage', 'announcement', 'hours'] as const
 
 export const singletonTypes = new Set<string>(SINGLETONS)
 
+/** The restaurant sees only what it asked to change (see access.ts). */
+export const structure: StructureResolver = (S, { currentUser }) =>
+  isAdmin(currentUser) ? everything(S) : restaurant(S)
+
+/**
+ * Menu updates, events and closure notices — the three things the restaurant
+ * asked to change itself. Menus lists the ones on the site; a menu's form
+ * shows only its PDF.
+ */
+const restaurant = (S: StructureBuilder) =>
+  S.list()
+    .title('Mission + Market')
+    .items([
+      S.listItem()
+        .title('Menus')
+        .icon(MenuIcon)
+        .child(
+          S.documentList()
+            .title('Menus')
+            .schemaType('menu')
+            .apiVersion(apiVersion)
+            .filter('_type == "menu" && defined(pdf.asset) && hidden != true')
+            .defaultOrdering([{ field: 'order', direction: 'asc' }])
+            .initialValueTemplates([]),
+        ),
+      S.documentTypeListItem('special').title('Happenings').icon(CalendarIcon),
+      S.listItem()
+        .title('Closures')
+        .icon(ClockIcon)
+        .child(S.document().schemaType('hours').documentId('hours').title('Closures')),
+    ])
+
 /**
  * Ordered by how often a manager reaches for each thing. The edits the
  * restaurant asked to own — closures and hours, the menus, what's on — sit at
  * the top; the things set once and rarely touched sit below the line.
  */
-export const structure: StructureResolver = (S) =>
+const everything = (S: StructureBuilder) =>
   S.list()
     .title('Mission + Market')
     .items([

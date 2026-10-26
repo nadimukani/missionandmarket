@@ -1,5 +1,7 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
 
+import { adminOnly } from '../access'
+
 const DAYS = [
   'Monday',
   'Tuesday',
@@ -19,6 +21,7 @@ export const siteSettings = defineType({
   name: 'siteSettings',
   title: 'Restaurant Info',
   type: 'document',
+  readOnly: adminOnly,
   groups: [
     { name: 'identity', title: 'Identity', default: true },
     { name: 'contact', title: 'Contact & Location' },

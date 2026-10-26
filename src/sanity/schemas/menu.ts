@@ -1,5 +1,7 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
 
+import { adminOnly } from '../access'
+
 export const DIETARY_TAGS = [
   { title: 'Vegetarian', value: 'vegetarian' },
   { title: 'Vegan', value: 'vegan' },
@@ -149,18 +151,21 @@ const menu = defineType({
   fields: [
     defineField({
       name: 'title',
+      hidden: adminOnly,
       type: 'string',
       description: 'e.g. Dinner, Lunch, Happy Hour',
       validation: (r) => r.required(),
     }),
     defineField({
       name: 'slug',
+      hidden: adminOnly,
       type: 'slug',
       options: { source: 'title', maxLength: 64 },
       validation: (r) => r.required(),
     }),
     defineField({
       name: 'order',
+      hidden: adminOnly,
       title: 'Display order',
       type: 'number',
       description: 'Lower numbers appear first in the menu switcher.',
@@ -168,6 +173,7 @@ const menu = defineType({
     }),
     defineField({
       name: 'hidden',
+      hidden: adminOnly,
       title: 'Hide from website',
       type: 'boolean',
       description:
@@ -176,6 +182,7 @@ const menu = defineType({
     }),
     defineField({
       name: 'image',
+      hidden: adminOnly,
       title: 'Cover photograph',
       type: 'image',
       description: 'Shown on the Menus page, where guests pick a menu.',
@@ -184,6 +191,7 @@ const menu = defineType({
     }),
     defineField({
       name: 'services',
+      hidden: adminOnly,
       title: 'Served during',
       type: 'array',
       description:
@@ -200,6 +208,7 @@ const menu = defineType({
     }),
     defineField({
       name: 'availability',
+      hidden: adminOnly,
       title: 'Served — custom wording (optional)',
       type: 'string',
       description: 'Leave blank to show the hours automatically.',
@@ -211,12 +220,13 @@ const menu = defineType({
       title: 'Menu PDF',
       type: 'file',
       description:
-        'Upload the latest menu here. When you publish, the website shows the new PDF straight away — its pages and a zoomable view.',
+        'To update this menu, upload the new PDF here and press Publish. The website shows it within a minute.',
       options: { accept: '.pdf,application/pdf' },
       validation: (r) => r.warning('Upload the menu PDF so guests can read this menu.').required(),
     }),
     defineField({
       name: 'intro',
+      hidden: adminOnly,
       type: 'text',
       rows: 2,
       description: 'Optional line under the title — e.g. "With cocktails, wine, beer and desserts."',

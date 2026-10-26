@@ -1,5 +1,7 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
 
+import { adminOnly } from '../access'
+
 /**
  * A bookable room for private events. Capacity is the first thing a planner
  * filters on, so the two numbers are real fields — not prose — and render as
@@ -9,6 +11,7 @@ export const space = defineType({
   name: 'space',
   title: 'Private Dining Room',
   type: 'document',
+  readOnly: adminOnly,
   fields: [
     defineField({
       name: 'name',
