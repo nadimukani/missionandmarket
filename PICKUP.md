@@ -6,14 +6,17 @@ _Updated: 2026-10-26_
 Second design pass done: immersive luxury layout (no ticker), wider type
 (Noto Serif Display + Jost), SEO page structure, 2026 menus, and a single
 source for every fact (Hours & Closures, menus with print versions, featured
-dishes from the menus, Studio Live preview). Built, linted, tested and
-screenshot-verified at 1440 and 390 on `localhost:3333`. **Not pushed** — the
+dishes from the menus, Studio Live preview). Hours now print as one aligned
+timetable everywhere (footer, home, Visit, Reservations): days column,
+opening times right-aligned to a shared dash, closing times left-aligned.
+Built, linted, tested and screenshot-verified at 1440 and 390 on
+`localhost:3333`. **Not pushed** — the
 push needs the user's go-ahead (public repo). `master` and the live demo are
 untouched. Rationale in `docs/REDESIGN-FALL-2026.md`; research in
 `docs/COMPETITIVE-SCAN-2026-10.md`.
 
 ## State
-- **Branch:** `redesign/fall-2026-site` — 3 local commits on `master`, clean
+- **Branch:** `redesign/fall-2026-site` — local commits on `master`, clean
   (no private notes, no secrets). The other local branch `redesign/fall-2026`
   must **never** be pushed (its first commit carried private notes).
 - **CMS (production dataset, shared with the live demo):** written by

@@ -96,7 +96,13 @@ export function serviceRows(service: Service, short = false) {
   return (service.periods ?? [])
     .filter((p) => p.days?.length && p.opens && p.closes)
     .sort((a, b) => DAY_KEYS.indexOf(sortDays(a.days)[0]) - DAY_KEYS.indexOf(sortDays(b.days)[0]))
-    .map((p) => ({ days: formatDays(p.days, short), time: formatRange(p.opens, p.closes) }))
+    .map((p) => ({
+      days: formatDays(p.days, short),
+      // Separate ends, so tables can align ranges on the dash.
+      opens: formatTime(p.opens),
+      closes: formatTime(p.closes),
+      time: formatRange(p.opens, p.closes),
+    }))
 }
 
 /** A one-line summary for a service: "Monday – Friday, 11:30am – 3pm" when

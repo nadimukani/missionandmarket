@@ -350,7 +350,7 @@ export default async function HomePage() {
             </div>
             <div>
               <Label className="text-bronze">Hours</Label>
-              <HoursList schedule={schedule} compact showClosures={false} className="mx-auto mt-5 max-w-xs text-left" />
+              <HoursList schedule={schedule} compact showClosures={false} className="mx-auto mt-5 max-w-xs" />
             </div>
             <div>
               <Label className="text-bronze">Reservations</Label>
