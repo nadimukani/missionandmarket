@@ -40,7 +40,8 @@ const over = (fg, alpha, bg) => {
 const INK = '#231F1F'
 const MOSS = '#464B20'
 const CREAM = '#F0E9D7'
-const BRASS = '#8A6445'
+// The bronze token: a shade under the old site's #8A6445 so labels pass on cream.
+const BRASS = '#866143'
 const PAPER = '#FAF8F4'
 const PAPER_WARM = '#F4EFE4'
 
@@ -52,6 +53,7 @@ const PAIRS = [
   ['ink-faint 62% on paper', over(INK, 0.62, PAPER), PAPER, 'normal'],
   ['brass on paper', BRASS, PAPER, 'normal'],
   ['brass on paper-warm', BRASS, PAPER_WARM, 'normal'],
+  ['brass on cream', BRASS, CREAM, 'normal'],
   ['moss on paper', MOSS, PAPER, 'normal'],
   ['cream on ink', CREAM, INK, 'normal'],
   ['cream-muted 70% on ink', over(CREAM, 0.7, INK), INK, 'normal'],

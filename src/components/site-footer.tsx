@@ -39,7 +39,7 @@ export function SiteFooter({ settings, schedule }: { settings: SiteSettings | nu
 
         <div className="mt-20 grid gap-12 border-t border-cream/15 pt-14 text-center sm:grid-cols-2 sm:text-left lg:grid-cols-4 lg:gap-10">
           <div>
-            <h2 className="label text-cream/60">Visit</h2>
+            <h2 className="label text-cream/70">Visit</h2>
             {a ? (
               <address className="mt-5 text-[0.9375rem] leading-relaxed font-light not-italic">
                 <span className="block">{a.street}</span>
@@ -64,7 +64,7 @@ export function SiteFooter({ settings, schedule }: { settings: SiteSettings | nu
           </div>
 
           <div>
-            <h2 className="label text-cream/60">Hours</h2>
+            <h2 className="label text-cream/70">Hours</h2>
             <HoursList
               schedule={schedule}
               tone="cream"
@@ -76,7 +76,7 @@ export function SiteFooter({ settings, schedule }: { settings: SiteSettings | nu
           </div>
 
           <nav aria-label="Footer">
-            <h2 className="label text-cream/60">Explore</h2>
+            <h2 className="label text-cream/70">Explore</h2>
             <ul className="mt-5 grid grid-cols-2 gap-x-6 gap-y-2 text-[0.9375rem] font-light">
               {EXPLORE.map((l) => (
                 <li key={l.href}>
@@ -89,7 +89,7 @@ export function SiteFooter({ settings, schedule }: { settings: SiteSettings | nu
           </nav>
 
           <div>
-            <h2 className="label text-cream/60">Follow + Order</h2>
+            <h2 className="label text-cream/70">Follow + Order</h2>
             <ul className="mt-5 grid gap-2 text-[0.9375rem] font-light">
               {social.map((s) => (
                 <li key={s.url}>
@@ -116,7 +116,7 @@ export function SiteFooter({ settings, schedule }: { settings: SiteSettings | nu
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col items-center gap-4 border-t border-cream/15 pt-8 text-xs font-light text-cream/60 lg:flex-row lg:justify-between">
+        <div className="mt-16 flex flex-col items-center gap-4 border-t border-cream/15 pt-8 text-xs font-light text-cream/70 lg:flex-row lg:justify-between">
           <p>
             © {year} {settings?.name ?? 'Mission + Market'} · Buckhead, Atlanta
           </p>

@@ -19,7 +19,9 @@
   --color-cream: #f0e9d7;
   --color-paper: #f7f5f0;
   --color-ink: #231f1f;
-  --color-bronze: #8a6445;
+  /* A shade under the old site's #8a6445, so small labels reach 4.5:1 on
+   * cream as well as paper. */
+  --color-bronze: #866143;
   --color-teal: #0b2f31;
   /* Text tints. ink-soft 8:1 on paper; stone 5.3:1; mist 7.9:1 on teal. */
   --color-ink-soft: #4d4743;

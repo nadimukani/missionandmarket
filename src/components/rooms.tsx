@@ -25,7 +25,7 @@ export function CapacityTable({
   const rows = rooms.filter((r) => r.seated || r.reception)
   if (!rows.length) return null
   const rule = tone === 'cream' ? 'border-cream/20' : 'border-ink/15'
-  const muted = tone === 'cream' ? 'text-cream/60' : 'text-stone'
+  const muted = tone === 'cream' ? 'text-cream/70' : 'text-stone'
   return (
     <table className="w-full text-left">
       <caption className="sr-only">Private dining capacities</caption>
@@ -69,7 +69,8 @@ function Figure({ value, label }: { value?: number; label: string }) {
   )
 }
 
-/** One room, full-bleed: photograph on one side, the room on the other. */
+/** One room, full-bleed: photograph on one side, the room on the other.
+ *  Each is a section of the private dining page, so its name is an h2. */
 export function RoomRow({ room, flip = false }: { room: Space; flip?: boolean }) {
   const photo = room.photos?.[0]
   return (
@@ -89,7 +90,7 @@ export function RoomRow({ room, flip = false }: { room: Space; flip?: boolean })
       <div className="flex flex-col items-center justify-center px-(--gutter) py-20 text-center sm:py-28">
         <div className="max-w-md">
           {room.bestFor ? <Label className="text-bronze">{room.bestFor}</Label> : null}
-          <h3 className="mt-6 font-display text-display font-light">{room.name}</h3>
+          <h2 className="mt-6 font-display text-display font-light">{room.name}</h2>
           {room.description ? <p className="mt-6 text-lead font-light text-ink-soft">{room.description}</p> : null}
           {room.seated || room.reception ? (
             <div className="mt-12 flex justify-center gap-16">
