@@ -7,7 +7,6 @@ import { ReserveDialog } from '@/components/reserve'
 import { RestaurantJsonLd } from '@/components/restaurant-json-ld'
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
-import { SITE_URL } from '@/lib/site'
 import { getAnnouncement, getMenuList, getSchedule, getSettings } from '@/sanity/queries'
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
@@ -18,7 +17,6 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
     getMenuList(),
     draftMode(),
   ])
-  const menuUrl = menus[0] ? `${SITE_URL}/menus/${menus[0].slug}` : undefined
   const instagram = settings?.social?.find((s) => s.platform === 'Instagram')?.url
   const a = settings?.address
   const addressLines = a
@@ -51,7 +49,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <SiteFooter settings={settings} schedule={schedule} />
       <MobileActionBar phone={settings?.phone} mapsUrl={settings?.mapsUrl} />
       <ReserveDialog rid={settings?.openTableRid} phone={settings?.phone} schedule={schedule} />
-      <RestaurantJsonLd settings={settings} schedule={schedule} menuUrl={menuUrl} />
+      <RestaurantJsonLd settings={settings} schedule={schedule} menus={menus} />
 
       {draft.isEnabled ? (
         <>

@@ -259,6 +259,59 @@ export function openState(schedule?: Schedule | null, now: Date = new Date()): O
 
 /** Quarter-hour booking times for a date, from the hours (minus closures).
  *  Stops 30 minutes before close. OpenTable has the final word on tables. */
+/**
+ * Which services are on right now, and which are still to come today, by
+ * name and in the order they open: at 4pm on a weekday, Happy Hour and Dinner
+ * are on. Restaurant time, honouring closures (a closed day, or one with
+ * special hours, has no named services). A service that runs past midnight
+ * still counts after midnight.
+ */
+export function servicesNow(schedule?: Schedule | null, now: Date = new Date()) {
+  const clock = restaurantClock(now)
+  const yesterday = addDays(clock.date, -1)
+  const closedToday = Boolean(closureOn(clock.date, schedule?.closures))
+  const closedYesterday = Boolean(closureOn(yesterday, schedule?.closures))
+  const windows: { name: string; opens: number; closes: number }[] = []
+  for (const s of schedule?.services ?? []) {
+    for (const p of s.periods ?? []) {
+      const o = minutes(p.opens)
+      const c0 = minutes(p.closes)
+      if (o === null || c0 === null) continue
+      const c = c0 <= o ? c0 + 1440 : c0
+      if (!closedToday && p.days?.includes(clock.day)) windows.push({ name: s.name, opens: o, closes: c })
+      if (!closedYesterday && c > 1440 && p.days?.includes(weekdayOf(yesterday))) {
+        windows.push({ name: s.name, opens: o - 1440, closes: c - 1440 })
+      }
+    }
+  }
+  windows.sort((a, b) => a.opens - b.opens)
+  const names = (list: typeof windows) => [...new Set(list.map((w) => w.name))]
+  return {
+    open: names(windows.filter((w) => clock.minutes >= w.opens && clock.minutes < w.closes)),
+    later: names(windows.filter((w) => w.opens > clock.minutes)),
+  }
+}
+
+const servesAny = (item: { services?: string[] }, names: string[]) =>
+  (item.services ?? []).some((s) => names.some((n) => n.trim().toLowerCase() === s.trim().toLowerCase()))
+
+/** Whether anything an item is served during (a menu's "Served during") is on now. */
+export function servedNow(item: { services?: string[] }, schedule?: Schedule | null, now: Date = new Date()) {
+  return servesAny(item, servicesNow(schedule, now).open)
+}
+
+/** The first of `items`, in the owner's order, being served right now: Lunch
+ *  at a weekday noon, Dinner (first on the list) at 4pm when Happy Hour is
+ *  also on, nothing at 11pm. */
+export function servingNow<T extends { services?: string[] }>(
+  items: T[],
+  schedule?: Schedule | null,
+  now: Date = new Date(),
+): T | undefined {
+  const { open } = servicesNow(schedule, now)
+  return items.find((i) => servesAny(i, open))
+}
+
 export function bookingSlots(iso: string, schedule?: Schedule | null): string[] {
   const out = new Set<string>()
   for (const i of intervalsOn(iso, schedule)) {

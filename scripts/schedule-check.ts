@@ -12,6 +12,9 @@ import {
   openState,
   serviceRows,
   serviceSummary,
+  servedNow,
+  servingNow,
+  servicesNow,
   weeklyIntervals,
   type Schedule,
 } from '../src/lib/schedule.ts'
@@ -72,5 +75,27 @@ assert.equal(bookingSlots('2026-10-31', schedule).at(-1), '22:30')
 // Banner shows within 7 days of the closure, not before.
 assert.equal(bannerClosure(schedule, new Date('2026-11-10T15:00:00Z')), undefined)
 assert.equal(bannerClosure(schedule, new Date('2026-11-20T15:00:00Z'))?.label, 'Thanksgiving')
+
+// What's on now, and which menu the switcher marks (Eastern time; EDT is UTC-4).
+const at = (iso: string) => new Date(iso)
+assert.deepEqual(servicesNow(schedule, at('2026-10-27T16:00:00Z')), { open: ['Lunch'], later: ['Happy Hour', 'Dinner'] })
+assert.deepEqual(servicesNow(schedule, at('2026-10-27T20:00:00Z')).open, ['Happy Hour', 'Dinner'])
+assert.deepEqual(servicesNow(schedule, at('2026-10-31T19:30:00Z')), { open: [], later: ['Dinner'] })
+assert.deepEqual(servicesNow(schedule, at('2026-11-26T17:00:00Z')), { open: [], later: [] }) // Thanksgiving, closed
+const lateNight: Schedule = { services: [{ name: 'Late Night', periods: [{ days: ['fri'], opens: '22:00', closes: '02:00' }] }] }
+assert.deepEqual(servicesNow(lateNight, at('2026-10-31T05:00:00Z')).open, ['Late Night']) // Sat 1am
+const menus = [
+  { slug: 'dinner', services: ['Dinner'] },
+  { slug: 'lunch', services: ['Lunch'] },
+  { slug: 'happy-hour', services: ['Happy Hour'] },
+  { slug: 'drinks', services: ['Lunch', 'Dinner'] },
+]
+const servingAt = (iso: string) => servingNow(menus, schedule, at(iso))?.slug
+assert.equal(servingAt('2026-10-27T16:00:00Z'), 'lunch') // Tue noon
+assert.equal(servingAt('2026-10-27T20:00:00Z'), 'dinner') // Tue 4pm: dinner leads the owner's order
+assert.equal(servingAt('2026-10-27T13:00:00Z'), undefined) // Tue 9am: nothing yet
+assert.equal(servingAt('2026-10-28T03:00:00Z'), undefined) // Tue 11pm: closed
+assert.equal(servedNow(menus[2], schedule, at('2026-10-27T20:00:00Z')), true)
+assert.equal(servedNow(menus[2], schedule, at('2026-10-31T20:00:00Z')), false) // no Saturday happy hour
 
 console.log('schedule: all checks passed')

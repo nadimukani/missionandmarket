@@ -67,6 +67,7 @@ export type MenuItem = {
   tags?: string[]
   soldOut?: boolean
   addOns?: { label?: string; price?: string }[]
+  image?: SanityImage
 }
 
 export type MenuSection = {

@@ -13,12 +13,12 @@ import type { SiteSettings } from '@/sanity/types'
 export function RestaurantJsonLd({
   settings,
   schedule,
-  menuUrl,
+  menus = [],
 }: {
   settings: SiteSettings | null
   schedule: Schedule | null
-  /** Absolute URL of a menu page that actually resolves 200. */
-  menuUrl?: string
+  /** The published menus, in the owner's order. */
+  menus?: { slug: string; title: string }[]
 }) {
   if (!settings) return null
 
@@ -55,9 +55,15 @@ export function RestaurantJsonLd({
         }
       : undefined,
     hasMap: settings.mapsUrl,
-    // Not /menus — that 307s to the first menu, and advertising a redirect as
-    // the canonical menu URL is the same mistake the sitemap already avoids.
-    menu: menuUrl,
+    // The chooser lists every menu; each menu is also declared on its own
+    // page (MenuJsonLd), joined here by @id.
+    menu: menus.length ? `${SITE_URL}/menus` : undefined,
+    hasMenu: menus.map((m) => ({
+      '@type': 'Menu',
+      '@id': `${SITE_URL}/menus/${m.slug}#menu`,
+      name: `${m.title} Menu`,
+      url: `${SITE_URL}/menus/${m.slug}`,
+    })),
     openingHoursSpecification: openingHours.length ? openingHours : undefined,
     specialOpeningHoursSpecification: specialHours.length ? specialHours : undefined,
     sameAs: settings.social?.map((s) => s.url).filter(Boolean),

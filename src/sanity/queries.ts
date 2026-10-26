@@ -100,7 +100,7 @@ const MENU_QUERY = groq`*[_type == "menu" && slug.current == $slug && hidden != 
   _id, title, "slug": slug.current, availability, services, intro, footnote, image${IMAGE},
   sections[]{
     title, note, layout,
-    items[]{ name, description, price, tags, soldOut, addOns[]{ label, price } }
+    items[]{ name, description, price, tags, soldOut, addOns[]{ label, price }, image${IMAGE} }
   }
 }`
 

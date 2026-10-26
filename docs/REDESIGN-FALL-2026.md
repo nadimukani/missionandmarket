@@ -27,8 +27,9 @@ dedicated pages for search rather than one long scroll.
   already uses, wide and high-contrast — with Jost, a geometric sans that
   echoes the logo's wordmark, for labels, navigation and text.
 - **Signature details:** the logo's chevron mark as a section ornament;
-  centred compositions; tracked capitals; hairlines; square corners; menus set
-  like the printed menu (tracked names, italic serif descriptions).
+  centred compositions; tracked capitals; hairlines; square corners; dish
+  names in the display serif with the price beside them, descriptions in
+  plain text.
 - **Motion:** the reels, slow photographic hover zoom, a once-only entrance
   fade on page openings. No scroll-triggered reveals.
 
@@ -36,9 +37,10 @@ dedicated pages for search rather than one long scroll.
 
 | Route | Purpose |
 | --- | --- |
-| `/` | Full-screen opening: three vertical reels edge to edge (one on phones), logo, "Modern American Restaurant · Buckhead, Atlanta" as the H1 · welcome · menu gateway (Lunch, Dinner, Happy Hour) · the bar (teal) · signature dishes · private dining with capacities · seasonal band · happenings · gallery mosaic · visit |
-| `/menus` + `/menus/{dinner,lunch,happy-hour,drinks,dessert}` | Each menu is its own page with its own title/description and Menu structured data |
-| `/menus/[slug]/print` | Printable menu generated from the same data (no separate PDF to keep in sync) |
+| `/` | Full-screen opening: three vertical reels edge to edge (one on phones), logo, "Modern American Restaurant · Buckhead, Atlanta" as the H1 · welcome · menu gateway (Lunch, Dinner, Happy Hour) · the bar (teal) · signature dishes · private dining with capacities · seasonal band · happenings · gallery mosaic (the footer carries address, hours and phone) |
+| `/menus` | Chooser: every menu with when it's served and a live "Serving now" — all on the first screen |
+| `/menus/{dinner,lunch,happy-hour,drinks,dessert}` | Each menu is its own page (title, description, Menu structured data) under a pinned switcher shared by all five |
+| `/menus/[slug]/print` | Printable menu generated from the same data (no separate PDF to keep in sync); a small link at the end of each menu |
 | `/private-events` | Private dining: rooms, capacities, Tripleseat inquiry |
 | `/holiday-parties` | Seasonal landing page; exists only while the seasonal happening is live, then redirects to private dining |
 | `/happenings` | Happy hour, tasting menu, Beef Wellington, holiday parties |
@@ -87,6 +89,42 @@ The Lunch PDF's back page differs from the Dinner one in four places — the
 Evora spritz's ingredients, Monday Night 404 Lager on draft, Espresso gelato,
 and the tasting menu ("Saturdays at 4 PM" vs "Sat + Sun dinner"). The site
 follows the Dinner version; confirm with the restaurant.
+
+## Menus on the site — research and decision (26 Oct 2026)
+
+How 15 restaurant sites present menus (Chops, Aria, Atlas, Le Bilboquet,
+Storico Fresco, Bistro Niko, St. Cecilia, Lucian, Kyma, Umi, Gramercy Tavern,
+Le Bernardin, COTE, Union Square Cafe, Carbone): 9 swap menus on the same
+screen under tabs, 2 give each menu its own page, 1 slides a drawer over the
+page, 3 are PDF only. None has a "Print" button; none opens on the menu being
+served; none puts photos beside every dish. Best-practice sources (NN/g,
+Google Search Central, Baymard, W3C) agree: real HTML, one URL per menu, no
+modal or overlay for long content (it breaks Back, sharing and phones), and
+the menu on the first screens.
+
+What the site does:
+
+- **`/menus` is a chooser**, not a gallery: all five menus with their hours
+  on the first screen (rows on a phone, five photographs across on desktop).
+- **Picking a menu opens it in place** beneath a pinned switcher that every
+  menu page shares (`menus/layout.tsx`), so switching feels like changing
+  tabs while each menu keeps its own address, title and search listing.
+  Sentence-case labels fit all five on a 360px phone; 48px tap targets.
+- **"Serving now"** is worked out in the browser from Hours & Closures, in
+  the restaurant's time zone (a dot in the switcher, a line on the chooser
+  and on the menu). It highlights; it never redirects — a time-based redirect
+  would serve stale cached pages and shift content under crawlers.
+- **Typography first:** one photograph per menu (beside the title on
+  desktop only, so a phone reaches dishes on the first screen), plus "A
+  closer look" — any dish the owner has photographed, with name and price.
+- **Print is a quiet link** at the end of each menu.
+- **Search:** each dish carries its price in the Menu JSON-LD; the Restaurant
+  JSON-LD points `menu` at `/menus` and lists all five in `hasMenu`.
+
+Open with the client: is Happy Hour walk-in only (the button could say so)?
+Do the happy-hour, drinks and dessert menus need the allergen / raw-food
+notice the dinner and lunch menus carry? More dish photographs? After the
+domain moves, point the Google Business Profile menu link at `/menus`.
 
 ## Media
 
@@ -185,7 +223,8 @@ the documents it manages, so don't re-run it after the client starts editing.
    Publish → the banner appears (within a week of the date), Visit lists it,
    "Open now" and the booking panel skip the day.
 3. **Menus → Dinner** → change a price or tick "Temporarily unavailable" →
-   Publish → the dinner page and its printable version both change.
+   Publish → the dinner page and its printable version both change. Add a
+   photograph to a dish → it appears in "A closer look" on that menu.
 4. **Happenings → New** → a one-time event with a date and "hide after" →
    Publish → it appears on Happenings and the home page.
 5. **Private Dining Rooms → Semi-Private** → add a photograph → the

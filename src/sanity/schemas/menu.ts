@@ -34,7 +34,7 @@ const menuItem = defineType({
     defineField({
       name: 'price',
       type: 'string',
-      description: 'Include the $. Use "MP" for market price.',
+      description: 'The number only, as printed on the menu, e.g. 16 (no $). Use "MP" for market price.',
     }),
     defineField({
       name: 'tags',
