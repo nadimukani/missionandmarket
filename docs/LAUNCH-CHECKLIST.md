@@ -25,20 +25,24 @@ redirect to `https://missionandmarketatl.com/`), and the code's fallback in
 
 ## A day before
 
-1. **Access.** Someone who can sign in to GoDaddy (DNS), the Google Business
+1. **Vercel plan.** The project's team is on Hobby, which Vercel limits to
+   non-commercial personal use (fair-use guidelines); a restaurant's site
+   needs Pro. Upgrade the team, or move the project to a Pro team (the
+   agency's or the client's own) before the domain points at it.
+2. **Access.** Someone who can sign in to GoDaddy (DNS), the Google Business
    Profile and Search Console — asked for in the client's content request.
-2. **Sign-off** on the content, and the open items in
+3. **Sign-off** on the content, and the open items in
    `REDESIGN-FALL-2026.md` → "Placeholders".
-3. **Back up WordPress** — a full backup from the host, plus Tools → Export —
+4. **Back up WordPress** — a full backup from the host, plus Tools → Export —
    and keep the hosting running for a month after launch.
-4. **Lower the TTL** of the `@` A and `www` CNAME records to the lowest GoDaddy
+5. **Lower the TTL** of the `@` A and `www` CNAME records to the lowest GoDaddy
    offers, so the switch (and a rollback) takes minutes, not an hour.
-5. **Printed links.** Ask what the restaurant has printed (QR codes, cards,
+6. **Printed links.** Ask what the restaurant has printed (QR codes, cards,
    ads). Old page URLs are redirected (`next.config.ts`), but old uploads
    (`/wp-content/…`, e.g. a PDF menu) can't be: Vercel's firewall answers
    every `/wp-*` path with a 403 before redirects run. A printed link to one
    needs reprinting, or a new short URL redirected in `next.config.ts`.
-6. **Sanity CORS.** sanity.io/manage → `x2izrrun` → API → CORS origins → add
+7. **Sanity CORS.** sanity.io/manage → `x2izrrun` → API → CORS origins → add
    `https://missionandmarketatl.com` **with "Allow credentials"**, so the
    Studio works on the domain. (The vercel.app URL and `localhost:3333` are
    already allowed.)

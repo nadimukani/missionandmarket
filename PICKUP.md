@@ -28,14 +28,16 @@ WordPress site. On `master`:
   see everything.
 - **Every live WordPress URL redirects** (`next.config.ts`; an audit of 538
   old paths from the sitemaps and the Wayback Machine).
-- **Speed Insights**; the banner on the same 1-minute refresh as the rest.
+- **Web Analytics** (cookieless) and **Speed Insights**; the banner on the
+  same 1-minute refresh as the rest.
 - **`docs/LAUNCH-CHECKLIST.md`** — moving the domain over, step by step.
 
 ## Waiting on the client
-Three Word documents, outside the repo (on the Desktop; sources in
-`local/client-docs/`): the **menu allergen review** (sent; the kitchen
-answers per dish: allergens, raw/undercooked, spellings), a **Studio
-quick-start guide**, and a **content request** (13 items).
+All three Word documents have been sent (on the Desktop; sources in
+`local/client-docs/`): the **menu allergen review** (the kitchen answers per
+dish: allergens, raw/undercooked, spellings), the **Studio quick-start
+guide** (Menus, Happenings, Closures) and the **content request** (13
+items). The restaurant's editors are invited as Editor.
 
 Where each answer goes — in the Studio (as an administrator: the restaurant
 sees only Menus, Happenings and Closures) unless marked **code**:
@@ -55,18 +57,16 @@ sees only Menus, Happenings and Closures) unless marked **code**:
 | Domain, Google access, printed QR codes | `docs/LAUNCH-CHECKLIST.md`. |
 
 ## Needs the account owner
-- Invite the restaurant's editors at sanity.io/manage → Members, as
-  **Editor** (an Administrator sees the whole Studio). To record the demo of
-  what they'll see, sign in with an Editor account too.
-- Enable Vercel Web Analytics (then see Backlog).
-- Swap `SANITY_API_READ_TOKEN` for a Viewer token (it is the Editor robot) —
-  in Vercel Production and `.env.local`.
+- **Vercel Production → `SANITY_API_READ_TOKEN`:** replace it with the
+  read-only token now in `.env.local` (Sanity token "Website preview
+  (read-only)", Viewer role, created 2026-10-26), then redeploy. Until then
+  production still uses the Editor robot token; nothing is broken.
+- **Move the project off the Hobby plan before launch:** Vercel limits Hobby
+  to non-commercial personal use; the restaurant's site needs a Pro (or the
+  client's own) team — `docs/LAUNCH-CHECKLIST.md`.
 - The domain move.
-- Decide on the untracked `web/` folder (a blank create-next-app starter).
 
 ## Backlog
-- **Web Analytics**, once enabled: `pnpm add @vercel/analytics` and
-  `<Analytics />` beside `<SpeedInsights />` in `src/app/(site)/layout.tsx`.
 - **Careers email:** the Apply link's help text says "Leave blank to use the
   careers email", but there is no careers email field, and a posting
   without a link shows no Apply button. Fix when the client says how to
@@ -88,7 +88,8 @@ sees only Menus, Happenings and Closures) unless marked **code**:
   Backups: `backups/sanity-production-20261025-2305`, `…20261026-0012` and
   `…20261026-0241.ndjson` (local, gitignored). Additive/hides only. The old
   line-by-line menu data is kept, hidden in the Studio.
-- **Env (.env.local only):** `SANITY_API_WRITE_TOKEN`, `SANITY_API_READ_TOKEN`,
+- **Env (.env.local only):** `SANITY_API_WRITE_TOKEN` (Editor robot, for the
+  scripts), `SANITY_API_READ_TOKEN` (Viewer, for preview),
   `TRIPLESEAT_PUBLIC_KEY`. Vercel Production has `SANITY_API_READ_TOKEN`;
   Sanity CORS allows the vercel.app URL (with credentials) and
   `localhost:3333`.
@@ -101,9 +102,8 @@ sees only Menus, Happenings and Closures) unless marked **code**:
 - Speed Insights in the bundle, its script served
 
 ## Not verified
-- The Studio signed in, as an Administrator and as an Editor, since the
-  security update and the cut-down Studio (the access rules are checked
-  against the real schemas; the screens need a signed-in user)
+- Live preview (administrators) with the read-only token, once Vercel has
+  it. The Editor view was checked signed in by the account owner.
 - Safari / Firefox / real devices
 
 ## Caveats
