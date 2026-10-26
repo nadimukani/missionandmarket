@@ -481,8 +481,41 @@ export const homePage = defineType({
       title: 'Signatures heading',
       type: 'string',
       group: 'kitchen',
+      description: 'Shown above the Signature dishes below.',
+    }),
+    defineField({
+      name: 'signatureDishes',
+      title: 'Signature dishes',
+      type: 'array',
+      group: 'kitchen',
       description:
-        'The dishes themselves come from the menus — open a menu and tick "Feature on the home page" on any dish with a photograph.',
+        'A few dishes with a photograph, shown on the home page. Take a dish off this list when it leaves the menu.',
+      validation: (r) => r.max(8),
+      of: [
+        defineArrayMember({
+          type: 'object',
+          fields: [
+            defineField({ name: 'name', type: 'string', validation: (r) => r.required() }),
+            defineField({ name: 'description', type: 'string' }),
+            defineField({
+              name: 'image',
+              title: 'Photograph',
+              type: 'image',
+              options: { hotspot: true },
+              fields: [altField],
+              validation: (r) => r.required(),
+            }),
+            defineField({
+              name: 'menu',
+              title: 'On the menu',
+              type: 'reference',
+              to: [{ type: 'menu' }],
+              description: 'Tapping the dish opens this menu.',
+            }),
+          ],
+          preview: { select: { title: 'name', subtitle: 'description', media: 'image' } },
+        }),
+      ],
     }),
     defineField({
       name: 'featuredDishes',

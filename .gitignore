@@ -42,3 +42,6 @@ next-env.d.ts
 
 # local CMS backups (may include drafts)
 /backups
+
+# copied from node_modules at dev/build time (scripts/copy-pdf-worker.mjs)
+/public/pdf.worker.min.mjs

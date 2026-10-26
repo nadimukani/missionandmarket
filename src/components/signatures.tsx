@@ -27,8 +27,8 @@ export function Signatures({ dishes }: { dishes: FeaturedDish[] }) {
         className="flex snap-x snap-mandatory scroll-px-(--gutter) gap-5 overflow-x-auto px-(--gutter) pb-4 [scrollbar-width:none] sm:gap-8 [&::-webkit-scrollbar]:hidden"
       >
         {dishes.map((d) => (
-          <li key={`${d.menuSlug}-${d.name}`} className="w-[78vw] shrink-0 snap-center sm:w-[44vw] lg:w-[30vw] lg:snap-start xl:w-[26vw]">
-            <Link href={`/menus/${d.menuSlug}`} className="group block">
+          <li key={`${d.menuSlug ?? 'menus'}-${d.name}`} className="w-[78vw] shrink-0 snap-center sm:w-[44vw] lg:w-[30vw] lg:snap-start xl:w-[26vw]">
+            <Link href={d.menuSlug ? `/menus/${d.menuSlug}` : '/menus'} className="group block">
               <div className="aspect-[3/4] overflow-hidden bg-cream">
                 <SanityImage
                   image={d.image}

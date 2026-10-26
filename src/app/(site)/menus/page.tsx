@@ -21,8 +21,17 @@ export const metadata: Metadata = {
  * a desktop. Picking one opens it beneath the menu switcher, each at its own
  * address.
  */
+// Large screens set the cards in one row, sized to however many menus are shown.
+const ROW: Record<number, string> = {
+  1: 'lg:max-w-md lg:grid-cols-1',
+  2: 'lg:max-w-3xl lg:grid-cols-2',
+  3: 'lg:max-w-4xl lg:grid-cols-3',
+  4: 'lg:max-w-6xl lg:grid-cols-4',
+}
+
 export default async function MenusPage() {
   const [menus, schedule] = await Promise.all([getMenuList(), getSchedule()])
+  const row = ROW[menus.length] ?? 'lg:max-w-none lg:grid-cols-5'
 
   return (
     <>
@@ -37,20 +46,20 @@ export default async function MenusPage() {
       </header>
 
       <nav aria-label="Choose a menu" className="page pb-(--section)">
-        <ul className="rise rise-3 mx-auto grid max-w-2xl border-t border-ink/10 lg:max-w-none lg:grid-cols-5 lg:gap-6 lg:border-0">
+        <ul className={`rise rise-3 mx-auto grid max-w-2xl border-t border-ink/10 lg:gap-6 lg:border-0 ${row}`}>
           {menus.map((m, i) => (
             <li key={m._id} className="border-b border-ink/10 lg:border-0">
               <Link
                 href={`/menus/${m.slug}`}
                 className="group grid grid-cols-[3.5rem_1fr_auto] items-center gap-4 py-3 sm:grid-cols-[4.5rem_1fr_auto] sm:gap-5 lg:grid-cols-1 lg:gap-0 lg:py-0"
               >
-                <div className="relative aspect-[4/5] overflow-hidden bg-ink lg:aspect-[3/4]">
+                <div className={`relative aspect-[4/5] overflow-hidden bg-ink ${menus.length > 3 ? 'lg:aspect-[3/4]' : ''}`}>
                   {m.image ? (
                     <SanityImage
                       image={m.image}
                       alt=""
                       width={700}
-                      sizes="(min-width: 1024px) 20vw, 72px"
+                      sizes="(min-width: 1024px) 30vw, 72px"
                       priority={i < 3}
                       className="absolute inset-0 size-full object-cover transition-transform duration-[1600ms] ease-(--ease-lux) group-hover:scale-[1.05]"
                     />

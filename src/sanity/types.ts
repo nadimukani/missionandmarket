@@ -48,6 +48,9 @@ export type SiteSettings = {
   ogImage?: SanityImage
   tripleseatLeadFormId?: string
   tripleseatPublicKey?: string
+  /** Shown under every menu (Restaurant Info → Menu notices). */
+  allergenNotice?: string
+  rawFoodNotice?: string
   relatedAccounts?: { label?: string; url?: string }[]
 }
 
@@ -60,31 +63,14 @@ export type Announcement = {
   endsAt?: string
 }
 
-export type MenuItem = {
-  name: string
-  description?: string
-  price?: string
-  tags?: string[]
-  soldOut?: boolean
-  addOns?: { label?: string; price?: string }[]
-  image?: SanityImage
-}
-
-export type MenuSection = {
-  title: string
-  note?: string
-  layout?: 'list' | 'feature'
-  items?: MenuItem[]
-}
-
-/** A dish ticked "Feature on the home page" in its menu — so the home page
- *  can never show a plate the menu no longer lists. */
+/** A dish from Home page → Signature dishes, with the menu it links to
+ *  (absent if that menu is hidden). */
 export type FeaturedDish = {
   name: string
   description?: string
   image: SanityImage
-  menuTitle: string
-  menuSlug: string
+  menuTitle?: string
+  menuSlug?: string
 }
 
 export type MenuSummary = {
@@ -100,20 +86,12 @@ export type MenuSummary = {
 
 export type Menu = MenuSummary & {
   intro?: string
-  footnote?: string
-  pdfUrl?: string
-  sections?: MenuSection[]
+  /** The uploaded menu PDF — the menu itself (a menu without one isn't shown). */
+  pdf: { url: string; originalFilename?: string; size?: number }
 }
 
 export type Seo = {
   title?: string
-  description?: string
-  image?: SanityImage
-}
-
-/** Hand-entered dishes from the pre-redesign home page (hidden in the Studio). */
-export type LegacyFeaturedDish = {
-  name?: string
   description?: string
   image?: SanityImage
 }
@@ -128,7 +106,6 @@ export type HomePage = {
   storyBody?: PortableTextBlock[]
   storyImage?: SanityImage
   kitchenHeading?: string
-  featuredDishes?: LegacyFeaturedDish[]
   barHeading?: string
   barBody?: string
   barImage?: SanityImage

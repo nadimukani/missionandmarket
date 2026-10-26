@@ -24,6 +24,7 @@ export const siteSettings = defineType({
     { name: 'contact', title: 'Contact & Location' },
     { name: 'hours', title: 'Hours (moved)', hidden: true },
     { name: 'booking', title: 'Reservations & Ordering' },
+    { name: 'menus', title: 'Menu notices' },
     { name: 'social', title: 'Social' },
     { name: 'seo', title: 'SEO' },
     { name: 'integrations', title: 'Integrations' },
@@ -279,6 +280,24 @@ export const siteSettings = defineType({
       description: '1200×630. Shown when the site is linked on social or texted.',
     }),
 
+    defineField({
+      name: 'allergenNotice',
+      title: 'Allergen notice',
+      type: 'text',
+      rows: 3,
+      group: 'menus',
+      description:
+        'Shown under every menu on the website. Georgia requires telling guests in writing which of the nine major allergens are in the food (milk, eggs, fish, shellfish, tree nuts, wheat, peanuts, soy, sesame — naming the type of fish, shellfish or nut), e.g. "The following major food allergens are used as ingredients: …"',
+    }),
+    defineField({
+      name: 'rawFoodNotice',
+      title: 'Raw or undercooked notice',
+      type: 'text',
+      rows: 3,
+      group: 'menus',
+      description:
+        'Shown under every menu. Dishes served raw or undercooked must also carry an asterisk on the menu PDF itself.',
+    }),
     defineField({
       name: 'tripleseatLeadFormId',
       title: 'Tripleseat lead form ID',

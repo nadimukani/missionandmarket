@@ -150,7 +150,7 @@ const menu = defineType({
     defineField({
       name: 'title',
       type: 'string',
-      description: 'e.g. Dinner, Lunch, Brunch, Dessert',
+      description: 'e.g. Dinner, Lunch, Happy Hour',
       validation: (r) => r.required(),
     }),
     defineField({
@@ -178,7 +178,7 @@ const menu = defineType({
       name: 'image',
       title: 'Cover photograph',
       type: 'image',
-      description: 'Shown on the Menus page and at the top of this menu.',
+      description: 'Shown on the Menus page, where guests pick a menu.',
       options: { hotspot: true },
       fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
     }),
@@ -204,33 +204,35 @@ const menu = defineType({
       type: 'string',
       description: 'Leave blank to show the hours automatically.',
     }),
+    // The menu itself: the restaurant updates a menu by uploading the new PDF
+    // from its designer — nothing to retype, line by line or anywhere else.
+    defineField({
+      name: 'pdf',
+      title: 'Menu PDF',
+      type: 'file',
+      description:
+        'Upload the latest menu here. When you publish, the website shows the new PDF straight away — its pages, a zoomable view and a text version for search engines.',
+      options: { accept: '.pdf,application/pdf' },
+      validation: (r) => r.warning('Upload the menu PDF so guests can read this menu.').required(),
+    }),
     defineField({
       name: 'intro',
       type: 'text',
-      rows: 3,
-      description: 'Optional paragraph above the dishes.',
+      rows: 2,
+      description: 'Optional line under the title — e.g. "With cocktails, wine, beer and desserts."',
     }),
+    // Retired when the PDF became the menu (the data is kept, just hidden).
     defineField({
       name: 'sections',
       type: 'array',
+      hidden: true,
       of: [defineArrayMember({ type: 'menuSection' })],
     }),
     defineField({
       name: 'footnote',
       type: 'text',
       rows: 2,
-      description:
-        'Allergen or gratuity notice printed at the bottom of the menu.',
-    }),
-    // Retired: an uploaded PDF drifts out of step with the web menu the
-    // moment a price changes. The site now prints this menu from the same
-    // data (/menus/<slug>/print), so there is one menu to keep up to date.
-    defineField({
-      name: 'pdf',
-      title: 'Printable PDF (legacy)',
-      type: 'file',
       hidden: true,
-      options: { accept: '.pdf' },
     }),
   ],
   orderings: [
@@ -241,10 +243,11 @@ const menu = defineType({
     },
   ],
   preview: {
-    select: { title: 'title', subtitle: 'availability', hidden: 'hidden' },
-    prepare: ({ title, subtitle, hidden }) => ({
+    select: { title: 'title', file: 'pdf.asset.originalFilename', hidden: 'hidden', media: 'image' },
+    prepare: ({ title, file, hidden, media }) => ({
       title: hidden ? `${title} (hidden)` : title,
-      subtitle,
+      subtitle: file ? `PDF: ${file}` : 'No PDF yet',
+      media,
     }),
   },
 })

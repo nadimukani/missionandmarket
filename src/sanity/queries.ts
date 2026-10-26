@@ -50,7 +50,8 @@ const SETTINGS_QUERY = groq`*[_type == "siteSettings"][0]{
   parkingNote, address, hours, machineHours,
   openTableRid, openTableUrl, orderUrl, giftCardUrl,
   privateEventsEmail, social, ogImage, relatedAccounts,
-  tripleseatLeadFormId, tripleseatPublicKey
+  tripleseatLeadFormId, tripleseatPublicKey,
+  allergenNotice, rawFoodNotice
 }`
 
 export async function getSettings() {
@@ -77,7 +78,8 @@ export function getAnnouncement() {
   })
 }
 
-const MENU_LIST_QUERY = groq`*[_type == "menu" && hidden != true] | order(order asc, title asc){
+/** A menu is on the site once it has a PDF (and isn't hidden). */
+const MENU_LIST_QUERY = groq`*[_type == "menu" && hidden != true && defined(pdf.asset)] | order(order asc, title asc){
   _id, title, "slug": slug.current, availability, services, order, image${IMAGE}
 }`
 
@@ -85,7 +87,7 @@ const MENU_LIST_QUERY = groq`*[_type == "menu" && hidden != true] | order(order 
  *  with no request (so no draft mode to check). */
 export function getMenuSlugs() {
   return client.fetch<string[]>(
-    groq`*[_type == "menu" && hidden != true && defined(slug.current)].slug.current`,
+    groq`*[_type == "menu" && hidden != true && defined(pdf.asset) && defined(slug.current)].slug.current`,
     {},
     { perspective: 'published', stega: false, next: { revalidate: 60, tags: ['menu'] } },
   )
@@ -96,21 +98,15 @@ export async function getMenuList() {
   return menus.map((m) => cleanKeys(m, ['slug', 'services']))
 }
 
-const MENU_QUERY = groq`*[_type == "menu" && slug.current == $slug && hidden != true][0]{
-  _id, title, "slug": slug.current, availability, services, intro, footnote, image${IMAGE},
-  sections[]{
-    title, note, layout,
-    items[]{ name, description, price, tags, soldOut, addOns[]{ label, price }, image${IMAGE} }
-  }
+const MENU_QUERY = groq`*[_type == "menu" && slug.current == $slug && hidden != true && defined(pdf.asset)][0]{
+  _id, title, "slug": slug.current, availability, services, intro, image${IMAGE},
+  "pdf": pdf.asset->{ url, originalFilename, size }
 }`
 
 export async function getMenu(slug: string) {
   const menu = await sanityFetch<Menu | null>({ query: MENU_QUERY, params: { slug }, tags: ['menu', `menu:${slug}`] })
   if (!menu) return menu
-  return {
-    ...cleanKeys(menu, ['slug', 'services']),
-    sections: menu.sections?.map((sec) => cleanKeys(sec, ['layout'])),
-  }
+  return { ...cleanKeys(menu, ['slug', 'services']), pdf: stegaClean(menu.pdf) }
 }
 
 /** Hours & Closures — the one schedule everything derives from. Cleaned of
@@ -126,20 +122,17 @@ export async function getSchedule(): Promise<Schedule> {
   return stegaClean(data ?? { services: [], closures: [] })
 }
 
-const FEATURED_QUERY = groq`*[_type == "menu" && hidden != true] | order(order asc){
-  title, "slug": slug.current,
-  "items": sections[].items[featured == true && defined(image) && soldOut != true]{
-    name, description, image${IMAGE}
-  }
+/** Home page → Signature dishes: a short list the owner keeps, each with a
+ *  photograph and the menu it's on (no link if that menu is hidden). */
+const FEATURED_QUERY = groq`*[_type == "homePage"][0].signatureDishes[defined(image.asset) && defined(name)]{
+  name, description, image${IMAGE},
+  "menuTitle": select(menu->hidden != true && defined(menu->pdf.asset) => menu->title),
+  "menuSlug": select(menu->hidden != true && defined(menu->pdf.asset) => menu->slug.current)
 }`
 
 export async function getFeaturedDishes(): Promise<FeaturedDish[]> {
-  const menus = await sanityFetch<
-    { title: string; slug: string; items?: Omit<FeaturedDish, 'menuTitle' | 'menuSlug'>[] }[]
-  >({ query: FEATURED_QUERY, tags: ['menu'] })
-  return menus.flatMap((m) =>
-    (m.items ?? []).map((i) => ({ ...i, menuTitle: m.title, menuSlug: stegaClean(m.slug) })),
-  )
+  const dishes = await sanityFetch<FeaturedDish[] | null>({ query: FEATURED_QUERY, tags: ['homePage', 'menu'] })
+  return (dishes ?? []).map((d) => ({ ...d, menuSlug: stegaClean(d.menuSlug) }))
 }
 
 const HOME_QUERY = groq`*[_type == "homePage"][0]{
@@ -147,7 +140,6 @@ const HOME_QUERY = groq`*[_type == "homePage"][0]{
   heroImages[]${IMAGE},
   storyHeading, storyBody, storyImage${IMAGE},
   kitchenHeading,
-  featuredDishes[]{ name, description, image${IMAGE} },
   barHeading, barBody, barImage${IMAGE},
   eventsHeading, eventsBody, eventsImage${IMAGE},
   patioHeading, patioBody, patioImages[]${IMAGE},

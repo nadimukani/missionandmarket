@@ -39,8 +39,8 @@ dedicated pages for search rather than one long scroll.
 | --- | --- |
 | `/` | Full-screen opening: three vertical reels edge to edge (one on phones), logo, "Modern American Restaurant · Buckhead, Atlanta" as the H1 · welcome · menu gateway (Lunch, Dinner, Happy Hour) · the bar (teal) · signature dishes · private dining with capacities · seasonal band · happenings · gallery mosaic (the footer carries address, hours and phone) |
 | `/menus` | Chooser: every menu with when it's served and a live "Serving now" — all on the first screen |
-| `/menus/{dinner,lunch,happy-hour,drinks,dessert}` | Each menu is its own page (title, description, Menu structured data) under a pinned switcher shared by all five |
-| `/menus/[slug]/print` | Printable menu generated from the same data (no separate PDF to keep in sync); a small link at the end of each menu |
+| `/menus/{dinner,lunch,happy-hour}` | Each menu is its own page (title, description) under a pinned switcher: the uploaded PDF drawn in the page, tap to zoom, a text version, the notices |
+| `/menus/[slug]/print` | Retired (redirects to the menu): the PDF is the printable menu |
 | `/private-events` | Private dining: rooms, capacities, Tripleseat inquiry |
 | `/holiday-parties` | Seasonal landing page; exists only while the seasonal happening is live, then redirects to private dining |
 | `/happenings` | Happy hour, tasting menu, Beef Wellington, holiday parties |
@@ -62,12 +62,15 @@ and the site must never show a stale copy.
   "served" line, "Open now", the booking panel's times (closed days are
   disabled), Google's opening hours and holiday hours, and an automatic
   closure banner a week ahead.
-- **Menus.** The HTML menu is the only menu. The print version is generated
-  from it; the old PDF upload is retired. Each menu links to its service for
-  its hours. Any dish can carry a photograph and "Feature on the home page" —
-  the home page's signature dishes come from there, so a dish removed from the
-  menu disappears from the home page too. Sections can be a framed "feature"
-  (Dinner for Two, M+M Express).
+- **Menus.** The uploaded PDF is the menu: the manager updates a menu by
+  uploading the designer's new PDF — nothing to retype, line by line or
+  anywhere else (client decision, 26 Oct). A menu appears on the site once it
+  has a PDF. Each menu links to its service for its hours.
+- **Signature dishes** (Home page → Signature dishes): a short list with
+  photographs, each linked to the menu it's on; take a dish off when it
+  leaves the menu.
+- **Menu notices** (Restaurant Info → Menu notices): the allergen and
+  raw-or-undercooked notices, shown under every menu.
 - **Happenings** can take their hours from a service (Happy Hour) or their own
   wording; one-time events hide themselves after their date.
 - **Live preview.** Inside the Studio, the owner sees the real site, clicks
@@ -102,29 +105,51 @@ Google Search Central, Baymard, W3C) agree: real HTML, one URL per menu, no
 modal or overlay for long content (it breaks Back, sharing and phones), and
 the menu on the first screens.
 
-What the site does:
+Then the client's constraint: the manager updates a menu by uploading the
+designer's PDF and will not retype menus line by line, so **the PDF is the
+menu**. The research's warnings about PDFs (unreadable on phones, Android
+can't embed them, invisible to search and screen readers) are handled in the
+build instead:
 
-- **`/menus` is a chooser**, not a gallery: all five menus with their hours
-  on the first screen (rows on a phone, five photographs across on desktop).
-- **Picking a menu opens it in place** beneath a pinned switcher that every
-  menu page shares (`menus/layout.tsx`), so switching feels like changing
-  tabs while each menu keeps its own address, title and search listing.
-  Sentence-case labels fit all five on a 360px phone; 48px tap targets.
-- **"Serving now"** is worked out in the browser from Hours & Closures, in
-  the restaurant's time zone (a dot in the switcher, a line on the chooser
-  and on the menu). It highlights; it never redirects — a time-based redirect
-  would serve stale cached pages and shift content under crawlers.
-- **Typography first:** one photograph per menu (beside the title on
-  desktop only, so a phone reaches dishes on the first screen), plus "A
-  closer look" — any dish the owner has photographed, with name and price.
-- **Print is a quiet link** at the end of each menu.
-- **Search:** each dish carries its price in the Menu JSON-LD; the Restaurant
-  JSON-LD points `menu` at `/menus` and lists all five in `hasMenu`.
+- **`/menus` is a chooser**: every menu with its hours on the first screen
+  (rows on a phone, photographs across on desktop). The restaurant's PDFs
+  are Lunch, Dinner (each with drinks and desserts on page 2) and Happy Hour;
+  a menu appears once it has a PDF.
+- **Picking a menu opens it in place** under a pinned switcher shared by every
+  menu page (`menus/layout.tsx`); each keeps its own address and title.
+- **The PDF is drawn in the page** with pdf.js, sharp at any width, on every
+  phone; tapping a page opens it full screen with pinch and double-tap zoom
+  (PhotoSwipe). The download link names the format and size.
+- **A text version is read from the PDF on the server** ("Read this menu as
+  text") — search engines and screen readers get the menu with no typing.
+- **"Serving now"** is worked out in the browser from Hours & Closures. It
+  highlights; it never redirects (pages are cached).
+- **Notices** from Restaurant Info sit under every menu, in capitals at a
+  legible size — so the happy-hour sheet, which has none, is covered online.
+- **Search:** the Restaurant JSON-LD points `menu` at `/menus` and lists each
+  menu in `hasMenu`.
 
-Open with the client: is Happy Hour walk-in only (the button could say so)?
-Do the happy-hour, drinks and dessert menus need the allergen / raw-food
-notice the dinner and lunch menus carry? More dish photographs? After the
-domain moves, point the Google Business Profile menu link at `/menus`.
+Georgia food code (DPH Chapter 511-6-1, revised 12 Feb 2025 to the 2022 FDA
+Food Code; checked 26 Oct 2026):
+
+- **Allergens** (.04(7)(d)3.): guests must be told in writing which of the
+  nine major allergens (milk, eggs, fish, crustacean shellfish, tree nuts,
+  wheat, peanuts, soy, sesame) are in the food, naming the type of fish,
+  shellfish or nut. DPH's guidance gives examples ("The following major food
+  allergens are used as ingredients: …" or "Contains …"); a general "tell
+  your server" line does not say which allergens are present. The kitchen
+  needs to supply the list — for the PDFs and for the website's notice.
+- **Raw or undercooked** (.04(7)(e)): each such dish must be marked (an
+  asterisk, or a description such as "hamburgers (can be cooked to order)")
+  and the asterisk tied to the reminder footnote — in capitals, 8 pt or
+  larger. The Lunch and Dinner PDFs carry the footnote but mark no dish; the
+  Happy Hour sheet has neither. Candidates for the chef to confirm: tuna
+  tataki, burgers and sliders cooked to order, a raw-egg Caesar dressing,
+  steaks (intact whole-muscle steaks can be exempt).
+
+Also for the client: the PDFs carry their own spellings (Gigandes,
+Parmagiano, Anchioves…); after the domain moves, point the Google Business
+Profile menu link at `/menus`.
 
 ## Media
 
@@ -222,9 +247,8 @@ the documents it manages, so don't re-run it after the client starts editing.
 2. **Hours & Closures** → add a closure: "Thanksgiving", Nov 26, closed →
    Publish → the banner appears (within a week of the date), Visit lists it,
    "Open now" and the booking panel skip the day.
-3. **Menus → Dinner** → change a price or tick "Temporarily unavailable" →
-   Publish → the dinner page and its printable version both change. Add a
-   photograph to a dish → it appears in "A closer look" on that menu.
+3. **Menus → Dinner** → upload the new PDF → Publish → the dinner page,
+   its zoomable view and its text version all change.
 4. **Happenings → New** → a one-time event with a date and "hide after" →
    Publish → it appears on Happenings and the home page.
 5. **Private Dining Rooms → Semi-Private** → add a photograph → the
