@@ -15,3 +15,13 @@ minimumReleaseAgeExclude:
   - '@next/swc-win32-x64-msvc@16.2.11'
   - eslint-config-next@16.2.11
   - next@16.2.11
+# Security fixes for transitive dependencies, held to the same major version
+# until sanity / @sanity/vision / next pick them up (pnpm audit, 2026-10-26).
+# uuid (moderate, Studio tooling) needs a major bump and is left as is.
+overrides:
+  'js-yaml@>=3 <3.15.2': ^3.15.2
+  'smol-toml@<1.8.1': ^1.8.1
+  'brace-expansion@>=5 <5.0.12': ^5.0.12
+  'browserslist@<4.28.7': ^4.28.7
+  'baseline-browser-mapping@<2.11.0': ^2.11.0
+  'undici@>=7 <7.30.1': ^7.30.1

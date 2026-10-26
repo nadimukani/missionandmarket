@@ -21,18 +21,18 @@
     "menus-pdf": "node --env-file=.env.local --experimental-strip-types scripts/menus-pdf.ts"
   },
   "dependencies": {
-    "@sanity/client": "^7.24.0",
+    "@sanity/client": "^7.28.0",
     "@sanity/icons": "5.1.0",
     "@sanity/image-url": "^2.1.1",
-    "@sanity/vision": "^6.5.0",
-    "next": "16.2.11",
-    "next-sanity": "^13.1.4",
+    "@sanity/vision": "^6.20.0",
+    "next": "16.4.3",
+    "next-sanity": "^13.4.0",
     "pdfjs-dist": "6.4.299",
     "photoswipe": "5.4.4",
-    "react": "19.2.4",
-    "react-dom": "19.2.4",
-    "sanity": "^6.5.0",
-    "styled-components": "^6.4.4"
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "sanity": "^6.20.0",
+    "styled-components": "^6.6.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -40,7 +40,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.2.11",
+    "eslint-config-next": "16.4.3",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

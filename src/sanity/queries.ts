@@ -27,7 +27,8 @@ import type {
  */
 function cleanKeys<T extends object>(item: T, keys: (keyof T)[]): T {
   const out = { ...item }
-  for (const k of keys) if (out[k] != null) out[k] = stegaClean(out[k])
+  // stegaClean only strips the invisible markers, so the value keeps its type.
+  for (const k of keys) if (out[k] != null) out[k] = stegaClean(out[k]) as T[keyof T]
   return out
 }
 

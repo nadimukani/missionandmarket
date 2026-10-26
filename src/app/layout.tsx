@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Jost, Noto_Serif_Display } from 'next/font/google'
+import localFont from 'next/font/local'
 import { stegaClean } from 'next-sanity'
 
 import { SITE_URL } from '@/lib/site'
@@ -8,19 +8,23 @@ import { getSettings } from '@/sanity/queries'
 
 import './globals.css'
 
+// Both faces are served from the site itself (Google Fonts' latin files, OFL
+// licensed — see ./fonts), so a build never depends on reaching Google.
+
 /** Display: the restaurant's own display face, set light. */
-const serif = Noto_Serif_Display({
-  subsets: ['latin'],
-  weight: ['300', '400'],
-  style: ['normal', 'italic'],
+const serif = localFont({
+  src: [
+    { path: './fonts/noto-serif-display-latin.woff2', weight: '300 400', style: 'normal' },
+    { path: './fonts/noto-serif-display-italic-latin.woff2', weight: '300 400', style: 'italic' },
+  ],
   variable: '--font-noto-serif-display',
   display: 'swap',
 })
 
 /** Labels, navigation and text: geometric, like the logo's wordmark. */
-const sans = Jost({
-  subsets: ['latin'],
-  weight: ['300', '400', '500'],
+const sans = localFont({
+  src: './fonts/jost-latin.woff2',
+  weight: '300 500',
   variable: '--font-jost',
   display: 'swap',
 })
