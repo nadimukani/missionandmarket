@@ -4,7 +4,6 @@ import { PortableText, stegaClean } from 'next-sanity'
 
 import { HappeningsList } from '@/components/happenings'
 import { HeroReels } from '@/components/hero-reels'
-import { HoursList } from '@/components/hours'
 import { Lockup } from '@/components/logo'
 import { OpenStatus } from '@/components/open-status'
 import { PortableBody } from '@/components/portable-body'
@@ -15,7 +14,6 @@ import { Signatures } from '@/components/signatures'
 import { ButtonLink, Emphasis, Label, LineLink, Ornament, SectionIntro } from '@/components/ui'
 import { servedShort } from '@/lib/menus'
 import { findService, serviceSummary } from '@/lib/schedule'
-import { telHref } from '@/lib/site'
 import {
   getFeaturedDishes,
   getGallery,
@@ -68,7 +66,6 @@ export default async function HomePage() {
   const mosaic = gallery.slice(0, 5)
   const instagram = settings?.social?.find((s) => s.platform === 'Instagram')?.url
   const [seasonHeadline, seasonText] = splitFirstSentence(seasonal?.description)
-  const a = settings?.address
 
   return (
     <>
@@ -322,57 +319,6 @@ export default async function HomePage() {
           </div>
         </section>
       ) : null}
-
-      {/* ──────────────────────────────── Visit ──────────────────────────────── */}
-      <section className="bg-cream section-y" aria-labelledby="visit-h">
-        <div className="page">
-          <div className="mx-auto max-w-3xl text-center">
-            <Label className="text-bronze">Visit</Label>
-            <h2 id="visit-h" className="mt-6 font-display text-display font-light">
-              Find us in <em>Buckhead</em>
-            </h2>
-          </div>
-          <div className="mt-16 grid gap-14 text-center lg:grid-cols-3 lg:gap-10">
-            <div>
-              <Label className="text-bronze">Address</Label>
-              {a ? (
-                <address className="mt-5 font-display text-subtitle font-light not-italic">
-                  <span className="block">{a.street}</span>
-                  {a.street2 ? <span className="block text-[1.0625rem] text-ink-soft">{a.street2}</span> : null}
-                  <span className="block text-[1.0625rem] text-ink-soft">
-                    {[a.city, a.state].filter(Boolean).join(', ')} {a.zip}
-                  </span>
-                </address>
-              ) : null}
-              {settings?.parkingNote ? (
-                <p className="mx-auto mt-5 max-w-xs text-sm font-light text-stone">{settings.parkingNote}</p>
-              ) : null}
-            </div>
-            <div>
-              <Label className="text-bronze">Hours</Label>
-              <HoursList schedule={schedule} compact align="center" showClosures={false} className="mx-auto mt-5 max-w-xs" />
-            </div>
-            <div>
-              <Label className="text-bronze">Reservations</Label>
-              <p className="mt-5 font-display text-subtitle font-light">
-                {settings?.phone ? (
-                  <a className="link-line tabular" href={telHref(settings.phone)}>
-                    {settings.phone}
-                  </a>
-                ) : null}
-              </p>
-              <div className="mt-8 flex flex-wrap justify-center gap-3">
-                <ReserveButton className="btn btn-solid">Reserve a Table</ReserveButton>
-                {settings?.mapsUrl ? (
-                  <ButtonLink href={settings.mapsUrl} tone="outline">
-                    Directions
-                  </ButtonLink>
-                ) : null}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
     </>
   )
 }
