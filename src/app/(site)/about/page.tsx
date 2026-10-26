@@ -7,6 +7,7 @@ import { PortableBody } from '@/components/portable-body'
 import { ReserveButton } from '@/components/reserve'
 import { SanityImage } from '@/components/sanity-image'
 import { ButtonLink, Label, Ornament, Placeholder } from '@/components/ui'
+import { linkPreview } from '@/lib/metadata'
 import { getGallery, getPage, getTeam } from '@/sanity/queries'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -16,6 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: page?.seo?.title ?? 'About — Modern American Dining in Buckhead',
     description: page?.seo?.description ?? page?.intro,
     alternates: { canonical: '/about' },
+    openGraph: await linkPreview('/about'),
   })
 }
 

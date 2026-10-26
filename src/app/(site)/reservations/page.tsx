@@ -5,13 +5,17 @@ import { HoursList } from '@/components/hours'
 import { ReserveForm } from '@/components/reserve'
 import { SanityImage } from '@/components/sanity-image'
 import { Label, LineLink, Ornament } from '@/components/ui'
+import { linkPreview } from '@/lib/metadata'
 import { telHref } from '@/lib/site'
 import { getGallery, getSchedule, getSettings } from '@/sanity/queries'
 
-export const metadata: Metadata = {
-  title: 'Reservations',
-  description: 'Reserve a table at Mission + Market in Buckhead, Atlanta — lunch, happy hour and dinner.',
-  alternates: { canonical: '/reservations' },
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: 'Reservations',
+    description: 'Reserve a table at Mission + Market in Buckhead, Atlanta — lunch, happy hour and dinner.',
+    alternates: { canonical: '/reservations' },
+    openGraph: await linkPreview('/reservations'),
+  }
 }
 
 export default async function ReservationsPage() {

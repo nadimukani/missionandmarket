@@ -13,6 +13,7 @@ import { SanityImage } from '@/components/sanity-image'
 import { Signatures } from '@/components/signatures'
 import { ButtonLink, Emphasis, Label, LineLink, Ornament, SectionIntro } from '@/components/ui'
 import { servedShort } from '@/lib/menus'
+import { linkPreview } from '@/lib/metadata'
 import { findService, serviceSummary } from '@/lib/schedule'
 import {
   getFeaturedDishes,
@@ -32,6 +33,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: { absolute: 'Mission + Market — Modern American Restaurant in Buckhead, Atlanta' },
     description: home?.heroSubheading ?? home?.seo?.description ?? settings?.shortDescription,
     alternates: { canonical: '/' },
+    openGraph: await linkPreview('/'),
   })
 }
 

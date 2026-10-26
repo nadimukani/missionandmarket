@@ -4,12 +4,16 @@ import { PortableText } from 'next-sanity'
 import { BreadcrumbsJsonLd } from '@/components/breadcrumbs-json-ld'
 import { PortableBody } from '@/components/portable-body'
 import { Label, Ornament, Placeholder } from '@/components/ui'
+import { linkPreview } from '@/lib/metadata'
 import { getJobs } from '@/sanity/queries'
 
-export const metadata: Metadata = {
-  title: 'Careers',
-  description: 'Front-of-house and back-of-house positions at Mission + Market in Buckhead, Atlanta.',
-  alternates: { canonical: '/careers' },
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: 'Careers',
+    description: 'Front-of-house and back-of-house positions at Mission + Market in Buckhead, Atlanta.',
+    alternates: { canonical: '/careers' },
+    openGraph: await linkPreview('/careers'),
+  }
 }
 
 /** The positions offered on the restaurant's current application form. */

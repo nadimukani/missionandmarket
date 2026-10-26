@@ -6,14 +6,18 @@ import { CapacityTable } from '@/components/rooms'
 import { SanityImage } from '@/components/sanity-image'
 import { TripleseatForm } from '@/components/tripleseat-form'
 import { ButtonLink, Label, LineLink, Ornament } from '@/components/ui'
+import { linkPreview } from '@/lib/metadata'
 import { telHref } from '@/lib/site'
 import { getHomePage, getSettings, getSpaces, getSpecials } from '@/sanity/queries'
 
-export const metadata: Metadata = {
-  title: 'Holiday Parties in Buckhead, Atlanta',
-  description:
-    'Corporate and social holiday parties at Mission + Market in Buckhead — private rooms, the patio or the whole restaurant.',
-  alternates: { canonical: '/holiday-parties' },
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: 'Holiday Parties in Buckhead, Atlanta',
+    description:
+      'Corporate and social holiday parties at Mission + Market in Buckhead — private rooms, the patio or the whole restaurant.',
+    alternates: { canonical: '/holiday-parties' },
+    openGraph: await linkPreview('/holiday-parties'),
+  }
 }
 
 /**

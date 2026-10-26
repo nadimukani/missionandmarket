@@ -4,13 +4,17 @@ import { BreadcrumbsJsonLd } from '@/components/breadcrumbs-json-ld'
 import { HappeningRow } from '@/components/happenings'
 import { PageHero } from '@/components/page-hero'
 import { LineLink } from '@/components/ui'
+import { linkPreview } from '@/lib/metadata'
 import { getGallery, getSchedule, getSettings, getSpecials } from '@/sanity/queries'
 
-export const metadata: Metadata = {
-  title: 'Happenings — Happy Hour, Tasting Menu + More',
-  description:
-    'Happy hour, the chef’s tasting menu, Beef Wellington nights and holiday parties at Mission + Market in Buckhead, Atlanta.',
-  alternates: { canonical: '/happenings' },
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: 'Happenings — Happy Hour, Tasting Menu + More',
+    description:
+      'Happy hour, the chef’s tasting menu, Beef Wellington nights and holiday parties at Mission + Market in Buckhead, Atlanta.',
+    alternates: { canonical: '/happenings' },
+    openGraph: await linkPreview('/happenings'),
+  }
 }
 
 export default async function HappeningsPage() {

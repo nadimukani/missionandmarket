@@ -3,12 +3,16 @@ import type { Metadata } from 'next'
 import { BreadcrumbsJsonLd } from '@/components/breadcrumbs-json-ld'
 import { SanityImage } from '@/components/sanity-image'
 import { Label, LineLink, Ornament } from '@/components/ui'
+import { linkPreview } from '@/lib/metadata'
 import { getGallery, getSettings } from '@/sanity/queries'
 
-export const metadata: Metadata = {
-  title: 'Gallery',
-  description: 'The food, the cocktails, the patio and the dining room at Mission + Market in Buckhead, Atlanta.',
-  alternates: { canonical: '/gallery' },
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: 'Gallery',
+    description: 'The food, the cocktails, the patio and the dining room at Mission + Market in Buckhead, Atlanta.',
+    alternates: { canonical: '/gallery' },
+    openGraph: await linkPreview('/gallery'),
+  }
 }
 
 export default async function GalleryPage() {

@@ -6,14 +6,18 @@ import { OpenStatus } from '@/components/open-status'
 import { PageHero } from '@/components/page-hero'
 import { ReserveButton } from '@/components/reserve'
 import { ButtonLink, Label } from '@/components/ui'
+import { linkPreview } from '@/lib/metadata'
 import { formatAddress, telHref } from '@/lib/site'
 import { getGallery, getSchedule, getSettings } from '@/sanity/queries'
 
-export const metadata: Metadata = {
-  title: 'Visit — Hours, Directions + Parking',
-  description:
-    'Hours, directions and parking for Mission + Market at Three Alliance Center, 3550 Lenox Road NE, Buckhead, Atlanta.',
-  alternates: { canonical: '/visit' },
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: 'Visit — Hours, Directions + Parking',
+    description:
+      'Hours, directions and parking for Mission + Market at Three Alliance Center, 3550 Lenox Road NE, Buckhead, Atlanta.',
+    alternates: { canonical: '/visit' },
+    openGraph: await linkPreview('/visit'),
+  }
 }
 
 /** Driving directions as the restaurant publishes them on its current site. */

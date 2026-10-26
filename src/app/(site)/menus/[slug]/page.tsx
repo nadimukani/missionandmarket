@@ -9,6 +9,7 @@ import { ReserveButton } from '@/components/reserve'
 import { ServingNow } from '@/components/serving-now'
 import { Label, Ornament } from '@/components/ui'
 import { servedLines } from '@/lib/menus'
+import { linkPreview } from '@/lib/metadata'
 import { readPageSizes } from '@/lib/pdf-pages'
 import { findService } from '@/lib/schedule'
 import { getMenu, getMenuSlugs, getSchedule, getSettings } from '@/sanity/queries'
@@ -47,6 +48,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: seo?.title ?? `${menu.title} Menu`,
     description: seo?.description ?? menu.intro ?? `The ${menu.title.toLowerCase()} menu at Mission + Market in Buckhead, Atlanta.`,
     alternates: { canonical: `/menus/${slug}` },
+    openGraph: await linkPreview(`/menus/${slug}`),
   })
 }
 

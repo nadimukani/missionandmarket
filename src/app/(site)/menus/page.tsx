@@ -6,13 +6,17 @@ import { SanityImage } from '@/components/sanity-image'
 import { ServingNow } from '@/components/serving-now'
 import { Arrow, Emphasis, Label } from '@/components/ui'
 import { servedShort } from '@/lib/menus'
+import { linkPreview } from '@/lib/metadata'
 import { getMenuList, getSchedule } from '@/sanity/queries'
 
-export const metadata: Metadata = {
-  title: 'Menus — Lunch, Dinner, Happy Hour, Drinks + Dessert',
-  description:
-    'Lunch, dinner, happy hour, cocktails, wine and dessert menus at Mission + Market — modern American cooking with California and Pacific influences in Buckhead, Atlanta.',
-  alternates: { canonical: '/menus' },
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: 'Menus — Lunch, Dinner, Happy Hour, Drinks + Dessert',
+    description:
+      'Lunch, dinner, happy hour, cocktails, wine and dessert menus at Mission + Market — modern American cooking with California and Pacific influences in Buckhead, Atlanta.',
+    alternates: { canonical: '/menus' },
+    openGraph: await linkPreview('/menus'),
+  }
 }
 
 /**

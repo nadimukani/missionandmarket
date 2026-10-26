@@ -2,8 +2,8 @@ import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
 import { stegaClean } from 'next-sanity'
 
+import { linkPreview } from '@/lib/metadata'
 import { SITE_URL } from '@/lib/site'
-import { urlForImage } from '@/sanity/image'
 import { getSettings } from '@/sanity/queries'
 
 import './globals.css'
@@ -36,9 +36,6 @@ export const viewport: Viewport = {
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSettings()
   const name = settings?.name ?? 'Mission + Market'
-  const og = settings?.ogImage
-    ? urlForImage(settings.ogImage).width(1200).height(630).fit('crop').url()
-    : undefined
 
   // No click-to-edit markers in <head>, even in the Studio preview.
   return stegaClean({
@@ -48,21 +45,10 @@ export async function generateMetadata(): Promise<Metadata> {
       template: `%s · ${name}`,
     },
     description: settings?.shortDescription,
-    openGraph: {
-      type: 'website',
-      siteName: name,
-      title: name,
-      description: settings?.shortDescription,
-      url: SITE_URL,
-      images: og ? [{ url: og, width: 1200, height: 630 }] : undefined,
-      locale: 'en_US',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: name,
-      description: settings?.shortDescription,
-      images: og ? [og] : undefined,
-    },
+    // No address here: each page passes its own to linkPreview(). The preview
+    // title, description and X's card (photograph included) follow the page.
+    openGraph: await linkPreview(),
+    twitter: { card: 'summary_large_image' },
     alternates: { canonical: '/' },
   })
 }

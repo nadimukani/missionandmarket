@@ -7,6 +7,7 @@ import { PortableBody } from '@/components/portable-body'
 import { CapacityTable, RoomRow } from '@/components/rooms'
 import { TripleseatForm } from '@/components/tripleseat-form'
 import { ButtonLink, Label, LineLink, Ornament } from '@/components/ui'
+import { linkPreview } from '@/lib/metadata'
 import { telHref } from '@/lib/site'
 import { getPage, getSettings, getSpaces, getSpecials } from '@/sanity/queries'
 
@@ -20,6 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
       page?.intro ??
       'Private dining rooms, the patio and full buyouts at Mission + Market in Buckhead, Atlanta.',
     alternates: { canonical: '/private-events' },
+    openGraph: await linkPreview('/private-events'),
   })
 }
 
