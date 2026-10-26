@@ -30,10 +30,11 @@ dataset `production`.
 ## Content
 
 Everything is edited in the Studio; no deploy is needed for any of it. The
-restaurant's editors (Editor role) see only what they asked to change: Menus
-(upload the PDF), Happenings and Closures. Administrators see the rest — hours,
-restaurant info and links, the banner, the home page, rooms, team, gallery
-(`src/sanity/access.ts`).
+restaurant's login sees only what they asked to change: Menus (upload the PDF),
+Happenings and Closures. The developers listed by Sanity user ID in
+`src/sanity/access.ts` see the rest — hours, restaurant info and links, the
+banner, the home page, rooms, team, gallery. (On Sanity's free plan everyone
+who edits is an Administrator, so the list decides, not the role.)
 
 `pnpm seed` re-imports the content migrated from the old WordPress site. It is
 idempotent (fixed `_id`s, `createOrReplace`), so re-running overwrites rather

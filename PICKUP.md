@@ -22,10 +22,12 @@ WordPress site. On `master`:
   moderate, uuid, which needs a major bump), fonts served from the site, the
   Studio rendered in the browser only.
 - **The Studio is cut down for the restaurant** to what they asked to change
-  — menu updates, events, closure notices: a signed-in Editor sees only
-  Menus (the PDF), Happenings and Closures; the rest is read-only to them, and
-  Live preview is administrators' (`src/sanity/access.ts`). Administrators
-  see everything.
+  — menu updates, events, closure notices: every login sees only Menus (the
+  PDF), Happenings and Closures, with the rest read-only, except the
+  developers listed by Sanity user ID in `src/sanity/access.ts` (the
+  developer signs in with GitHub). Sanity stays on the free plan (decided
+  2026-10-26), where people can only be Administrators or Viewers, so the
+  list, not the role, tells them apart.
 - **Every live WordPress URL redirects** (`next.config.ts`; an audit of 538
   old paths from the sitemaps and the Wayback Machine).
 - **Web Analytics** (cookieless) and **Speed Insights**; the banner on the
@@ -37,9 +39,10 @@ All three Word documents have been sent (on the Desktop; sources in
 `local/client-docs/`): the **menu allergen review** (the kitchen answers per
 dish: allergens, raw/undercooked, spellings), the **Studio quick-start
 guide** (Menus, Happenings, Closures) and the **content request** (13
-items). The restaurant's editors are invited as Editor.
+items). The restaurant's logins are invited (Administrator, the free plan's
+only editing role).
 
-Where each answer goes — in the Studio (as an administrator: the restaurant
+Where each answer goes — in the Studio (as the developer: the restaurant
 sees only Menus, Happenings and Closures) unless marked **code**:
 
 | Answer | Where |
@@ -102,8 +105,10 @@ sees only Menus, Happenings and Closures) unless marked **code**:
 - Web Analytics and Speed Insights load on the live site (both scripts 200)
 
 ## Not verified
-- Live preview (administrators) with the read-only token, once Vercel has
-  it. The Editor view was checked signed in by the account owner.
+- The restaurant's view signed in (any login but the developer's), and Live
+  preview with the read-only token once Vercel has it. The access rules are
+  checked against the real schemas for the developer and for a restaurant
+  Administrator.
 - Safari / Firefox / real devices
 
 ## Caveats

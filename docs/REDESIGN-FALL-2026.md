@@ -57,12 +57,13 @@ The brief: when the restaurant changes something, it must change everywhere,
 and the site must never show a stale copy.
 
 - **What the restaurant sees.** They asked to change three things
-  themselves: menu updates, events and closure notices. So a signed-in
-  **Editor** gets just **Menus** (the PDF only), **Happenings** and
-  **Closures**, in one tool; everything else is read-only to them, and Live
-  preview and the query console are for administrators
-  (`src/sanity/access.ts`). An **Administrator** sees the whole Studio —
-  invite the restaurant as Editor.
+  themselves: menu updates, events and closure notices. So every login gets
+  just **Menus** (the PDF only), **Happenings** and **Closures**, in one
+  tool, with everything else read-only — except the developers listed by
+  Sanity user ID in `src/sanity/access.ts`, who get the whole Studio, Live
+  preview and the query console. The project stays on Sanity's free plan,
+  where people can only be Administrators or Viewers, so the restaurant's
+  login is an Administrator too: the list, not the role, tells them apart.
 - **Hours & Closures** (new singleton). Services with days + times picked from
   dropdowns; closures with a date, "closed" or special hours, and an optional
   banner. Everything derives from it: footer and Visit hours, each menu's
@@ -81,7 +82,7 @@ and the site must never show a stale copy.
   raw-or-undercooked notices, shown under every menu.
 - **Happenings** can take their hours from a service (Happy Hour) or their own
   wording; one-time events hide themselves after their date.
-- **Live preview** (administrators). Inside the Studio, the real site: click
+- **Live preview** (developers). Inside the Studio, the real site: click
   any text to open the field behind it, edit, publish. Published changes
   reach the public site within a minute without any webhook (instantly with
   it).
@@ -240,16 +241,18 @@ the documents it manages, so don't re-run it after the client starts editing.
 
 1. **Sanity CORS.** Done for `https://missionandmarket.vercel.app` (with
    credentials). The domain is added at launch — `LAUNCH-CHECKLIST.md`.
-2. **Invite the restaurant's editors** at sanity.io/manage → Members, with
-   the **Editor** role (an Administrator sees the whole Studio).
+2. **Invite the restaurant's login** at sanity.io/manage → Members, as
+   Administrator (the free plan's only editing role). The Studio still shows
+   them only Menus, Happenings and Closures.
 3. **Revalidation webhook** — confirm sanity.io/manage → API → Webhooks points
    at the deployment's `/api/revalidate` with the filter in
    `src/app/api/revalidate/route.ts`, or edits wait out the 1-minute floor.
 
 ## Demo script (≈2 minutes)
 
-Sign in with an **Editor** account to show what the restaurant will see (an
-Administrator sees the whole Studio).
+Sign in with any login other than the developer's (`src/sanity/access.ts`)
+to show what the restaurant will see; the developer's login sees the whole
+Studio.
 
 1. **Menus → Dinner** → upload the new PDF → Publish → within a minute the
    dinner page shows it.
