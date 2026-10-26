@@ -211,7 +211,7 @@ const menu = defineType({
       title: 'Menu PDF',
       type: 'file',
       description:
-        'Upload the latest menu here. When you publish, the website shows the new PDF straight away — its pages, a zoomable view and a text version for search engines.',
+        'Upload the latest menu here. When you publish, the website shows the new PDF straight away — its pages and a zoomable view.',
       options: { accept: '.pdf,application/pdf' },
       validation: (r) => r.warning('Upload the menu PDF so guests can read this menu.').required(),
     }),

@@ -9,7 +9,7 @@ import { ReserveButton } from '@/components/reserve'
 import { ServingNow } from '@/components/serving-now'
 import { Label, Ornament } from '@/components/ui'
 import { servedLines } from '@/lib/menus'
-import { readPdf } from '@/lib/pdf-text'
+import { readPageSizes } from '@/lib/pdf-pages'
 import { findService } from '@/lib/schedule'
 import { getMenu, getMenuSlugs, getSchedule, getSettings } from '@/sanity/queries'
 
@@ -64,10 +64,9 @@ export default async function MenuPage({ params }: Props) {
   const notes = [
     ...new Set((menu.services ?? []).map((name) => findService(schedule, name)?.note).filter((n): n is string => Boolean(n))),
   ]
-  // The uploaded PDF is the menu: its pages are drawn below, and its text is
-  // read here for a plain-text version.
-  const pages = await readPdf(menu.pdf.url)
-  const hasText = Boolean(pages?.some((p) => p.lines.length))
+  // The uploaded PDF is the menu: its pages are drawn below, in space
+  // reserved from the page sizes read here.
+  const pages = await readPageSizes(menu.pdf.url)
 
   return (
     <article aria-labelledby="menu-title">
@@ -97,37 +96,12 @@ export default async function MenuPage({ params }: Props) {
 
       <section aria-label={`The ${menu.title} menu`} className="page pb-(--section)">
         <div className="mx-auto max-w-[52rem]">
-          <MenuPdf
-            url={menu.pdf.url}
-            title={menu.title}
-            pages={pages?.map(({ width, height }) => ({ width, height })) ?? []}
-          />
+          <MenuPdf url={menu.pdf.url} title={menu.title} pages={pages ?? []} />
           <p className="mt-8 text-center">
             <a href={`${menu.pdf.url}?dl=mission-market-${slug}-menu.pdf`} className="label link-line text-stone">
               Download the menu (PDF{kb(menu.pdf.size)})
             </a>
           </p>
-          {hasText ? (
-            <details className="mt-10 border-t border-ink/10 pt-6">
-              <summary className="label cursor-pointer list-none text-center text-stone transition-colors hover:text-ink [&::-webkit-details-marker]:hidden">
-                Read this menu as text
-              </summary>
-              <div className="mt-8 grid gap-10">
-                {pages!.map((p, i) =>
-                  p.lines.length ? (
-                    <div key={i}>
-                      {pages!.length > 1 ? <p className="label text-bronze">Page {i + 1}</p> : null}
-                      <div className="mt-3 grid gap-1 text-[0.9375rem] leading-relaxed font-light text-ink-soft">
-                        {p.lines.map((line, j) => (
-                          <p key={j}>{line}</p>
-                        ))}
-                      </div>
-                    </div>
-                  ) : null,
-                )}
-              </div>
-            </details>
-          ) : null}
 
           <MenuNotices notices={[settings?.allergenNotice, settings?.rawFoodNotice]} className="mt-12" />
         </div>

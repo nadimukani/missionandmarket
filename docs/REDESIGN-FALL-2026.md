@@ -39,7 +39,7 @@ dedicated pages for search rather than one long scroll.
 | --- | --- |
 | `/` | Full-screen opening: three vertical reels edge to edge (one on phones), logo, "Modern American Restaurant · Buckhead, Atlanta" as the H1 · welcome · menu gateway (Lunch, Dinner, Happy Hour) · the bar (teal) · signature dishes · private dining with capacities · seasonal band · happenings · gallery mosaic (the footer carries address, hours and phone) |
 | `/menus` | Chooser: every menu with when it's served and a live "Serving now" — all on the first screen |
-| `/menus/{dinner,lunch,happy-hour}` | Each menu is its own page (title, description) under a pinned switcher: the uploaded PDF drawn in the page, tap to zoom, a text version, the notices |
+| `/menus/{dinner,lunch,happy-hour}` | Each menu is its own page (title, description) under a pinned switcher: the uploaded PDF drawn in the page, tap to zoom, the notices |
 | `/menus/[slug]/print` | Retired (redirects to the menu): the PDF is the printable menu |
 | `/private-events` | Private dining: rooms, capacities, Tripleseat inquiry |
 | `/holiday-parties` | Seasonal landing page; exists only while the seasonal happening is live, then redirects to private dining |
@@ -108,9 +108,9 @@ the menu on the first screens.
 
 Then the client's constraint: the manager updates a menu by uploading the
 designer's PDF and will not retype menus line by line, so **the PDF is the
-menu**. The research's warnings about PDFs (unreadable on phones, Android
-can't embed them, invisible to search and screen readers) are handled in the
-build instead:
+menu**, and the owners want the PDF alone — nothing beside it. The
+research's warnings about PDFs on phones (unreadable, Android can't embed
+them) are handled in the build instead:
 
 - **`/menus` is a chooser**: every menu with its hours on the first screen
   (rows on a phone, photographs across on desktop). The restaurant's PDFs
@@ -121,8 +121,9 @@ build instead:
 - **The PDF is drawn in the page** with pdf.js, sharp at any width, on every
   phone; tapping a page opens it full screen with pinch and double-tap zoom
   (PhotoSwipe). The download link names the format and size.
-- **A text version is read from the PDF on the server** ("Read this menu as
-  text") — search engines and screen readers get the menu with no typing.
+- **No text version.** One read from the PDF on the server ("Read this menu
+  as text") was tried and removed at the owners' request: the page is the
+  PDF.
 - **"Serving now"** is worked out in the browser from Hours & Closures. It
   highlights; it never redirects (pages are cached).
 - **Notices** from Restaurant Info sit under every menu, in capitals at a
@@ -245,8 +246,8 @@ the documents it manages, so don't re-run it after the client starts editing.
 2. **Hours & Closures** → add a closure: "Thanksgiving", Nov 26, closed →
    Publish → the banner appears (within a week of the date), Visit lists it,
    "Open now" and the booking panel skip the day.
-3. **Menus → Dinner** → upload the new PDF → Publish → the dinner page,
-   its zoomable view and its text version all change.
+3. **Menus → Dinner** → upload the new PDF → Publish → the dinner page and
+   its zoomable view change.
 4. **Happenings → New** → a one-time event with a date and "hide after" →
    Publish → it appears on Happenings and the home page.
 5. **Private Dining Rooms → Semi-Private** → add a photograph → the

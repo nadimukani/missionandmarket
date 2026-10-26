@@ -15,7 +15,8 @@ The fall 2026 redesign is **live** on production
 auto-deploys `master`); missionandmarketatl.com still serves the old
 WordPress site. On `master`:
 - **Menus are the uploaded PDFs** (client decision: the manager won't retype
-  menus) — rationale and the Georgia food-code findings in
+  menus, and the owners want the PDF alone — no text version, nothing to
+  keep in step) — rationale and the Georgia food-code findings in
   `docs/REDESIGN-FALL-2026.md` → "Menus on the site — research and decision".
 - **Security update** (Next 16.4.3, Sanity 6.20; Dependabot down to 2
   moderate, uuid, which needs a major bump), fonts served from the site, the
@@ -106,8 +107,8 @@ Where each answer goes — in the Studio unless marked **code**:
   pages are cached, so never decide it on the server.
 - pdf.js runs in two places: the browser viewer (worker copied to
   `public/pdf.worker.min.mjs` by `scripts/copy-pdf-worker.mjs`, run by
-  `dev`/`build`; ESLint skips it) and the server text reader
-  (`src/lib/pdf-text.ts`, bundled, its worker imported in-process).
+  `dev`/`build`; ESLint skips it) and the server, which reads only the page
+  sizes (`src/lib/pdf-pages.ts`, bundled, its worker imported in-process).
 - Vercel + Turbopack: never mark packages external (`serverExternalPackages`)
   — with pnpm it symlinks them into `.next` and Vercel rejects the bundle.
   The same is why the Studio renders in the browser only
