@@ -8,9 +8,8 @@ export const SITE_URL =
 
 export const NAV_LINKS = [
   { href: '/menus', label: 'Menus' },
-  { href: '/specials', label: 'Specials' },
-  { href: '/private-events', label: 'Private Events' },
-  { href: '/gallery', label: 'Gallery' },
+  { href: '/happenings', label: 'Happenings' },
+  { href: '/private-events', label: 'Private Dining' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Visit' },
 ] as const
@@ -23,6 +22,8 @@ export const NAV_LINKS = [
  * submitted to Google as a 404.
  */
 export const CMS_ROUTED_SLUGS = ['about', 'private-events'] as const
+
+export const INSTAGRAM_HANDLE = '@missionandmkt'
 
 export function telHref(phone?: string) {
   return phone ? `tel:${phone.replace(/[^\d+]/g, '')}` : undefined

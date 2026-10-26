@@ -1,43 +1,44 @@
-import type { Metadata } from 'next'
-import { Cormorant_Garamond, Instrument_Sans } from 'next/font/google'
+import type { Metadata, Viewport } from 'next'
+import { Instrument_Sans, Instrument_Serif } from 'next/font/google'
 
-import { NoticeBanner } from '@/components/notice-banner'
-import { ReserveBar } from '@/components/reserve-bar'
-import { RestaurantJsonLd } from '@/components/restaurant-json-ld'
-import { SiteFooter } from '@/components/site-footer'
-import { SiteHeader } from '@/components/site-header'
 import { SITE_URL } from '@/lib/site'
-import { getMenuList, getSettings } from '@/sanity/queries'
+import { urlForImage } from '@/sanity/image'
+import { getSettings } from '@/sanity/queries'
 
 import './globals.css'
 
-/** Echoes the wordmark: a thin, high-elegance serif. Only the weights the
- *  design actually uses, so we ship two files rather than a variable range. */
-const display = Cormorant_Garamond({
+/** Display face. One weight with its italic — the italic carries the voice. */
+const serif = Instrument_Serif({
   subsets: ['latin'],
-  weight: ['300', '400'],
+  weight: '400',
   style: ['normal', 'italic'],
-  variable: '--font-display',
+  variable: '--font-instrument-serif',
   display: 'swap',
 })
 
-/** The one webfont the restaurant already loads — the UI voice carries over. */
-const body = Instrument_Sans({
+/** The UI and body face the restaurant's current site already uses. */
+const sans = Instrument_Sans({
   subsets: ['latin'],
-  variable: '--font-body',
+  variable: '--font-instrument-sans',
   display: 'swap',
 })
+
+export const viewport: Viewport = {
+  themeColor: '#f7f5f0',
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSettings()
   const name = settings?.name ?? 'Mission + Market'
-  const area = settings?.neighborhood ? ` | ${settings.neighborhood}` : ''
+  const og = settings?.ogImage
+    ? urlForImage(settings.ogImage).width(1200).height(630).fit('crop').url()
+    : undefined
 
   return {
     metadataBase: new URL(SITE_URL),
     title: {
-      default: `${name} — ${settings?.tagline ?? 'Modern American'}${area}`,
-      template: `%s | ${name}`,
+      default: `${name} — Modern American dining in Buckhead, Atlanta`,
+      template: `%s · ${name}`,
     },
     description: settings?.shortDescription,
     openGraph: {
@@ -46,55 +47,25 @@ export async function generateMetadata(): Promise<Metadata> {
       title: name,
       description: settings?.shortDescription,
       url: SITE_URL,
-      // Resolved from app/opengraph-image.tsx. Without this every shared link
-      // rendered as a blank card.
-      images: [{ url: '/opengraph-image', width: 1200, height: 630 }],
+      images: og ? [{ url: og, width: 1200, height: 630 }] : undefined,
       locale: 'en_US',
     },
     twitter: {
       card: 'summary_large_image',
       title: name,
       description: settings?.shortDescription,
-      images: ['/opengraph-image'],
+      images: og ? [og] : undefined,
     },
     alternates: { canonical: '/' },
   }
 }
 
-export default async function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  const [settings, menus] = await Promise.all([getSettings(), getMenuList()])
-  const menuUrl = menus[0] ? `${SITE_URL}/menus/${menus[0].slug}` : undefined
-
+/** Document shell only. The site chrome lives in (site)/layout.tsx so the
+ *  Studio at /studio renders full-screen without the header and footer. */
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${display.variable} ${body.variable}`}>
-      <body className="flex min-h-dvh flex-col bg-paper text-ink">
-        <a
-          href="#main"
-          className="sr-only bg-ink px-4 py-2 text-cream focus:not-sr-only
-                     focus:absolute focus:top-3 focus:left-3 focus:z-100"
-        >
-          Skip to content
-        </a>
-
-        <NoticeBanner notice={settings?.holidayNotice} />
-        <SiteHeader settings={settings} />
-
-        {/* tabIndex -1 so the skip link actually moves focus. Chrome and
-            Firefox will focus a non-focusable fragment target; Safari will
-            not, so a VoiceOver user activated the skip link, the page
-            scrolled, and focus stayed on the skip link. */}
-        <main id="main" tabIndex={-1} className="flex-1 outline-none">
-          {children}
-        </main>
-
-        <SiteFooter settings={settings} />
-        <ReserveBar settings={settings} />
-        <RestaurantJsonLd settings={settings} menuUrl={menuUrl} />
-      </body>
+    <html lang="en" className={`${serif.variable} ${sans.variable}`}>
+      <body>{children}</body>
     </html>
   )
 }

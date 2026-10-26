@@ -1,360 +1,255 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
-/*
- * Mission + Market — design tokens.
+/* ==========================================================================
+ * Mission + Market — fall 2026 design system
  *
- * Every colour here was recovered from the restaurant's own brand assets
- * (their logo files and the inline styles on the existing site), not invented.
- * The palette turns out to be a description of the room itself: a chartreuse
- * moss wall behind the bar, brass sconces and chair frames, walnut tables,
- * polished concrete, and a lot of daylight through floor-to-ceiling glass.
+ * Palette is the restaurant's own, measured from missionandmarketatl.com's
+ * stylesheets (client requirement: keep the current site's colours):
+ *   moss  #464B20 · cream #F0E9D7 · paper #F7F5F0 · ink #231F1F
+ *   bronze #8A6445 · teal #0B2F31 (their deep teal, used on the night/bar
+ *   surfaces — it is the colour of the velvet banquettes in the photography)
  *
- * The site is therefore LIGHT by default. A dark-by-default restaurant site
- * would be the genre cliché and would misrepresent a room whose defining
- * feature is daylight. Dark bands (ink, moss) are used deliberately and
- * sparingly, for the hero and the footer, to frame the photography.
- */
+ * Type: Instrument Serif for display — same foundry as Instrument Sans, which
+ * the current site already uses for everything else, so the pairing is a
+ * family rather than a guess. Tracked uppercase sans for labels, echoing the
+ * wordmark in the logo.
+ *
+ * Corners are square everywhere. Separation is by hairline and space, never
+ * by boxes and shadows.
+ * ======================================================================== */
+
 @theme {
-  /* --- Core brand ------------------------------------------------------- */
-  --color-ink: #231f1f;        /* dominant colour in their CSS (19 uses)     */
-  --color-moss: #464b20;       /* the moss wall (10 uses) — signature colour */
-  --color-cream: #f0e9d7;      /* the logo's own colour (5 uses)             */
-  --color-brass: #8a6445;      /* sconces + chair frames (3 uses)            */
+  --color-moss: #464b20;
+  --color-moss-deep: #353918;
+  --color-cream: #f0e9d7;
+  --color-paper: #f7f5f0;
+  --color-ink: #231f1f;
+  --color-bronze: #8a6445;
+  --color-teal: #0b2f31;
+  --color-teal-soft: #14403f;
+  /* Muted text. 5.3:1 on paper, 4.9:1 on cream — passes AA for body copy. */
+  --color-stone: #6b635c;
+  /* Muted text on the dark surfaces. 7.9:1 on teal. */
+  --color-mist: #c9c2b0;
 
-  /* --- Derived surfaces --------------------------------------------------
-   * Tints and shades of the four brand colours. Nothing here introduces a
-   * new hue; each is the brand colour moved along lightness only.          */
-  --color-paper: #faf8f4;      /* page ground — cream lifted toward white    */
-  --color-paper-warm: #f4efe4; /* alternating section band                   */
-  --color-rule: #231f1f1f;     /* hairlines — ink at 12%                     */
-  --color-rule-strong: #231f1f38;
+  --font-display: var(--font-instrument-serif), 'Iowan Old Style', Georgia, serif;
+  --font-sans: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
 
-  /* Text tints. Every value below was solved against WCAG 2.1 AA (4.5:1) on
-   * its intended ground rather than picked by eye — see scripts/contrast.mjs.
-   * Raw brand brass fails on ink (3.10:1), so dark grounds get a lifted tint
-   * and buttons get a slightly darkened fill. Do not substitute --color-brass
-   * for these on dark backgrounds. */
-  --color-ink-muted: #231f1fa6; /* 65% ink on paper — 4.98:1                 */
-  --color-ink-faint: #231f1f9e; /* 62% ink on paper — 4.53:1 (was 44%, 2.7)  */
+  /* Fluid scale. Display sizes step 1.5 / 1.55 / 1.6 down to the card title. */
+  --text-hero: clamp(3rem, 1.9rem + 4.4vw, 6.75rem);
+  --text-hero--line-height: 0.98;
+  --text-hero--letter-spacing: -0.012em;
+  --text-display: clamp(2.375rem, 1.7rem + 2.7vw, 4.5rem);
+  --text-display--line-height: 1;
+  --text-display--letter-spacing: -0.01em;
+  --text-title: clamp(1.875rem, 1.5rem + 1.5vw, 3rem);
+  --text-title--line-height: 1.05;
+  --text-subtitle: clamp(1.5rem, 1.3rem + 0.8vw, 2.125rem);
+  --text-subtitle--line-height: 1.1;
+  --text-card: clamp(1.375rem, 1.25rem + 0.45vw, 1.75rem);
+  --text-card--line-height: 1.15;
+  --text-lead: clamp(1.0625rem, 1rem + 0.3vw, 1.3125rem);
+  --text-lead--line-height: 1.55;
+  --text-label: 0.75rem;
+  --text-label--line-height: 1.3;
+  --text-label--letter-spacing: 0.16em;
 
-  --color-cream-muted: #f0e9d7b3; /* 70% cream on ink — 7.24:1               */
-
-  --color-moss-deep: #333719;
-  --color-brass-ondark: #a08165;  /* brass + 22% cream — 4.54:1 on ink       */
-  --color-brass-button: #866143;  /* cream on it — 4.56:1                     */
-  --color-brass-button-hover: #725239; /* darkened, not lightened: cream rises
-                                        * to 5.82:1. Lightening brass on hover
-                                        * dropped it to 4.35:1 — below AA.    */
-
-  /* --- Type -------------------------------------------------------------
-   * Display echoes the wordmark: a thin, uniform-stroke serif set in caps
-   * with wide tracking. Body is Instrument Sans — the one webfont the
-   * restaurant actually loads today, so the voice carries over.            */
-  --font-display: var(--font-display), ui-serif, Georgia, serif;
-  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
-
-  --tracking-wordmark: 0.24em;
-  --tracking-eyebrow: 0.2em;
-
-  /* --- Type scale --------------------------------------------------------
-   * Six roles, not four sizes. The site previously set every section heading
-   * at the same 4xl→5xl step, every intro at the same `text-base`, and every
-   * display face at weight 300 — so nothing on a page was allowed to be more
-   * important than anything else, which is most of what reads as template.
-   *
-   * Fluid, so the relationship between sizes survives from 390px to 3440px
-   * rather than snapping at 1024 and then freezing.
-   *
-   * Tracking is optical, not decorative: a hairline serif at 7rem needs
-   * negative tracking to stop the counters opening up, and the same face at
-   * 1.5rem needs none. Line height tightens as size grows for the same
-   * reason. */
-  /* These were measured against 22 upscale restaurant sites, not chosen by
-   * eye. The first cut of this scale capped display at 112px with 0.98
-   * leading and -0.025em tracking — all three wrong, and wrong in the same
-   * direction. The largest hand-built display value in the whole sample is
-   * Saga at 62px; Aman's biggest heading on a 2560px screen is 31px; Quince
-   * sets its h1 at 40px. 72px is the BentoBox template default, i.e. the
-   * tell — the old value was 1.55× that.
-   *
-   * No negative tracking anywhere. Not one site in the sample uses it on
-   * display type. The old comment here argued a hairline serif at 7rem needs
-   * tightening to stop its counters opening up, which is a true observation
-   * about a size that should not exist; fix the size and the problem goes
-   * with it. Leading likewise: nothing in the sample sits under 1.10.
-   *
-   * The ladder is 60 / 40 / 30 / 24 / 20 / 16 — steps of 1.5, 1.33, 1.25,
-   * 1.2, 1.25. Saga steps 62→32, Quince 48→40→24; this sits between them. */
-  --text-display: clamp(2.25rem, 1.6rem + 2.4vw, 3.75rem); /* 36 → 60 */
-  --text-display--line-height: 1.15;
-  --text-display--letter-spacing: 0em;
-
-  --text-lead: clamp(1.75rem, 1.35rem + 1.6vw, 2.5rem); /* 28 → 40 */
-  --text-lead--line-height: 1.2;
-  --text-lead--letter-spacing: 0em;
-
-  --text-section: clamp(1.5rem, 1.3rem + 0.8vw, 1.875rem); /* 24 → 30 */
-  --text-section--line-height: 1.25;
-  --text-section--letter-spacing: 0.01em;
-
-  --text-sub: clamp(1.25rem, 1.15rem + 0.4vw, 1.5rem); /* 20 → 24 */
-  --text-sub--line-height: 1.35;
-  --text-sub--letter-spacing: 0.015em;
-
-  /* The opening paragraph of a page or section — bigger than body, set in
-   * the body face, and the only place a longer measure is allowed. */
-  --text-lede: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem); /* 17 → 20 */
-  --text-lede--line-height: 1.65;
-
-  --text-caption: 0.8125rem;
-  --text-caption--line-height: 1.5;
+  --container-page: 90rem; /* 1440 */
+  --container-prose: 38rem;
 
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
 
-  /* Header height — the hero pulls itself up by exactly this. */
-  --spacing-header: 5.5rem;
+:root {
+  --gutter: clamp(1.25rem, 0.6rem + 3.2vw, 3.5rem);
+  --section: clamp(4.5rem, 2.5rem + 8vw, 9.5rem);
+  --header-h: 4rem;
+  color-scheme: light;
+}
 
-  /* --- Layout -----------------------------------------------------------
-   * Two rails, and only two. Before this the site had six widths (1408 /
-   * 1280 / 1152 / 1024 / 768 / 576) crossed with two desktop gutters that
-   * did not correlate with width, so every interior page's masthead sat on
-   * a different rail from its own body.
-   *
-   * Both are fluid. `lg:` (1024px) used to be the last responsive step in
-   * the codebase, which meant a 3440px display rendered identically to a
-   * laptop with a thousand dead pixels down each side. The clamps below are
-   * tuned to reproduce the old fixed values almost exactly at 1024 — the
-   * gutter lands on 40.8px against the old `lg:px-10` — so this widens the
-   * site above a laptop without redesigning it below one. */
-  --gutter: clamp(1.25rem, 0.5rem + 3.2vw, 6rem);
-  --container-rail: 108rem;    /* 1728 — band-aligned surfaces             */
-  --container-measure: 40rem;  /* 640 ≈ 72ch — long-form reading           */
-
-  /* Vertical rhythm, likewise fluid. Proportion is what makes a wide page
-   * feel considered rather than merely stretched. */
-  --section: clamp(4rem, 1rem + 4.5vw, 9rem);
-  --section-lg: clamp(5rem, 1rem + 6vw, 12rem);
+@media (min-width: 64rem) {
+  :root {
+    --header-h: 4.75rem;
+  }
 }
 
 @layer base {
   html {
-    scroll-behavior: smooth;
-    scroll-padding-top: calc(var(--spacing-header) + 1rem);
-    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    scroll-padding-top: calc(var(--header-h) + 1rem);
   }
 
-  @media (prefers-reduced-motion: reduce) {
+  @media (prefers-reduced-motion: no-preference) {
     html {
-      scroll-behavior: auto;
-    }
-    *,
-    *::before,
-    *::after {
-      /* `animation-timeline: auto` is the load-bearing line, and it is not
-       * belt-and-braces. On a scroll-driven animation the spec says any
-       * <time> duration is re-read as `auto` — "the duration necessary to
-       * fill the timeline" (css-animations-2 § animation-duration). So the
-       * 0.01ms below is normatively IGNORED by a view() timeline and the
-       * motion plays in full. Returning the animation to the document
-       * timeline first makes it time-based again, at which point 0.01ms
-       * genuinely ends it on the first frame and `fill-mode: both` resolves
-       * the element to its final, visible state.
-       *
-       * `animation-delay: 0s` matters for the same reason: with the duration
-       * crushed but a delay intact, fill-mode would hold an element at its
-       * opacity-0 start frame for the whole delay and then pop it in —
-       * worse than the animation it was meant to remove. */
-      animation-timeline: auto !important;
-      animation-duration: 0.01ms !important;
-      animation-delay: 0s !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-      transition-delay: 0s !important;
+      scroll-behavior: smooth;
     }
   }
 
   body {
-    background-color: var(--color-paper);
+    background: var(--color-paper);
     color: var(--color-ink);
     font-family: var(--font-sans);
-    font-synthesis-weight: none;
+    font-size: 1rem;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: 'kern', 'liga';
   }
 
-  /* Optical weight compensation. Cormorant at 300 is beautiful at 5rem and
-   * anaemic at 2rem — the stroke is a fixed fraction of the em, so the same
-   * weight that reads as elegant on a hero reads as washed-out on a section
-   * heading. Headings therefore default to 400 and only the largest display
-   * sizes drop to 300, which is the opposite of what a single `font-light`
-   * across every heading was doing. */
+  ::selection {
+    background: var(--color-moss);
+    color: var(--color-cream);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-bronze);
+    outline-offset: 3px;
+  }
+
   h1,
   h2,
   h3 {
-    font-family: var(--font-display);
-    font-weight: 400;
     text-wrap: balance;
-  }
-
-  /* Cormorant 300 at 36px and up, 400 below. The threshold moved down with
-   * the scale — display is now 60px and lead 40px, so both still carry the
-   * light weight, while section (30) and sub (24) take 400. Quince runs
-   * weight 200 at 40px, so 300 here is conservative. */
-  .text-display,
-  .text-lead {
-    font-weight: 300;
-  }
-
-  .text-section,
-  .text-sub {
-    font-weight: 400;
-  }
-
-  /* Hospitality leading. The tier runs long: Mujō 1.9, Alinea 1.8,
-   * Bacchanalia 1.7, EMP +0.02em tracking. 1.7/+0.01em on Instrument Sans
-   * sits in the middle of that and is most of what makes body copy read as
-   * considered rather than as a CMS dump. */
-  p,
-  li,
-  dd,
-  address {
-    line-height: 1.7;
-    letter-spacing: 0.01em;
   }
 
   p {
     text-wrap: pretty;
   }
 
-  /* Keyboard focus must be visible on both the light ground and the dark
-     bands, so the ring carries its own contrasting offset. */
-  :focus-visible {
-    outline: 2px solid var(--color-brass);
-    outline-offset: 3px;
-    border-radius: 1px;
-  }
-
-  ::selection {
-    background-color: var(--color-moss);
-    color: var(--color-cream);
+  /* Display italics are where the voice lives — "*flavor*" in the CMS. */
+  .font-display em {
+    font-style: italic;
   }
 }
 
-@layer components {
-  /* The wordmark treatment: caps, hairline serif, very wide tracking. */
-  .wordmark {
-    font-family: var(--font-display);
-    font-weight: 300;
-    letter-spacing: var(--tracking-wordmark);
-    text-transform: uppercase;
-  }
+/* ------------------------------------------------------------- Utilities */
 
-  /* Small label above a section heading. */
-  .eyebrow {
-    font-family: var(--font-sans);
-    font-size: 0.6875rem;
-    font-weight: 500;
-    letter-spacing: var(--tracking-eyebrow);
-    text-transform: uppercase;
-  }
-
-  /* Dotted leader between a dish and its price, as on a printed menu.
-     A flex spacer rather than a background image, so it reflows at any width
-     and disappears cleanly when the price wraps. */
-  .menu-leader {
-    flex: 1 1 auto;
-    min-width: 1.5rem;
-    margin: 0 0.625rem;
-    border-bottom: 1px dotted var(--color-rule-strong);
-    transform: translateY(-0.32em);
-  }
-}
-
-@utility text-balance-none {
-  text-wrap: initial;
-}
-
-/* --------------------------------------------------------------- Layout */
-
-/** Band-aligned surfaces: header, notice, footer, page mastheads, every
- *  full-width section. One rail, so a masthead and the body beneath it can
- *  never again sit on different left edges. */
-@utility rail {
-  margin-inline: auto;
+/** The page rail: 1440 max, fluid gutters. */
+@utility page {
   width: 100%;
-  max-width: var(--container-rail);
+  max-width: calc(var(--container-page) + 2 * var(--gutter));
+  margin-inline: auto;
   padding-inline: var(--gutter);
 }
 
-/** Long-form reading. The cap is on the CONTENT, with the gutter added
- *  outside it, so the measure holds at ~72ch whether the viewport is 390px
- *  or 3440px. */
-@utility measure {
-  margin-inline: auto;
-  width: 100%;
-  max-width: calc(var(--container-measure) + 2 * var(--gutter));
-  padding-inline: var(--gutter);
-}
-
-@utility band {
+@utility section-y {
   padding-block: var(--section);
 }
 
-@utility band-lg {
-  padding-block: var(--section-lg);
+/** Tracked uppercase label — the wordmark's voice at text size. */
+@utility eyebrow {
+  font-family: var(--font-sans);
+  font-size: var(--text-label);
+  line-height: var(--text-label--line-height);
+  letter-spacing: var(--text-label--letter-spacing);
+  text-transform: uppercase;
+  font-weight: 500;
 }
 
-/* --------------------------------------------------------------- Motion */
+@utility tabular {
+  font-variant-numeric: tabular-nums lining-nums;
+}
 
+@utility hairline {
+  border-color: color-mix(in srgb, currentColor 16%, transparent);
+}
+
+/* --------------------------------------------------------------- Controls */
+
+@utility btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: 3rem;
+  padding: 0.95rem 1.75rem;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  line-height: 1;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  transition:
+    background-color 200ms var(--ease-out-soft),
+    color 200ms var(--ease-out-soft),
+    border-color 200ms var(--ease-out-soft);
+}
+
+@utility btn-moss {
+  background: var(--color-moss);
+  color: var(--color-cream);
+  &:hover {
+    background: var(--color-ink);
+  }
+}
+
+@utility btn-cream {
+  background: var(--color-cream);
+  color: var(--color-ink);
+  &:hover {
+    background: var(--color-paper);
+  }
+}
+
+@utility btn-line {
+  border-color: color-mix(in srgb, currentColor 45%, transparent);
+  &:hover {
+    border-color: currentColor;
+  }
+}
+
+/** Underlined text link that thickens on hover. */
+@utility link {
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+  text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+  transition: text-decoration-color 200ms;
+  &:hover {
+    text-decoration-color: currentColor;
+  }
+}
+
+/* ---------------------------------------------------------------- Logo */
+
+/** The logo files are the restaurant's own cream-on-transparent PNGs. Used
+ *  as masks so one asset renders in any brand colour via `currentColor`. */
+@utility logo-mask {
+  display: block;
+  background-color: currentColor;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+}
+
+/* ---------------------------------------------------------------- Motion */
 /*
- * Deliberately small. Two mechanisms, no JavaScript, nothing that moves
- * more than 14px: a load-in stagger for the top of every page, and a slow
- * cross-fade between hero photographs.
- *
- * A third — revealing each section as it scrolls into view — was built,
- * measured and removed. Both implementations failed the same way, by leaving
- * sections permanently invisible:
- *
- *   1. CSS `animation-timeline: view()`. The ViewTimeline attached but never
- *      activated (`animation.currentTime` was null on every subject), and
- *      with seventeen subjects a programmatic scroll froze the renderer for
- *      over 45s — disabling only those rules took the same scroll to 3ms.
- *      Firefox has no stable support for it either.
- *   2. A JS observer. Position had to be tested rather than intersection
- *      state, because a jump from 0 to 2000px moved a section from below the
- *      viewport to above it inside one frame and crossed no threshold; and
- *      hiding via a root class fought hydration. It never reliably ran.
- *
- * If it is revisited, the bar is: content must be visible when the mechanism
- * does not run, and it must survive an anchor jump and a restored scroll
- * position. Do not ship it without testing both.
- *
- * The resting state is ALWAYS the visible state — no rule anywhere sets
- * opacity: 0 statically. Hidden is only ever a keyframe's `from`. So every
- * failure mode (unsupported browser, print, CSS loaded but animation
- * blocked) resolves to "the content is simply there", which is why this
- * needs no client component and cannot strand content invisible the way an
- * IntersectionObserver reveal can.
- *
- * Three gates, all fail-visible:
- *   1. resting state is visible
- *   2. everything sits inside prefers-reduced-motion: no-preference
- *   3. scroll-driven rules additionally sit behind @supports
- *
- * NOTE for future edits: Tailwind's `animate-*` utilities emit the
- * `animation` shorthand, which clobbers animation-timeline and is the sole
- * owner of animation-range. Putting any `animate-*` class on a `.reveal`
- * element silently disables the reveal.
+ * Motion is limited to things that cannot strand content: the video loops,
+ * the ticker, hover states. There is deliberately no scroll-reveal — the
+ * previous build tried two and both left sections invisible.
  */
-@keyframes rise-in {
+
+@keyframes ticker {
   from {
-    opacity: 0;
-    transform: translateY(var(--rise, 12px));
+    transform: translate3d(0, 0, 0);
   }
   to {
-    opacity: 1;
-    transform: none;
+    transform: translate3d(-50%, 0, 0);
   }
+}
+
+.ticker-track {
+  animation: ticker 48s linear infinite;
+}
+
+.ticker:hover .ticker-track {
+  animation-play-state: paused;
 }
 
 @keyframes fade-in {
@@ -366,23 +261,147 @@
   }
 }
 
-@layer components {
-  @media (prefers-reduced-motion: no-preference) {
-    /* Above the fold. Time-based, not scroll-driven: the hero is already
-       fully in view at first paint, so a view() timeline would be past its
-       range and would never play. */
-    .load-in {
-      animation: rise-in 760ms var(--ease-out-soft) both;
-      animation-delay: var(--load-delay, 0ms);
-    }
-
-    /* Hero cross-fade. Keyframe percentages are generated per image count in
-       hero-images.tsx; the timing lives here. Frames after the first rest at
-       opacity 0, so with no animation attached the hero is simply the first
-       photograph — never an empty box. */
-    .hero-frame {
-      animation: mm-hero var(--cycle) linear infinite both;
-      animation-delay: calc(var(--i) * -7s);
-    }
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track {
+    animation: none;
   }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ------------------------------------------------- Tripleseat inquiry form */
+/*
+ * Tripleseat's embed injects its own table-based form and a stylesheet keyed
+ * on #tripleseat_embed_form. We keep their markup (it carries reCAPTCHA and
+ * posts leads straight into the restaurant's Tripleseat account) and restyle
+ * it onto the site's system. ID selectors are needed to win specificity.
+ */
+.ts-form #tripleseat_embed_form {
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+}
+
+.ts-form #tripleseat_embed_form table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ts-form #tripleseat_embed_form table td {
+  display: block;
+  padding: 0 0 1.25rem;
+}
+
+.ts-form #tripleseat_embed_form label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  color: var(--color-ink);
+}
+
+.ts-form #tripleseat_embed_form label span.required {
+  color: var(--color-bronze);
+}
+
+.ts-form #tripleseat_embed_form input[type='text'],
+.ts-form #tripleseat_embed_form input[type='email'],
+.ts-form #tripleseat_embed_form input[type='tel'],
+.ts-form #tripleseat_embed_form input:not([type]),
+.ts-form #tripleseat_embed_form select,
+.ts-form #tripleseat_embed_form textarea {
+  width: 100% !important;
+  min-height: 3rem;
+  padding: 0.75rem 0.9rem;
+  font: inherit;
+  font-size: 1rem;
+  color: var(--color-ink);
+  background: var(--color-paper);
+  border: 1px solid color-mix(in srgb, var(--color-ink) 22%, transparent);
+  border-radius: 0;
+  box-shadow: none;
+  appearance: none;
+}
+
+.ts-form #tripleseat_embed_form select {
+  background-image: linear-gradient(45deg, transparent 50%, var(--color-ink) 50%),
+    linear-gradient(135deg, var(--color-ink) 50%, transparent 50%);
+  background-position:
+    calc(100% - 1.15rem) 50%,
+    calc(100% - 0.8rem) 50%;
+  background-size: 0.35rem 0.35rem;
+  background-repeat: no-repeat;
+  padding-right: 2.5rem;
+}
+
+.ts-form #tripleseat_embed_form textarea {
+  min-height: 7.5rem;
+}
+
+.ts-form #tripleseat_embed_form input:focus,
+.ts-form #tripleseat_embed_form select:focus,
+.ts-form #tripleseat_embed_form textarea:focus {
+  outline: 2px solid var(--color-moss);
+  outline-offset: 0;
+  border-color: var(--color-moss);
+}
+
+.ts-form #tripleseat_embed_form input.error,
+.ts-form #tripleseat_embed_form .errorExplanation {
+  background: #f6ece4;
+  border-color: var(--color-bronze);
+}
+
+.ts-form #tripleseat_embed_form .errorExplanation {
+  width: auto;
+  padding: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.ts-form #tripleseat_embed_form input[type='submit'],
+.ts-form #tripleseat_embed_form button,
+.ts-form #tripleseat_embed_form .button {
+  float: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.25rem;
+  padding: 1rem 2rem;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-cream);
+  background: var(--color-moss);
+  border: 0;
+  border-radius: 0;
+  cursor: pointer;
+}
+
+.ts-form #tripleseat_embed_form input[type='submit']:hover,
+.ts-form #tripleseat_embed_form button:hover {
+  background: var(--color-ink);
+}
+
+.ts-form #tripleseat_embed_form #lead_form_submit a,
+.ts-form #tripleseat_link {
+  font-size: 0.75rem;
+  color: var(--color-stone);
+}
+
+.ts-form #tripleseat_embed_form .location_list label,
+.ts-form #tripleseat_embed_form .row_email_opt_out label,
+.ts-form #tripleseat_embed_form .row_gdpr_consent label {
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
+  font-size: 0.9375rem;
+}
+
+.ts-form .ui-datepicker {
+  font-family: var(--font-sans);
 }

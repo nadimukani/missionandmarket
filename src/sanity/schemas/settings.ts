@@ -26,6 +26,7 @@ export const siteSettings = defineType({
     { name: 'booking', title: 'Reservations & Ordering' },
     { name: 'social', title: 'Social' },
     { name: 'seo', title: 'SEO' },
+    { name: 'integrations', title: 'Integrations' },
   ],
   fields: [
     defineField({
@@ -106,7 +107,7 @@ export const siteSettings = defineType({
             defineField({
               name: 'service',
               type: 'string',
-              description: 'Lunch, Dinner, Brunch, Happy Hour, Bar',
+              description: 'Lunch, Dinner, Happy Hour, Bar',
               validation: (r) => r.required(),
             }),
             defineField({
@@ -156,11 +157,15 @@ export const siteSettings = defineType({
         }),
       ],
     }),
+    // Superseded by the "Announcement Banner" singleton (announcement.ts),
+    // which the Studio surfaces as its own item. Kept, hidden, so the data
+    // stays readable by the pre-redesign build until it is retired.
     defineField({
       name: 'holidayNotice',
-      title: 'Temporary notice',
+      title: 'Temporary notice (legacy)',
       type: 'object',
       group: 'hours',
+      hidden: true,
       description:
         'Shows a banner sitewide. Use for holiday closures, private buyouts, weather.',
       fields: [
@@ -250,6 +255,23 @@ export const siteSettings = defineType({
       type: 'image',
       group: 'seo',
       description: '1200×630. Shown when the site is linked on social or texted.',
+    }),
+
+    defineField({
+      name: 'tripleseatLeadFormId',
+      title: 'Tripleseat lead form ID',
+      type: 'string',
+      group: 'integrations',
+      description:
+        'From the Tripleseat embed code (lead_form_id=…). Powers the private events inquiry form.',
+    }),
+    defineField({
+      name: 'tripleseatPublicKey',
+      title: 'Tripleseat public key',
+      type: 'string',
+      group: 'integrations',
+      description:
+        'From the same embed code (public_key=…). This key is designed to be public — it is visible in the page source of any site that embeds the form.',
     }),
   ],
   preview: {

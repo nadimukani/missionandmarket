@@ -93,15 +93,44 @@ export const page = defineType({
 
 export const special = defineType({
   name: 'special',
-  title: 'Special / Offer',
+  title: 'Happening',
   type: 'document',
-  description: 'Happy hour, wine nights, cocktail classes, prix fixe.',
+  description:
+    'Happy hour, tastings, holiday parties, one-night events. Shown on the Happenings page and the home page.',
   fields: [
     defineField({ name: 'title', type: 'string', validation: (r) => r.required() }),
+    defineField({
+      name: 'kind',
+      type: 'string',
+      description: 'Sets the small label on the card.',
+      options: {
+        list: [
+          { title: 'Every week', value: 'weekly' },
+          { title: 'Seasonal', value: 'seasonal' },
+          { title: 'One-time event', value: 'event' },
+        ],
+        layout: 'radio',
+        direction: 'horizontal',
+      },
+      initialValue: 'weekly',
+    }),
     defineField({
       name: 'schedule',
       type: 'string',
       description: 'e.g. "Monday – Friday, 3 – 6pm" or "Every Saturday"',
+    }),
+    defineField({
+      name: 'startDate',
+      title: 'Event date (optional)',
+      type: 'date',
+      description: 'For one-time events. Upcoming events sort by this date.',
+    }),
+    defineField({
+      name: 'endDate',
+      title: 'Hide after (optional)',
+      type: 'date',
+      description:
+        'The card comes off the site by itself after this date — no need to remember to switch it off.',
     }),
     defineField({ name: 'description', type: 'text', rows: 3 }),
     defineField({ name: 'price', type: 'string' }),
@@ -117,7 +146,14 @@ export const special = defineType({
       type: 'string',
       description: 'Leave blank to show the standard Reserve button.',
     }),
-    defineField({ name: 'ctaUrl', title: 'Button link', type: 'url' }),
+    defineField({
+      name: 'ctaUrl',
+      title: 'Button link',
+      type: 'url',
+      description: 'A page on this site such as /private-events, or a full web address.',
+      validation: (r) =>
+        r.uri({ allowRelative: true, scheme: ['http', 'https', 'mailto', 'tel'] }),
+    }),
     defineField({
       name: 'active',
       title: 'Show on site',
@@ -209,6 +245,13 @@ export const person = defineType({
       initialValue: false,
     }),
     defineField({
+      name: 'hidden',
+      title: 'Hide from website',
+      type: 'boolean',
+      description: 'Keeps the profile in the Studio but off the site.',
+      initialValue: false,
+    }),
+    defineField({
       name: 'order',
       title: 'Display order',
       type: 'number',
@@ -223,7 +266,13 @@ export const person = defineType({
       title: 'name',
       subtitle: 'role',
       media: 'portrait',
+      hidden: 'hidden',
     },
+    prepare: ({ title, subtitle, media, hidden }) => ({
+      title: hidden ? `${title} (hidden)` : title,
+      subtitle,
+      media,
+    }),
   },
 })
 
@@ -307,66 +356,125 @@ export const galleryImage = defineType({
       options: { list: ['Food', 'Drinks', 'Space', 'Patio', 'Private Dining', 'Team'] },
     }),
     defineField({ name: 'order', title: 'Display order', type: 'number', initialValue: 0 }),
+    defineField({
+      name: 'hidden',
+      title: 'Hide from website',
+      type: 'boolean',
+      initialValue: false,
+    }),
   ],
   orderings: [
     { title: 'Display order', name: 'orderAsc', by: [{ field: 'order', direction: 'asc' }] },
   ],
-  preview: { select: { title: 'alt', subtitle: 'category', media: 'image' } },
+  preview: {
+    select: { title: 'alt', subtitle: 'category', media: 'image', hidden: 'hidden' },
+    prepare: ({ title, subtitle, media, hidden }) => ({
+      title: hidden ? `(hidden) ${title}` : title,
+      subtitle,
+      media,
+    }),
+  },
 })
 
+const altField = defineField({ name: 'alt', type: 'string', title: 'Alt text' })
+
+const photo = (name: string, title: string, description?: string, group?: string) =>
+  defineField({
+    name,
+    title,
+    type: 'image',
+    group,
+    description,
+    options: { hotspot: true },
+    fields: [altField],
+  })
+
+/**
+ * Singleton. Every block on the home page has its words here so the client can
+ * re-voice the page without us. All fields are optional — the page renders a
+ * sensible default for anything left blank, so a half-filled document never
+ * produces a broken layout.
+ *
+ * The motion in the hero comes from the shoot's reels, which are encoded for
+ * the web and shipped with the site rather than uploaded here: a raw phone or
+ * camera file dropped into a CMS field would not play in most browsers.
+ */
 export const homePage = defineType({
   name: 'homePage',
   title: 'Home Page',
   type: 'document',
+  groups: [
+    { name: 'hero', title: 'Opening', default: true },
+    { name: 'intro', title: 'Introduction' },
+    { name: 'kitchen', title: 'Kitchen' },
+    { name: 'bar', title: 'Bar' },
+    { name: 'events', title: 'Private dining' },
+    { name: 'patio', title: 'Patio' },
+    { name: 'seo', title: 'SEO' },
+  ],
   fields: [
     defineField({
-      name: 'heroImages',
-      title: 'Hero images',
+      name: 'heroEyebrow',
+      title: 'Small line above the headline',
+      type: 'string',
+      group: 'hero',
+      description: 'e.g. "Buckhead · Atlanta"',
+    }),
+    defineField({ name: 'heroHeading', title: 'Headline', type: 'string', group: 'hero' }),
+    defineField({
+      name: 'heroSubheading',
+      title: 'Sentence under the headline',
+      type: 'text',
+      rows: 2,
+      group: 'hero',
+    }),
+    defineField({
+      name: 'ticker',
+      title: 'Moving strip',
       type: 'array',
-      description: 'One or more. Multiple images cross-fade automatically.',
+      group: 'hero',
+      description:
+        'Short phrases that scroll across the band under the opening, joined by "+". Keep each one to a few words.',
+      of: [defineArrayMember({ type: 'string' })],
+    }),
+    defineField({
+      name: 'heroImages',
+      title: 'Opening photographs',
+      type: 'array',
+      group: 'hero',
+      description:
+        'Shown in place of the video for visitors who have reduced motion switched on, and while the video loads.',
       of: [
         defineArrayMember({
           type: 'image',
           options: { hotspot: true },
-          fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
+          fields: [altField],
         }),
       ],
-      validation: (r) => r.min(1),
     }),
-    defineField({ name: 'heroHeading', type: 'string' }),
-    defineField({ name: 'heroSubheading', type: 'text', rows: 2 }),
+
     defineField({
       name: 'storyHeading',
-      title: 'Story section heading',
+      title: 'Introduction',
       type: 'string',
+      group: 'intro',
+      description: 'The large statement under the opening.',
     }),
-    defineField({ name: 'storyBody', title: 'Story section body', type: 'richText' }),
+    defineField({ name: 'storyBody', title: 'Introduction body', type: 'richText', group: 'intro' }),
+    photo('storyImage', 'Introduction photograph', undefined, 'intro'),
+
     defineField({
-      name: 'storyImage',
-      type: 'image',
-      options: { hotspot: true },
-      fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
-    }),
-    defineField({
-      name: 'bandImage',
-      title: 'Full-width band image',
-      type: 'image',
-      options: { hotspot: true },
-      description:
-        'A wide, landscape photograph shown edge-to-edge between sections. Use the widest frame you have — it runs the full width of the screen.',
-      fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
-    }),
-    defineField({
-      name: 'bandCaption',
-      title: 'Band caption',
+      name: 'kitchenHeading',
+      title: 'Kitchen heading',
       type: 'string',
-      description: 'Optional line set over the band image.',
+      group: 'kitchen',
     }),
     defineField({
       name: 'featuredDishes',
       title: 'Featured dishes',
       type: 'array',
-      description: 'Three works best. Shown between the hero and the menus.',
+      group: 'kitchen',
+      description: 'Four works best. Name each plate the way the menu does.',
       of: [
         defineArrayMember({
           type: 'object',
@@ -377,14 +485,66 @@ export const homePage = defineType({
               name: 'image',
               type: 'image',
               options: { hotspot: true },
-              fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
+              fields: [altField],
             }),
           ],
           preview: { select: { title: 'name', subtitle: 'description', media: 'image' } },
         }),
       ],
     }),
-    seo,
+
+    defineField({ name: 'barHeading', title: 'Bar heading', type: 'string', group: 'bar' }),
+    defineField({ name: 'barBody', title: 'Bar text', type: 'text', rows: 3, group: 'bar' }),
+    photo('barImage', 'Bar photograph', undefined, 'bar'),
+
+    defineField({
+      name: 'eventsHeading',
+      title: 'Private dining heading',
+      type: 'string',
+      group: 'events',
+    }),
+    defineField({
+      name: 'eventsBody',
+      title: 'Private dining text',
+      type: 'text',
+      rows: 3,
+      group: 'events',
+    }),
+    photo('eventsImage', 'Private dining photograph', undefined, 'events'),
+
+    defineField({ name: 'patioHeading', title: 'Patio heading', type: 'string', group: 'patio' }),
+    defineField({ name: 'patioBody', title: 'Patio text', type: 'text', rows: 3, group: 'patio' }),
+    defineField({
+      name: 'patioImages',
+      title: 'Patio photographs',
+      type: 'array',
+      group: 'patio',
+      description: 'Two or three.',
+      of: [
+        defineArrayMember({
+          type: 'image',
+          options: { hotspot: true },
+          fields: [altField],
+        }),
+      ],
+    }),
+
+    // Used by the pre-redesign layout only; hidden so the Studio stays tidy.
+    defineField({
+      name: 'bandImage',
+      title: 'Full-width band image (legacy)',
+      type: 'image',
+      hidden: true,
+      options: { hotspot: true },
+      fields: [altField],
+    }),
+    defineField({
+      name: 'bandCaption',
+      title: 'Band caption (legacy)',
+      type: 'string',
+      hidden: true,
+    }),
+    { ...seo, group: 'seo' },
   ],
   preview: { prepare: () => ({ title: 'Home Page' }) },
 })

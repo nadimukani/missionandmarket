@@ -44,6 +44,17 @@ export type SiteSettings = {
   privateEventsEmail?: string
   social?: SocialLink[]
   ogImage?: SanityImage
+  tripleseatLeadFormId?: string
+  tripleseatPublicKey?: string
+}
+
+export type Announcement = {
+  enabled?: boolean
+  message?: string
+  linkLabel?: string
+  linkUrl?: string
+  startsAt?: string
+  endsAt?: string
 }
 
 export type MenuItem = {
@@ -67,6 +78,8 @@ export type MenuSummary = {
   slug: string
   availability?: string
   order?: number
+  hidden?: boolean
+  image?: SanityImage
 }
 
 export type Menu = MenuSummary & {
@@ -82,26 +95,41 @@ export type Seo = {
   image?: SanityImage
 }
 
+export type FeaturedDish = {
+  name?: string
+  description?: string
+  image?: SanityImage
+}
+
 export type HomePage = {
-  heroImages?: SanityImage[]
+  heroEyebrow?: string
   heroHeading?: string
   heroSubheading?: string
+  ticker?: string[]
+  heroImages?: SanityImage[]
   storyHeading?: string
   storyBody?: PortableTextBlock[]
   storyImage?: SanityImage
-  bandImage?: SanityImage
-  bandCaption?: string
-  featuredDishes?: {
-    name?: string
-    description?: string
-    image?: SanityImage
-  }[]
+  kitchenHeading?: string
+  featuredDishes?: FeaturedDish[]
+  barHeading?: string
+  barBody?: string
+  barImage?: SanityImage
+  eventsHeading?: string
+  eventsBody?: string
+  eventsImage?: SanityImage
+  patioHeading?: string
+  patioBody?: string
+  patioImages?: SanityImage[]
   seo?: Seo
 }
 
 export type Special = {
   _id: string
   title: string
+  kind?: 'weekly' | 'seasonal' | 'event'
+  startDate?: string
+  endDate?: string
   schedule?: string
   description?: string
   price?: string
@@ -143,6 +171,18 @@ export type GalleryImage = {
   image: SanityImage
   alt: string
   category?: string
+}
+
+export type Space = {
+  _id: string
+  name: string
+  bestFor?: string
+  seated?: number
+  reception?: number
+  capacityNote?: string
+  description?: string
+  features?: string[]
+  photos?: SanityImage[]
 }
 
 export type Person = {

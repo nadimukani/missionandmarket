@@ -136,6 +136,22 @@ const menu = defineType({
       initialValue: 0,
     }),
     defineField({
+      name: 'hidden',
+      title: 'Hide from website',
+      type: 'boolean',
+      description:
+        'Takes the menu off the site without deleting it — for a seasonal menu or a service that is paused.',
+      initialValue: false,
+    }),
+    defineField({
+      name: 'image',
+      title: 'Cover photograph',
+      type: 'image',
+      description: 'Shown on the Menus page and at the top of this menu.',
+      options: { hotspot: true },
+      fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
+    }),
+    defineField({
       name: 'availability',
       title: 'Served',
       type: 'string',
@@ -176,7 +192,11 @@ const menu = defineType({
     },
   ],
   preview: {
-    select: { title: 'title', subtitle: 'availability' },
+    select: { title: 'title', subtitle: 'availability', hidden: 'hidden' },
+    prepare: ({ title, subtitle, hidden }) => ({
+      title: hidden ? `${title} (hidden)` : title,
+      subtitle,
+    }),
   },
 })
 

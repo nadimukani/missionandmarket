@@ -1,7 +1,10 @@
 import { groq } from 'next-sanity'
 
+import { restaurantToday } from '@/lib/opentable'
+
 import { sanityFetch } from './client'
 import type {
+  Announcement,
   GalleryImage,
   HomePage,
   JobPosting,
@@ -9,8 +12,8 @@ import type {
   MenuSummary,
   Page,
   Person,
-  PressItem,
   SiteSettings,
+  Space,
   Special,
 } from './types'
 
@@ -20,21 +23,20 @@ import type {
  * `lqip` is a ~500-byte base64 thumbnail Sanity generates for each asset on
  * upload. It costs nothing to ask for and it is what stops a photograph
  * snapping in from blank — the blur is on screen at first paint, holding the
- * exact frame the real file will occupy, and dissolves when it arrives. On a
- * photography-led page like the gallery that is the difference between the
- * page assembling itself as you scroll and it just being there.
+ * exact frame the real file will occupy, and dissolves when it arrives.
  */
 const IMAGE = groq`{
   ...,
-  "alt": coalesce(alt, ""),
+  "alt": coalesce(alt, asset->description, ""),
   "lqip": asset->metadata.lqip
 }`
 
 const SETTINGS_QUERY = groq`*[_type == "siteSettings"][0]{
   name, tagline, shortDescription, phone, email, neighborhood, mapsUrl,
-  parkingNote, address, hours, machineHours, holidayNotice,
-  openTableRid, openTableUrl, largePartyNote, orderUrl, giftCardUrl,
-  privateEventsEmail, social, ogImage
+  parkingNote, address, hours, machineHours,
+  openTableRid, openTableUrl, orderUrl, giftCardUrl,
+  privateEventsEmail, social, ogImage,
+  tripleseatLeadFormId, tripleseatPublicKey
 }`
 
 export function getSettings() {
@@ -44,8 +46,21 @@ export function getSettings() {
   })
 }
 
-const MENU_LIST_QUERY = groq`*[_type == "menu"] | order(order asc, title asc){
-  _id, title, "slug": slug.current, availability, order
+const ANNOUNCEMENT_QUERY = groq`*[_type == "announcement" && _id == "announcement"][0]{
+  enabled, message, linkLabel, linkUrl, startsAt, endsAt
+}`
+
+export function getAnnouncement() {
+  return sanityFetch<Announcement | null>({
+    query: ANNOUNCEMENT_QUERY,
+    tags: ['announcement'],
+    // A closure notice is time-critical; keep the floor short.
+    revalidate: 300,
+  })
+}
+
+const MENU_LIST_QUERY = groq`*[_type == "menu" && hidden != true] | order(order asc, title asc){
+  _id, title, "slug": slug.current, availability, order, image${IMAGE}
 }`
 
 export function getMenuList() {
@@ -55,8 +70,8 @@ export function getMenuList() {
   })
 }
 
-const MENU_QUERY = groq`*[_type == "menu" && slug.current == $slug][0]{
-  _id, title, "slug": slug.current, availability, intro, footnote,
+const MENU_QUERY = groq`*[_type == "menu" && slug.current == $slug && hidden != true][0]{
+  _id, title, "slug": slug.current, availability, intro, footnote, image${IMAGE},
   "pdfUrl": pdf.asset->url,
   sections[]{
     title, note,
@@ -73,12 +88,14 @@ export function getMenu(slug: string) {
 }
 
 const HOME_QUERY = groq`*[_type == "homePage"][0]{
+  heroEyebrow, heroHeading, heroSubheading, ticker,
   heroImages[]${IMAGE},
-  heroHeading, heroSubheading, storyHeading, storyBody,
-  storyImage${IMAGE},
-  bandImage${IMAGE},
-  bandCaption,
+  storyHeading, storyBody, storyImage${IMAGE},
+  kitchenHeading,
   featuredDishes[]{ name, description, image${IMAGE} },
+  barHeading, barBody, barImage${IMAGE},
+  eventsHeading, eventsBody, eventsImage${IMAGE},
+  patioHeading, patioBody, patioImages[]${IMAGE},
   seo
 }`
 
@@ -89,15 +106,30 @@ export function getHomePage() {
   })
 }
 
-const SPECIALS_QUERY = groq`*[_type == "special" && active == true] | order(order asc){
-  _id, title, schedule, description, price, ctaLabel, ctaUrl, image${IMAGE}
+/** Active happenings that have not passed their "hide after" date. `today`
+ *  is the restaurant's date, not the server's — Vercel runs in UTC, and an
+ *  event ending on the 31st should still show at 9pm in Atlanta. */
+const SPECIALS_QUERY = groq`*[_type == "special" && active == true &&
+    (!defined(endDate) || endDate >= $today)] | order(order asc, startDate asc){
+  _id, title, kind, schedule, startDate, endDate, description, price,
+  ctaLabel, ctaUrl, image${IMAGE}
 }`
 
 export function getSpecials() {
   return sanityFetch<Special[]>({
     query: SPECIALS_QUERY,
+    params: { today: restaurantToday() },
     tags: ['special'],
   })
+}
+
+const SPACES_QUERY = groq`*[_type == "space" && hidden != true] | order(order asc){
+  _id, name, bestFor, seated, reception, capacityNote, description, features,
+  photos[]${IMAGE}
+}`
+
+export function getSpaces() {
+  return sanityFetch<Space[]>({ query: SPACES_QUERY, tags: ['space'] })
 }
 
 const PAGE_QUERY = groq`*[_type == "page" && slug.current == $slug][0]{
@@ -114,27 +146,13 @@ export function getPage(slug: string) {
   })
 }
 
-const PAGE_SLUGS_QUERY = groq`*[_type == "page" && defined(slug.current)].slug.current`
-
-export function getPageSlugs() {
-  return sanityFetch<string[]>({ query: PAGE_SLUGS_QUERY, tags: ['page'] })
-}
-
-const TEAM_QUERY = groq`*[_type == "person"] | order(order asc){
+const TEAM_QUERY = groq`*[_type == "person" && hidden != true] | order(order asc){
   _id, name, displayName, role, bio, quote, featured,
   portrait${IMAGE}
 }`
 
 export function getTeam() {
   return sanityFetch<Person[]>({ query: TEAM_QUERY, tags: ['person'] })
-}
-
-const PRESS_QUERY = groq`*[_type == "pressItem"] | order(date desc){
-  _id, title, publication, date, url, excerpt, logo${IMAGE}
-}`
-
-export function getPress() {
-  return sanityFetch<PressItem[]>({ query: PRESS_QUERY, tags: ['pressItem'] })
 }
 
 const JOBS_QUERY = groq`*[_type == "jobPosting" && open == true]{
@@ -145,7 +163,7 @@ export function getJobs() {
   return sanityFetch<JobPosting[]>({ query: JOBS_QUERY, tags: ['jobPosting'] })
 }
 
-const GALLERY_QUERY = groq`*[_type == "galleryImage"] | order(order asc){
+const GALLERY_QUERY = groq`*[_type == "galleryImage" && hidden != true] | order(order asc){
   _id, image${IMAGE}, alt, category
 }`
 

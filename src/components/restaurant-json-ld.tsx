@@ -45,8 +45,9 @@ export function RestaurantJsonLd({
     url: SITE_URL,
     telephone: settings.phone,
     email: settings.email,
-    servesCuisine: ['Modern American', 'Pacific Rim', 'Seafood'],
-    priceRange: '$$$',
+    // As the restaurant describes itself. No priceRange: nothing published
+    // by the restaurant states one, and Google shows it verbatim.
+    servesCuisine: ['Modern American'],
     image: settings.ogImage
       ? urlForImage(settings.ogImage).width(1200).height(630).url()
       : undefined,

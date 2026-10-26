@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Local-only folders: the static preview export sent to the client in
+    // August, and CMS dataset backups.
+    "preview/**",
+    "backups/**",
   ]),
 ]);
 

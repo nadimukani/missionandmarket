@@ -1,3 +1,8 @@
+> **Superseded 2026-10-26** by `REDESIGN-FALL-2026.md` (new visual system,
+> palette and type taken from the restaurant's own site, fall shoot). Kept for
+> the research history; the type ladder and colour notes below describe the
+> previous build.
+
 # Design direction — Mission + Market
 
 _Derived 2026-07-28 from a survey of 22 upscale restaurant sites (Michelin,

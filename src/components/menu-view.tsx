@@ -1,6 +1,6 @@
 import type { Menu, MenuItem } from '@/sanity/types'
 
-import { TextLink } from '@/components/ui'
+import { slugify } from './rooms'
 
 const TAG_LABEL: Record<string, string> = {
   vegetarian: 'Vegetarian',
@@ -11,108 +11,71 @@ const TAG_LABEL: Record<string, string> = {
   signature: 'Signature',
 }
 
-function Dish({ item }: { item: MenuItem }) {
+function Item({ item }: { item: MenuItem }) {
+  const tags = (item.tags ?? []).map((t) => TAG_LABEL[t]).filter(Boolean)
   return (
-    <li className={item.soldOut ? 'opacity-45' : undefined}>
-      <div className="flex items-baseline">
-        <h3 className="font-display text-lg leading-snug text-ink">
+    <li className={`border-t border-ink/10 py-5 ${item.soldOut ? 'opacity-50' : ''}`}>
+      <div className="flex items-baseline justify-between gap-6">
+        <h4 className="font-display text-[1.375rem] leading-tight">
           {item.name}
-        </h3>
-        <span className="menu-leader" aria-hidden="true" />
-        {item.price ? (
-          <span className="shrink-0 font-sans text-sm tabular-nums text-ink">
-            {item.price}
-          </span>
-        ) : null}
+          {item.soldOut ? <span className="eyebrow ml-3 align-middle text-stone">Unavailable today</span> : null}
+        </h4>
+        {item.price ? <p className="shrink-0 text-[0.9375rem] tabular">{item.price}</p> : null}
       </div>
-
-      {item.description ? (
-        <p className="mt-1 max-w-prose font-sans text-sm text-ink-muted">
-          {item.description}
-        </p>
-      ) : null}
-
+      {item.description ? <p className="mt-1.5 text-[0.9375rem] text-stone">{item.description}</p> : null}
       {item.addOns?.length ? (
-        <p className="mt-1 font-sans text-xs text-ink-faint">
-          {item.addOns
-            .map((a) => [a.label, a.price].filter(Boolean).join(' '))
-            .join(' · ')}
-        </p>
-      ) : null}
-
-      {(item.tags?.length || item.soldOut) ? (
-        <p className="mt-2 flex flex-wrap gap-2">
-          {item.soldOut ? (
-            <span className="eyebrow rounded-full border border-ink/20 px-2 py-0.5 text-ink-faint">
-              Unavailable
-            </span>
-          ) : null}
-          {item.tags?.map((tag) => (
-            <span
-              key={tag}
-              className="eyebrow rounded-full border border-moss/40 px-2 py-0.5 text-moss"
-            >
-              {TAG_LABEL[tag] ?? tag}
-            </span>
+        <ul className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-sm text-stone">
+          {item.addOns.map((a, i) => (
+            <li key={i}>
+              {a.label} <span className="tabular">{a.price}</span>
+            </li>
           ))}
-        </p>
+        </ul>
       ) : null}
+      {tags.length ? <p className="eyebrow mt-2.5 text-bronze">{tags.join(' · ')}</p> : null}
     </li>
   )
 }
 
+/** HTML menus — readable by guests on a phone and by Google, which is what a
+ *  PDF is not. Sections flow in two columns on wide screens. */
 export function MenuView({ menu }: { menu: Menu }) {
+  const sections = (menu.sections ?? []).filter((s) => s.items?.length)
+
   return (
-    <article>
-      {menu.intro ? (
-        <p className="mx-auto max-w-2xl text-center font-sans text-base text-ink-muted">
-          {menu.intro}
-        </p>
+    <div>
+      {sections.length > 2 ? (
+        <nav aria-label={`${menu.title} sections`} className="mb-14 flex flex-wrap gap-x-6 gap-y-3">
+          {sections.map((s) => (
+            <a key={s.title} href={`#${slugify(s.title)}`} className="eyebrow link text-stone hover:text-ink">
+              {s.title}
+            </a>
+          ))}
+        </nav>
       ) : null}
 
-      {/* Reads like a printed menu and halves the scroll depth; sections never
-          split across the gap. The column COUNT follows from a target column
-          width rather than being fixed at two, so a wide display gets a third
-          column instead of two very long ones. */}
-      <div className="mt-14 columns-[26rem] gap-x-16">
-        {/* Keyed by index, not by title: two sections named"Sides", or two
-            dishes both called"Market Fish", are ordinary on a real menu and
-            produced duplicate React keys. */}
-        {menu.sections?.map((section, s) => (
+      <div className="gap-x-16 lg:columns-2">
+        {sections.map((s) => (
           <section
-            key={`${section.title}-${s}`}
-            className="mb-14 break-inside-avoid-column"
+            key={s.title}
+            id={slugify(s.title)}
+            aria-labelledby={`${slugify(s.title)}-h`}
+            className="mb-16 break-inside-avoid scroll-mt-28"
           >
-            <h2 className="eyebrow border-b border-ink/15 pb-3 text-brass">
-              {section.title}
-            </h2>
-            {section.note ? (
-              <p className="mt-3 font-sans text-xs text-ink-faint italic">
-                {section.note}
-              </p>
-            ) : null}
-            <ul className="mt-6 space-y-6">
-              {section.items?.map((item, i) => (
-                <Dish key={`${item.name}-${i}`} item={item} />
+            <h3 id={`${slugify(s.title)}-h`} className="font-display text-title">
+              {s.title}
+            </h3>
+            {s.note ? <p className="mt-3 text-[0.9375rem] text-stone italic">{s.note}</p> : null}
+            <ul className="mt-6">
+              {s.items!.map((item, i) => (
+                <Item key={`${item.name}-${i}`} item={item} />
               ))}
             </ul>
           </section>
         ))}
       </div>
 
-      {menu.footnote ? (
-        <p className="mt-8 border-t border-rule pt-8 text-center font-sans text-xs text-ink-faint">
-          {menu.footnote}
-        </p>
-      ) : null}
-
-      {menu.pdfUrl ? (
-        <p className="mt-8 text-center">
-          <TextLink href={menu.pdfUrl}>
-            Download printable menu (PDF)
-          </TextLink>
-        </p>
-      ) : null}
-    </article>
+      {menu.footnote ? <p className="mt-4 max-w-prose text-sm text-stone">{menu.footnote}</p> : null}
+    </div>
   )
 }

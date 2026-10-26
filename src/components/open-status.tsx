@@ -5,68 +5,55 @@ import { useEffect, useState } from 'react'
 import { getOpenState, type OpenState } from '@/lib/hours'
 import type { MachineHours } from '@/sanity/types'
 
+function describe(state: OpenState) {
+  switch (state.status) {
+    case 'open':
+      return { live: true, text: `Open now · until ${state.until}` }
+    case 'closing-soon':
+      return { live: true, text: `Open · closes at ${state.until}` }
+    case 'closed':
+      if (!state.opensAt) return { live: false, text: 'Closed now' }
+      return {
+        live: false,
+        text: `Closed · opens ${state.opensDay === 'today' ? 'today' : state.opensDay === 'tomorrow' ? 'tomorrow' : state.opensDay} at ${state.opensAt}`,
+      }
+    default:
+      return null
+  }
+}
+
 /**
- * "Are you open right now" — the question a guest standing on Lenox Road at
- * 9:40pm actually has, and one most restaurant sites answer only by making you
- * read a table and do the arithmetic yourself.
- *
- * Computed after mount rather than on the server: the answer depends on the
- * current time, so rendering it during a static build would bake in a stale
- * status and cause a hydration mismatch. Until then nothing is shown, which
- * degrades to simply not making the claim.
+ * "Open now · until 9:30pm", computed in the browser from the structured
+ * hours in the CMS and the restaurant's own timezone. Client-side on purpose:
+ * a cached page must never claim the restaurant is open when it is not.
  */
 export function OpenStatus({
   hours,
   className = '',
-  tone = 'dark',
+  tone = 'ink',
 }: {
   hours?: MachineHours[]
   className?: string
-  /** Which ground it sits on, so the dot and text stay above 4.5:1. */
-  tone?: 'dark' | 'light'
+  tone?: 'ink' | 'cream'
 }) {
   const [state, setState] = useState<OpenState | null>(null)
 
   useEffect(() => {
-    const update = () => setState(getOpenState(hours))
-    update()
-    // Re-check on the minute boundary so the badge can't go stale on a page
-    // left open through closing time.
-    const id = setInterval(update, 60_000)
-    return () => clearInterval(id)
+    const tick = () => setState(getOpenState(hours))
+    tick()
+    const t = window.setInterval(tick, 60_000)
+    return () => window.clearInterval(t)
   }, [hours])
 
-  if (!state || state.status === 'unknown') return null
+  const info = state ? describe(state) : null
+  // Reserve the line's height before hydration so nothing shifts.
+  if (!info) return <p className={`eyebrow invisible ${className}`}>Open now</p>
 
-  const text =
-    state.status === 'open'
-      ? `Open now · until ${state.until}`
-      : state.status === 'closing-soon'
-        ? `Closing at ${state.until}`
-        : state.opensAt
-          ? `Closed · opens ${state.opensDay} at ${state.opensAt}`
-          : 'Closed'
-
-  const dot =
-    state.status === 'closed'
-      ? tone === 'dark'
-        ? 'bg-cream/40'
-        : 'bg-ink/30'
-      : state.status === 'closing-soon'
-        ? 'bg-brass-ondark'
-        : 'bg-[#7f9b4e]'
-
-  const textTone = tone === 'dark' ? 'text-cream-muted' : 'text-ink-muted'
-
+  const dot = info.live ? 'bg-[#6f8f3a]' : tone === 'cream' ? 'bg-mist' : 'bg-stone'
   return (
-    <p
-      className={`flex items-center gap-2 font-sans text-xs ${textTone} ${className}`}
-    >
-      <span
-        aria-hidden="true"
-        className={`h-1.5 w-1.5 shrink-0 rounded-full ${dot}`}
-      />
-      {text}
+    <p className={`eyebrow flex items-center gap-2.5 ${className}`} aria-live="polite">
+      <span className={`inline-block size-1.5 rounded-full ${dot}`} aria-hidden="true" />
+      {info.text}
     </p>
   )
 }
