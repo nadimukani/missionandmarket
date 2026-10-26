@@ -74,8 +74,6 @@ export function getAnnouncement() {
   return sanityFetch<Announcement | null>({
     query: ANNOUNCEMENT_QUERY,
     tags: ['announcement'],
-    // A closure notice is time-critical; keep the floor short.
-    revalidate: 300,
   })
 }
 
