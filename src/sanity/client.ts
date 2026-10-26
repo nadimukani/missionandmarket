@@ -1,3 +1,4 @@
+import { draftMode } from 'next/headers'
 import { createClient, type QueryParams } from 'next-sanity'
 
 import { apiVersion, dataset, projectId } from './env'
@@ -8,29 +9,46 @@ export const client = createClient({
   apiVersion,
   useCdn: true,
   perspective: 'published',
+  // Click-to-edit: in the Studio's Presentation view, every string carries an
+  // invisible pointer back to the field it came from. Off everywhere else.
+  stega: { studioUrl: '/studio' },
 })
+
+/** Server-only. Reads drafts for the Studio preview; never sent to a browser. */
+const previewToken = process.env.SANITY_API_READ_TOKEN
 
 type FetchOptions = {
   query: string
   params?: QueryParams
-  /** Cache tags to attach, so `revalidateTag` can bust this query on publish. */
+  /** Cache tags, so the publish webhook can bust exactly what changed. */
   tags?: string[]
-  /** Seconds. Falls back to a 1-hour floor so a missed webhook never sticks. */
+  /** Seconds. A short floor so a publish shows up within a minute even if
+   *  the webhook was never configured — the owner should never wonder
+   *  whether their menu change "took". */
   revalidate?: number
 }
 
 /**
- * Menus change often and the client edits them directly, so every query is
- * tagged. The Sanity webhook at /api/revalidate busts the matching tags the
- * moment something is published — the time-based floor is only a safety net.
+ * Every query on the site goes through here.
+ *
+ * - Published (everyone): cached, tagged, refreshed at least every minute.
+ * - Draft mode (the owner inside the Studio's Presentation tool): unsaved
+ *   drafts, uncached, with stega markers so clicking text on the page opens
+ *   the field that holds it.
  */
-export async function sanityFetch<T>({
-  query,
-  params = {},
-  tags,
-  revalidate = 3600,
-}: FetchOptions): Promise<T> {
+export async function sanityFetch<T>({ query, params = {}, tags, revalidate = 60 }: FetchOptions): Promise<T> {
+  const isDraft = (await draftMode()).isEnabled
+  if (isDraft && previewToken) {
+    return client.fetch<T>(query, params, {
+      perspective: 'drafts',
+      useCdn: false,
+      stega: true,
+      token: previewToken,
+      next: { revalidate: 0 },
+    })
+  }
   return client.fetch<T>(query, params, {
-    next: { revalidate: tags?.length ? revalidate : revalidate, tags },
+    stega: false,
+    next: { revalidate, tags },
   })
 }

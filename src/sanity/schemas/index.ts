@@ -11,12 +11,14 @@ import {
   richText,
   special,
 } from './content'
+import { hours } from './hours'
 import { menuSchemas } from './menu'
 import { siteSettings } from './settings'
 import { space } from './space'
 
 export const schemaTypes: SchemaTypeDefinition[] = [
   announcement,
+  hours,
   siteSettings,
   homePage,
   ...menuSchemas,

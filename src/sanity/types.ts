@@ -1,6 +1,8 @@
 import type { PortableTextBlock } from 'next-sanity'
 import type { Image } from 'sanity'
 
+export type { Schedule, Service, Closure } from '@/lib/schedule'
+
 /** `lqip` is Sanity's base64 blur thumbnail, projected by the IMAGE fragment
  *  in queries.ts and used as the placeholder while the real file loads. */
 export type SanityImage = Image & { alt?: string; lqip?: string }
@@ -46,6 +48,7 @@ export type SiteSettings = {
   ogImage?: SanityImage
   tripleseatLeadFormId?: string
   tripleseatPublicKey?: string
+  relatedAccounts?: { label?: string; url?: string }[]
 }
 
 export type Announcement = {
@@ -69,7 +72,18 @@ export type MenuItem = {
 export type MenuSection = {
   title: string
   note?: string
+  layout?: 'list' | 'feature'
   items?: MenuItem[]
+}
+
+/** A dish ticked "Feature on the home page" in its menu — so the home page
+ *  can never show a plate the menu no longer lists. */
+export type FeaturedDish = {
+  name: string
+  description?: string
+  image: SanityImage
+  menuTitle: string
+  menuSlug: string
 }
 
 export type MenuSummary = {
@@ -77,6 +91,7 @@ export type MenuSummary = {
   title: string
   slug: string
   availability?: string
+  services?: string[]
   order?: number
   hidden?: boolean
   image?: SanityImage
@@ -95,7 +110,8 @@ export type Seo = {
   image?: SanityImage
 }
 
-export type FeaturedDish = {
+/** Hand-entered dishes from the pre-redesign home page (hidden in the Studio). */
+export type LegacyFeaturedDish = {
   name?: string
   description?: string
   image?: SanityImage
@@ -111,7 +127,7 @@ export type HomePage = {
   storyBody?: PortableTextBlock[]
   storyImage?: SanityImage
   kitchenHeading?: string
-  featuredDishes?: FeaturedDish[]
+  featuredDishes?: LegacyFeaturedDish[]
   barHeading?: string
   barBody?: string
   barImage?: SanityImage
@@ -121,6 +137,7 @@ export type HomePage = {
   patioHeading?: string
   patioBody?: string
   patioImages?: SanityImage[]
+  bandImage?: SanityImage
   seo?: Seo
 }
 
@@ -128,6 +145,7 @@ export type Special = {
   _id: string
   title: string
   kind?: 'weekly' | 'seasonal' | 'event'
+  service?: string
   startDate?: string
   endDate?: string
   schedule?: string

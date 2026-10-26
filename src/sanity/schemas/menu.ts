@@ -68,12 +68,29 @@ const menuItem = defineType({
       description: 'Greys the dish out without deleting it.',
       initialValue: false,
     }),
+    defineField({
+      name: 'image',
+      title: 'Photograph (optional)',
+      type: 'image',
+      options: { hotspot: true },
+      fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
+    }),
+    defineField({
+      name: 'featured',
+      title: 'Feature on the home page',
+      type: 'boolean',
+      description:
+        'Shows this dish, with its photograph, in "Signatures" on the home page. Edit or remove the dish here and the home page follows.',
+      initialValue: false,
+      hidden: ({ parent }) => !parent?.image,
+    }),
   ],
   preview: {
-    select: { title: 'name', subtitle: 'price', desc: 'description' },
-    prepare: ({ title, subtitle, desc }) => ({
-      title,
+    select: { title: 'name', subtitle: 'price', desc: 'description', media: 'image', featured: 'featured', soldOut: 'soldOut' },
+    prepare: ({ title, subtitle, desc, media, featured, soldOut }) => ({
+      title: `${title}${featured ? '  ★' : ''}${soldOut ? '  (unavailable)' : ''}`,
       subtitle: [subtitle, desc].filter(Boolean).join(' — '),
+      media,
     }),
   },
 })
@@ -95,6 +112,20 @@ const menuSection = defineType({
       rows: 2,
       description:
         'Optional line under the heading, e.g. "Choose Sauce: Chimichurri, Whiskey, Green Peppercorn".',
+    }),
+    defineField({
+      name: 'layout',
+      type: 'string',
+      description: 'Feature puts the section in a framed box — for a special like a dinner for two.',
+      options: {
+        list: [
+          { title: 'List', value: 'list' },
+          { title: 'Feature', value: 'feature' },
+        ],
+        layout: 'radio',
+        direction: 'horizontal',
+      },
+      initialValue: 'list',
     }),
     defineField({
       name: 'items',
@@ -152,10 +183,26 @@ const menu = defineType({
       fields: [defineField({ name: 'alt', type: 'string', title: 'Alt text' })],
     }),
     defineField({
+      name: 'services',
+      title: 'Served during',
+      type: 'array',
+      description:
+        'The menu page shows these hours straight from Hours & Closures, so they never go out of date.',
+      of: [defineArrayMember({ type: 'string' })],
+      options: {
+        list: [
+          { title: 'Lunch', value: 'Lunch' },
+          { title: 'Happy Hour', value: 'Happy Hour' },
+          { title: 'Dinner', value: 'Dinner' },
+        ],
+        layout: 'grid',
+      },
+    }),
+    defineField({
       name: 'availability',
-      title: 'Served',
+      title: 'Served — custom wording (optional)',
       type: 'string',
-      description: 'e.g. "Monday – Friday, 11:30am – 3:00pm"',
+      description: 'Leave blank to show the hours automatically.',
     }),
     defineField({
       name: 'intro',
@@ -175,12 +222,14 @@ const menu = defineType({
       description:
         'Allergen or gratuity notice printed at the bottom of the menu.',
     }),
+    // Retired: an uploaded PDF drifts out of step with the web menu the
+    // moment a price changes. The site now prints this menu from the same
+    // data (/menus/<slug>/print), so there is one menu to keep up to date.
     defineField({
       name: 'pdf',
-      title: 'Printable PDF (optional)',
+      title: 'Printable PDF (legacy)',
       type: 'file',
-      description:
-        'Only if you want a downloadable version. The web menu above is what guests and Google actually read.',
+      hidden: true,
       options: { accept: '.pdf' },
     }),
   ],

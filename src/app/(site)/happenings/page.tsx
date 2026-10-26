@@ -1,50 +1,50 @@
 import type { Metadata } from 'next'
 
-import { HappeningCard } from '@/components/happening-card'
-import { PageIntro } from '@/components/page-intro'
-import { getSettings, getSpecials } from '@/sanity/queries'
+import { BreadcrumbsJsonLd } from '@/components/breadcrumbs-json-ld'
+import { HappeningRow } from '@/components/happenings'
+import { PageHero } from '@/components/page-hero'
+import { LineLink } from '@/components/ui'
+import { getGallery, getSchedule, getSettings, getSpecials } from '@/sanity/queries'
 
 export const metadata: Metadata = {
-  title: 'Happenings',
+  title: 'Happenings — Happy Hour, Tasting Menu + More',
   description:
-    'Happy hour, the chef’s tasting, holiday parties and what’s on at Mission + Market in Buckhead, Atlanta.',
+    'Happy hour, the chef’s tasting menu, Beef Wellington nights and holiday parties at Mission + Market in Buckhead, Atlanta.',
   alternates: { canonical: '/happenings' },
 }
 
 export default async function HappeningsPage() {
-  const [specials, settings] = await Promise.all([getSpecials(), getSettings()])
+  const [specials, schedule, settings, gallery] = await Promise.all([
+    getSpecials(),
+    getSchedule(),
+    getSettings(),
+    getGallery(),
+  ])
   const instagram = settings?.social?.find((s) => s.platform === 'Instagram')?.url
+  const hero = gallery.find((g) => g._id === 'gallery-mm-0925-24-cocktail-lineup-room')?.image
 
   return (
     <>
-      <PageIntro
-        eyebrow="What’s on"
-        title="Happenings"
-        intro="Happy hour, the weekend tasting and what’s coming up — updated by the restaurant as plans change."
+      <PageHero
+        label="Happenings"
+        title="What’s *On*"
+        intro="Every week at Mission + Market — and what’s coming up this season."
+        image={hero}
+        tone="teal"
       />
-      <section className="page pb-(--section)" aria-label="Happenings">
-        {specials.length ? (
-          <div className="grid gap-x-6 gap-y-16 sm:grid-cols-2 lg:grid-cols-3">
-            {specials.map((s) => (
-              <HappeningCard key={s._id} item={s} />
-            ))}
-          </div>
-        ) : (
-          <p className="max-w-prose text-lead text-stone">
-            Nothing scheduled right now.
-            {instagram ? (
-              <>
-                {' '}
-                Follow along on{' '}
-                <a className="link text-ink" href={instagram} target="_blank" rel="noopener noreferrer">
-                  Instagram
-                </a>{' '}
-                for what’s next.
-              </>
-            ) : null}
-          </p>
-        )}
-      </section>
+      {specials.length ? (
+        <div>
+          {specials.map((s, i) => (
+            <HappeningRow key={s._id} item={s} schedule={schedule} flip={i % 2 === 1} />
+          ))}
+        </div>
+      ) : (
+        <section className="page section-y text-center">
+          <p className="mx-auto max-w-prose text-lead font-light text-ink-soft">Nothing scheduled right now.</p>
+          {instagram ? <LineLink href={instagram} className="mt-8">Follow along on Instagram</LineLink> : null}
+        </section>
+      )}
+      <BreadcrumbsJsonLd trail={[{ name: 'Happenings', path: '/happenings' }]} />
     </>
   )
 }

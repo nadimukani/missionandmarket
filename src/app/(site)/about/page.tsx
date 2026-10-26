@@ -1,131 +1,123 @@
 import type { Metadata } from 'next'
-import { PortableText } from 'next-sanity'
+import { PortableText, stegaClean } from 'next-sanity'
 
-import { PageIntro } from '@/components/page-intro'
+import { BreadcrumbsJsonLd } from '@/components/breadcrumbs-json-ld'
+import { PageHero } from '@/components/page-hero'
 import { PortableBody } from '@/components/portable-body'
 import { ReserveButton } from '@/components/reserve'
 import { SanityImage } from '@/components/sanity-image'
-import { ButtonLink, Eyebrow, Placeholder } from '@/components/ui'
+import { ButtonLink, Label, Ornament, Placeholder } from '@/components/ui'
 import { getGallery, getPage, getTeam } from '@/sanity/queries'
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPage('about')
-  return {
-    title: page?.seo?.title ?? 'About',
+  // No click-to-edit markers in <head>, even in the Studio preview.
+  return stegaClean({
+    title: page?.seo?.title ?? 'About — Modern American Dining in Buckhead',
     description: page?.seo?.description ?? page?.intro,
     alternates: { canonical: '/about' },
-  }
+  })
 }
 
 export default async function AboutPage() {
   const [page, team, gallery] = await Promise.all([getPage('about'), getTeam(), getGallery()])
-  const room = gallery.filter((g) => g.category === 'Space').slice(0, 4)
+  // The room, without repeating the photograph already used at the top.
+  const heroRef = (page?.heroImage as { asset?: { _ref?: string } } | undefined)?.asset?._ref
+  const room = gallery
+    .filter((g) => g.category === 'Space' && (g.image as { asset?: { _ref?: string } }).asset?._ref !== heroRef)
+    .slice(0, 4)
   const chef = team.find((p) => p.featured)
 
   return (
     <>
-      <PageIntro eyebrow="About" title={page?.title ?? 'About'} intro={page?.intro} image={page?.heroImage} />
+      <PageHero label="About" title="Flavor + *Fusion*" intro={page?.intro} image={page?.heroImage} tone="cream" />
 
       {page?.body ? (
-        <section className="page pb-(--section)">
-          <div className="grid gap-5 font-display text-subtitle lg:w-2/3 [&_p]:text-pretty">
+        <section className="page section-y text-center">
+          <Ornament className="h-12 text-bronze" />
+          <div className="mx-auto mt-10 grid max-w-3xl gap-8 font-display text-subtitle font-light">
             <PortableText value={page.body} components={PortableBody} />
           </div>
         </section>
       ) : null}
 
       {room.length ? (
-        <section className="section-y border-t border-ink/10" aria-labelledby="room-h">
-          <div className="page">
-            <Eyebrow className="text-bronze">The room</Eyebrow>
-            <h2 id="room-h" className="mt-5 font-display text-display">
+        <section aria-labelledby="room-h">
+          <div className="page pb-14 text-center">
+            <Label className="text-bronze">The Room</Label>
+            <h2 id="room-h" className="mt-6 font-display text-display font-light">
               Light, trees + <em>teal velvet</em>
             </h2>
           </div>
-          <div className="page mt-12 grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-4">
-            {room.map((g, i) => (
-              <figure key={g._id} className={i % 2 === 1 ? 'lg:mt-16' : ''}>
-                <div className="aspect-[9/16] overflow-hidden bg-cream">
-                  <SanityImage
-                    image={g.image}
-                    alt={g.alt}
-                    width={600}
-                    height={1067}
-                    sizes="(min-width: 1024px) 24vw, 50vw"
-                    className="size-full object-cover"
-                  />
-                </div>
-              </figure>
+          <div className={`grid gap-1 ${room.length === 3 ? 'grid-cols-3' : 'grid-cols-2 lg:grid-cols-4'}`}>
+            {room.map((g) => (
+              <div key={g._id} className="relative aspect-[9/16] overflow-hidden bg-cream">
+                <SanityImage
+                  image={g.image}
+                  alt={g.alt}
+                  width={800}
+                  sizes="(min-width: 1024px) 33vw, 50vw"
+                  className="absolute inset-0 size-full object-cover"
+                />
+              </div>
             ))}
           </div>
         </section>
       ) : null}
 
-      <section className="section-y border-t border-ink/10" aria-labelledby="kitchen-h">
-        <div className="page grid gap-12 lg:grid-cols-12 lg:items-center lg:gap-10">
-          <div className="lg:col-span-5">
-            {chef?.portrait ? (
-              <div className="aspect-[4/5] overflow-hidden bg-cream">
-                <SanityImage
-                  image={chef.portrait}
-                  width={1000}
-                  height={1250}
-                  sizes="(min-width: 1024px) 40vw, 100vw"
-                  className="size-full object-cover"
-                />
-              </div>
-            ) : (
-              <Placeholder
-                className="aspect-[4/5]"
-                label="Chef portrait + profile"
-                note="Portrait and profile to come. They publish from Team in the Studio."
-              />
-            )}
-          </div>
-          <div className="lg:col-span-6 lg:col-start-7">
-            <Eyebrow className="text-bronze">{chef?.role ?? 'The kitchen'}</Eyebrow>
-            <h2 id="kitchen-h" className="mt-5 font-display text-display">
+      <section className="grid lg:min-h-[86svh] lg:grid-cols-2" aria-labelledby="kitchen-h">
+        <div className="relative min-h-[64svh] overflow-hidden lg:min-h-0">
+          {chef?.portrait ? (
+            <SanityImage
+              image={chef.portrait}
+              width={1400}
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="absolute inset-0 size-full object-cover"
+            />
+          ) : (
+            <Placeholder className="absolute inset-0" label="Meet the chef" />
+          )}
+        </div>
+        <div className="flex items-center justify-center px-(--gutter) py-24 text-center sm:py-32">
+          <div className="max-w-md">
+            <Label className="text-bronze">{chef?.role ?? 'The Kitchen'}</Label>
+            <h2 id="kitchen-h" className="mt-6 font-display text-display font-light">
               {chef ? (
-                chef.displayName ?? chef.name
+                (chef.displayName ?? chef.name)
               ) : (
                 <>
-                  Meet the <em>chef</em>
+                  Meet the <em>Chef</em>
                 </>
               )}
             </h2>
             {chef?.bio ? (
-              <div className="mt-6 grid gap-5 text-lead text-stone">
+              <div className="mt-7 grid gap-5 text-lead font-light text-ink-soft">
                 <PortableText value={chef.bio} components={PortableBody} />
               </div>
             ) : (
-              <p className="mt-6 text-lead text-stone">
+              <p className="mt-7 text-lead font-light text-ink-soft">
                 Modern American cooking with California and Pacific influences, built around locally sourced
                 ingredients.
               </p>
             )}
             {chef?.quote ? (
-              <blockquote className="mt-8 border-l border-bronze pl-6 font-display text-subtitle italic">
-                {chef.quote}
-              </blockquote>
+              <blockquote className="mt-9 font-display text-subtitle font-light italic">“{chef.quote}”</blockquote>
             ) : null}
-            <div className="mt-10 flex flex-wrap gap-3">
-              <ButtonLink href="/menus">See the menus</ButtonLink>
-              <ReserveButton className="btn btn-line">Reserve a table</ReserveButton>
+            <div className="mt-11 flex flex-wrap justify-center gap-3">
+              <ButtonLink href="/menus/dinner">The Dinner Menu</ButtonLink>
+              <ReserveButton className="btn btn-outline">Reserve a Table</ReserveButton>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="bg-cream" aria-label="Recognition">
-        <div className="page flex flex-col gap-4 py-14 sm:flex-row sm:items-center sm:justify-between">
-          <p className="font-display text-subtitle">
-            OpenTable <em>Diners’ Choice</em> 2024
-          </p>
-          <ButtonLink href="/gallery" tone="line">
-            See the gallery
-          </ButtonLink>
-        </div>
+      <section className="bg-cream py-20 text-center">
+        <Label className="text-bronze">Recognition</Label>
+        <p className="mt-5 font-display text-title font-light">
+          OpenTable <em>Diners’ Choice</em> 2024
+        </p>
       </section>
+      <BreadcrumbsJsonLd trail={[{ name: 'About', path: '/about' }]} />
     </>
   )
 }

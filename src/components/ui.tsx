@@ -2,10 +2,9 @@ import Link from 'next/link'
 import { Fragment, type ReactNode } from 'react'
 
 /**
- * Renders `*word*` as italic. The CMS headlines carry their emphasis this way
- * ("West Coast *flavor*, in the heart of Buckhead.") so the client can move
- * the accent without touching code — and a stray asterisk degrades to plain
- * text rather than breaking the layout.
+ * Renders `*word*` as italic. CMS headlines carry their emphasis this way, so
+ * the client can move the accent without touching code; a stray asterisk
+ * degrades to plain text rather than breaking the layout.
  */
 export function Emphasis({ text }: { text?: string | null }) {
   if (!text) return null
@@ -19,70 +18,64 @@ export function Emphasis({ text }: { text?: string | null }) {
   )
 }
 
-export function Eyebrow({
+export function Label({
   children,
   className = '',
   as: Tag = 'p',
 }: {
   children: ReactNode
   className?: string
-  as?: 'p' | 'span' | 'h2' | 'h3'
+  as?: 'p' | 'span' | 'h2' | 'h3' | 'div'
 }) {
-  return <Tag className={`eyebrow ${className}`}>{children}</Tag>
+  return <Tag className={`label ${className}`}>{children}</Tag>
 }
 
-/** The brand's "+" — thin, square-ended, drawn rather than typed so it sits
- *  optically centred against both the serif and the sans. */
-export function Plus({ className = 'size-3' }: { className?: string }) {
+/** The chevron mark from the logo, used as a quiet section ornament. */
+export function Ornament({ className = 'h-9 text-bronze' }: { className?: string }) {
   return (
-    <svg viewBox="0 0 12 12" aria-hidden="true" className={className} fill="none">
-      <path d="M6 0v12M0 6h12" stroke="currentColor" strokeWidth="1.25" />
+    <span
+      aria-hidden="true"
+      className={`logo-mask mx-auto aspect-[53/181] ${className}`}
+      style={{ maskImage: 'url(/brand/mm-mark.png)', WebkitMaskImage: 'url(/brand/mm-mark.png)' }}
+    />
+  )
+}
+
+export function Arrow({ className = 'size-3' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 16 10" aria-hidden="true" className={className} fill="none">
+      <path d="M0 5h15M11 1l4 4-4 4" stroke="currentColor" strokeWidth="1" />
     </svg>
   )
 }
 
-export function Arrow({ className = 'size-3.5' }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 14 14" aria-hidden="true" className={className} fill="none">
-      <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" strokeWidth="1.25" />
-    </svg>
-  )
+type Tone = 'solid' | 'light' | 'outline'
+const TONE: Record<Tone, string> = {
+  solid: 'btn btn-solid',
+  light: 'btn btn-light',
+  outline: 'btn btn-outline',
 }
 
-type ButtonTone = 'moss' | 'cream' | 'line'
-
-const TONE: Record<ButtonTone, string> = {
-  moss: 'btn btn-moss',
-  cream: 'btn btn-cream',
-  line: 'btn btn-line',
-}
-
-function isExternal(href: string) {
-  return /^(https?:|mailto:|tel:)/.test(href)
-}
+const external = (href: string) => /^(https?:|mailto:|tel:)/.test(href)
 
 export function ButtonLink({
   href,
   children,
-  tone = 'moss',
+  tone = 'solid',
   className = '',
-  newTab,
 }: {
   href: string
   children: ReactNode
-  tone?: ButtonTone
+  tone?: Tone
   className?: string
-  /** Defaults to true for off-site http(s) links. */
-  newTab?: boolean
 }) {
   const cls = `${TONE[tone]} ${className}`
-  if (isExternal(href)) {
-    const blank = newTab ?? href.startsWith('http')
+  if (external(href)) {
     return (
       <a
         href={href}
         className={cls}
-        {...(blank ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+        {...(href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
       >
         {children}
       </a>
@@ -95,8 +88,8 @@ export function ButtonLink({
   )
 }
 
-/** Small tracked link with the brand plus — "+ Dinner menu". */
-export function PlusLink({
+/** Tracked-capital text link with a hairline that draws in on hover. */
+export function LineLink({
   href,
   children,
   className = '',
@@ -105,50 +98,48 @@ export function PlusLink({
   children: ReactNode
   className?: string
 }) {
-  const inner = (
-    <>
-      <Plus className="size-2.5 transition-transform duration-300 group-hover:rotate-90" />
-      <span className="link">{children}</span>
-    </>
-  )
-  const cls = `group eyebrow inline-flex items-center gap-2.5 ${className}`
-  return isExternal(href) ? (
-    <a href={href} className={cls} target="_blank" rel="noopener noreferrer">
-      {inner}
+  const cls = `label link-line ${className}`
+  return external(href) ? (
+    <a href={href} className={cls} {...(href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+      {children}
     </a>
   ) : (
     <Link href={href} className={cls}>
-      {inner}
+      {children}
     </Link>
   )
 }
 
-export function SectionHeading({
-  eyebrow,
+/** Centered label + heading + short text — the opening of most sections. */
+export function SectionIntro({
+  label,
   title,
-  intro,
-  className = '',
+  text,
   tone = 'ink',
+  as: Tag = 'h2',
+  className = '',
+  ornament = false,
 }: {
-  eyebrow?: string
-  title: string
-  intro?: string
-  className?: string
+  label?: string
+  title?: string | null
+  text?: string | null
   tone?: 'ink' | 'cream'
+  as?: 'h1' | 'h2'
+  className?: string
+  ornament?: boolean
 }) {
   return (
-    <div className={className}>
-      {eyebrow ? (
-        <Eyebrow className={tone === 'cream' ? 'text-mist' : 'text-bronze'}>{eyebrow}</Eyebrow>
+    <div className={`mx-auto max-w-3xl text-center ${className}`}>
+      {ornament ? <Ornament className={`mb-8 h-10 ${tone === 'cream' ? 'text-cream/60' : 'text-bronze'}`} /> : null}
+      {label ? <Label className={tone === 'cream' ? 'text-cream/70' : 'text-bronze'}>{label}</Label> : null}
+      {title ? (
+        <Tag className={`font-display text-display ${label ? 'mt-6' : ''}`}>
+          <Emphasis text={title} />
+        </Tag>
       ) : null}
-      <h2 className="mt-4 font-display text-display">
-        <Emphasis text={title} />
-      </h2>
-      {intro ? (
-        <p
-          className={`mt-6 max-w-prose text-lead ${tone === 'cream' ? 'text-mist' : 'text-stone'}`}
-        >
-          {intro}
+      {text ? (
+        <p className={`mx-auto mt-7 max-w-xl text-lead font-light ${tone === 'cream' ? 'text-mist' : 'text-ink-soft'}`}>
+          {text}
         </p>
       ) : null}
     </div>
@@ -156,39 +147,26 @@ export function SectionHeading({
 }
 
 /**
- * A designed stand-in for content the restaurant has not supplied yet. It is
- * deliberately labelled — the site is honest about what is pending rather
- * than filling the gap with something invented.
+ * A designed stand-in for material the restaurant hasn't supplied yet —
+ * labelled, so the site is honest about what is pending.
  */
 export function Placeholder({
   label,
   note,
   className = '',
-  tone = 'cream',
 }: {
   label: string
   note?: string
   className?: string
-  tone?: 'cream' | 'moss' | 'teal'
 }) {
-  const surface =
-    tone === 'moss'
-      ? 'bg-moss text-cream'
-      : tone === 'teal'
-        ? 'bg-teal text-cream'
-        : 'bg-cream text-ink'
   return (
-    <div
-      className={`relative flex flex-col items-center justify-center gap-3 overflow-hidden p-8 text-center ${surface} ${className}`}
-    >
-      <span
-        aria-hidden="true"
-        className="logo-mask absolute inset-y-[18%] left-1/2 w-[14%] -translate-x-1/2 opacity-[0.07]"
-        style={{ maskImage: 'url(/brand/mm-mark.png)', WebkitMaskImage: 'url(/brand/mm-mark.png)' }}
-      />
-      <span className="eyebrow relative border border-current/30 px-3 py-1.5">Placeholder</span>
-      <span className="relative font-display text-card">{label}</span>
-      {note ? <span className="relative max-w-[28ch] text-sm opacity-75">{note}</span> : null}
+    // Positioning comes from the caller (e.g. "absolute inset-0" to fill a
+    // photo slot) — a built-in `relative` here would override it.
+    <div className={`flex flex-col items-center justify-center gap-5 bg-cream p-10 text-center text-ink ${className}`}>
+      <Ornament className="h-12 text-bronze/50" />
+      <span className="label text-bronze">Coming soon</span>
+      <span className="font-display text-subtitle">{label}</span>
+      {note ? <span className="max-w-[30ch] text-sm font-light text-stone">{note}</span> : null}
     </div>
   )
 }

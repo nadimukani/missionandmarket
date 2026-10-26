@@ -1,16 +1,9 @@
+import { stegaClean } from 'next-sanity'
+
+import { openingHoursSpecification, specialOpeningHours, type Schedule } from '@/lib/schedule'
 import { SITE_URL } from '@/lib/site'
 import { urlForImage } from '@/sanity/image'
 import type { SiteSettings } from '@/sanity/types'
-
-const DAY_URIS: Record<string, string> = {
-  Monday: 'https://schema.org/Monday',
-  Tuesday: 'https://schema.org/Tuesday',
-  Wednesday: 'https://schema.org/Wednesday',
-  Thursday: 'https://schema.org/Thursday',
-  Friday: 'https://schema.org/Friday',
-  Saturday: 'https://schema.org/Saturday',
-  Sunday: 'https://schema.org/Sunday',
-}
 
 /**
  * Restaurant schema.org markup. This is what earns the hours panel, the
@@ -19,22 +12,20 @@ const DAY_URIS: Record<string, string> = {
  */
 export function RestaurantJsonLd({
   settings,
+  schedule,
   menuUrl,
 }: {
   settings: SiteSettings | null
+  schedule: Schedule | null
   /** Absolute URL of a menu page that actually resolves 200. */
   menuUrl?: string
 }) {
   if (!settings) return null
 
-  const openingHours = settings.machineHours
-    ?.filter((h) => h.opens && h.closes && DAY_URIS[h.day])
-    .map((h) => ({
-      '@type': 'OpeningHoursSpecification',
-      dayOfWeek: DAY_URIS[h.day],
-      opens: h.opens,
-      closes: h.closes,
-    }))
+  // Both from "Hours & Closures": weekly hours, plus holiday closures as
+  // Google's special opening hours.
+  const openingHours = openingHoursSpecification(schedule)
+  const specialHours = specialOpeningHours(schedule)
 
   const data = {
     '@context': 'https://schema.org',
@@ -67,7 +58,8 @@ export function RestaurantJsonLd({
     // Not /menus — that 307s to the first menu, and advertising a redirect as
     // the canonical menu URL is the same mistake the sitemap already avoids.
     menu: menuUrl,
-    openingHoursSpecification: openingHours?.length ? openingHours : undefined,
+    openingHoursSpecification: openingHours.length ? openingHours : undefined,
+    specialOpeningHoursSpecification: specialHours.length ? specialHours : undefined,
     sameAs: settings.social?.map((s) => s.url).filter(Boolean),
     acceptsReservations: settings.openTableUrl ?? true,
     potentialAction: settings.openTableUrl
@@ -105,7 +97,7 @@ export function RestaurantJsonLd({
     <script
       type="application/ld+json"
       // Server-rendered from trusted CMS content only.
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(compact(data)) }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(compact(stegaClean(data))) }}
     />
   )
 }

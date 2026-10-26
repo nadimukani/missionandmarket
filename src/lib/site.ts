@@ -6,13 +6,6 @@ export const SITE_URL =
     ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
     : 'https://missionandmarketatl.com')
 
-export const NAV_LINKS = [
-  { href: '/menus', label: 'Menus' },
-  { href: '/happenings', label: 'Happenings' },
-  { href: '/private-events', label: 'Private Dining' },
-  { href: '/about', label: 'About' },
-  { href: '/contact', label: 'Visit' },
-] as const
 
 /**
  * CMS `page` documents that have a hand-written route. There is no

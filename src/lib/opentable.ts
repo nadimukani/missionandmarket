@@ -11,7 +11,7 @@
  * restaurant's own website and is what preserves booking attribution.
  */
 
-import { RESTAURANT_TIME_ZONE } from './hours'
+import { RESTAURANT_TIME_ZONE } from './schedule'
 
 export { RESTAURANT_TIME_ZONE }
 

@@ -1,24 +1,26 @@
 import type { Metadata } from 'next'
-import { PortableText } from 'next-sanity'
+import { PortableText, stegaClean } from 'next-sanity'
 
-import { PageIntro } from '@/components/page-intro'
+import { BreadcrumbsJsonLd } from '@/components/breadcrumbs-json-ld'
+import { PageHero } from '@/components/page-hero'
 import { PortableBody } from '@/components/portable-body'
 import { CapacityTable, RoomRow } from '@/components/rooms'
 import { TripleseatForm } from '@/components/tripleseat-form'
-import { ButtonLink, Eyebrow } from '@/components/ui'
+import { ButtonLink, Label, LineLink, Ornament } from '@/components/ui'
 import { telHref } from '@/lib/site'
 import { getPage, getSettings, getSpaces, getSpecials } from '@/sanity/queries'
 
 export async function generateMetadata(): Promise<Metadata> {
   const page = await getPage('private-events')
-  return {
-    title: page?.seo?.title ?? 'Private Dining + Events',
+  // No click-to-edit markers in <head>, even in the Studio preview.
+  return stegaClean({
+    title: page?.seo?.title ?? 'Private Dining + Events in Buckhead',
     description:
       page?.seo?.description ??
       page?.intro ??
       'Private dining rooms, the patio and full buyouts at Mission + Market in Buckhead, Atlanta.',
     alternates: { canonical: '/private-events' },
-  }
+  })
 }
 
 export default async function PrivateEventsPage() {
@@ -28,89 +30,77 @@ export default async function PrivateEventsPage() {
     getSettings(),
     getSpecials(),
   ])
-
-  // A seasonal happening that points here — the holiday push — gets the band.
-  const seasonal = specials.find((s) => s.kind === 'seasonal' && s.ctaUrl?.startsWith('/private-events'))
+  const seasonal = specials.find((s) => s.kind === 'seasonal' && s.ctaUrl)
 
   return (
     <>
-      <PageIntro
-        eyebrow="Private dining + events"
+      <PageHero
+        label="Private Dining + Events"
         title={page?.title ?? 'Private Dining'}
         intro={page?.intro}
         image={page?.heroImage}
+        tone="moss"
       >
-        <div className="flex flex-wrap gap-3">
-          <ButtonLink href="#inquire">Start an inquiry</ButtonLink>
-          {settings?.phone ? (
-            <ButtonLink href={telHref(settings.phone)!} tone="line">
-              Call {settings.phone}
-            </ButtonLink>
+        <ButtonLink href="#inquire" tone="light">
+          Plan Your Event
+        </ButtonLink>
+        {settings?.phone ? (
+          <ButtonLink href={telHref(settings.phone)!} tone="outline">
+            {settings.phone}
+          </ButtonLink>
+        ) : null}
+      </PageHero>
+
+      <section className="page section-y">
+        <div className="mx-auto max-w-2xl text-center">
+          <Ornament className="h-12 text-bronze" />
+          {page?.body ? (
+            <div className="mt-10 grid gap-6 font-display text-subtitle font-light">
+              <PortableText value={page.body} components={PortableBody} />
+            </div>
+          ) : null}
+          {seasonal ? (
+            <p className="mt-10">
+              <LineLink href={seasonal.ctaUrl!} className="text-moss">
+                {seasonal.title} — {seasonal.schedule ?? 'now booking'}
+              </LineLink>
+            </p>
           ) : null}
         </div>
-      </PageIntro>
-
-      {seasonal ? (
-        <section className="bg-moss text-cream" aria-label={seasonal.title}>
-          <div className="page flex flex-col gap-6 py-12 sm:py-14 lg:flex-row lg:items-center lg:justify-between lg:gap-12">
-            <div>
-              <Eyebrow className="text-cream/75">{seasonal.title}</Eyebrow>
-              <p className="mt-3 max-w-3xl font-display text-subtitle">{seasonal.description}</p>
-            </div>
-            <ButtonLink href="#inquire" tone="cream" className="shrink-0 self-start lg:self-center">
-              {seasonal.ctaLabel ?? 'Start an inquiry'}
-            </ButtonLink>
-          </div>
-        </section>
-      ) : null}
-
-      <section className="page section-y" aria-labelledby="spaces-h">
-        <div className="grid gap-12 lg:grid-cols-12 lg:gap-10">
-          <div className="lg:col-span-5">
-            <Eyebrow className="text-bronze">The spaces</Eyebrow>
-            <h2 id="spaces-h" className="mt-5 font-display text-display">
-              Rooms for <em>20 to 140</em>
-            </h2>
-            {page?.body ? (
-              <div className="mt-6 grid gap-5 text-lead text-stone">
-                <PortableText value={page.body} components={PortableBody} />
-              </div>
-            ) : null}
-          </div>
-          <div className="min-w-0 lg:col-span-6 lg:col-start-7">
+        <div className="mx-auto mt-20 max-w-3xl">
+          <Label className="text-center text-bronze">The Spaces at a Glance</Label>
+          <div className="mt-6">
             <CapacityTable rooms={rooms} />
           </div>
         </div>
       </section>
 
-      <section className="page pb-(--section)" aria-label="Rooms">
-        <div className="grid gap-24 lg:gap-32">
-          {rooms.map((room, i) => (
-            <RoomRow key={room._id} room={room} flip={i % 2 === 1} />
-          ))}
-        </div>
-      </section>
+      <div aria-label="The spaces">
+        {rooms.map((room, i) => (
+          <RoomRow key={room._id} room={room} flip={i % 2 === 1} />
+        ))}
+      </div>
 
-      <section id="inquire" className="scroll-mt-20 bg-cream" aria-labelledby="inquire-h">
-        <div className="page section-y grid gap-12 lg:grid-cols-12 lg:gap-10">
-          <div className="lg:col-span-4">
-            <Eyebrow className="text-bronze">Inquire</Eyebrow>
-            <h2 id="inquire-h" className="mt-5 font-display text-display">
+      <section id="inquire" className="scroll-mt-16 bg-cream section-y" aria-labelledby="inquire-h">
+        <div className="page grid gap-14 lg:grid-cols-12 lg:gap-10">
+          <div className="text-center lg:col-span-4 lg:text-left">
+            <Label className="text-bronze">Inquire</Label>
+            <h2 id="inquire-h" className="mt-6 font-display text-display font-light">
               Tell us about <em>your event</em>
             </h2>
-            <p className="mt-6 text-lead text-stone">
-              The date, the headcount and the occasion are all we need to start.
+            <p className="mt-7 text-lead font-light text-ink-soft">
+              The date, the number of guests and the occasion are all we need to begin.
             </p>
             {settings?.phone ? (
-              <p className="mt-8 text-[0.9375rem]">
-                Prefer to talk it through?{' '}
+              <p className="mt-8 text-[0.9375rem] font-light">
+                Or call{' '}
                 <a className="link tabular" href={telHref(settings.phone)}>
                   {settings.phone}
                 </a>
               </p>
             ) : null}
           </div>
-          <div className="bg-paper p-6 sm:p-10 lg:col-span-7 lg:col-start-6">
+          <div className="bg-paper px-6 py-10 sm:px-12 lg:col-span-7 lg:col-start-6">
             <TripleseatForm
               leadFormId={settings?.tripleseatLeadFormId}
               publicKey={settings?.tripleseatPublicKey}
@@ -119,6 +109,7 @@ export default async function PrivateEventsPage() {
           </div>
         </div>
       </section>
+      <BreadcrumbsJsonLd trail={[{ name: 'Private Dining', path: '/private-events' }]} />
     </>
   )
 }

@@ -2,57 +2,41 @@
 
 import { useEffect, useState } from 'react'
 
-import { getOpenState, type OpenState } from '@/lib/hours'
-import type { MachineHours } from '@/sanity/types'
+import { openState, type OpenState, type Schedule } from '@/lib/schedule'
 
-function describe(state: OpenState) {
-  switch (state.status) {
-    case 'open':
-      return { live: true, text: `Open now · until ${state.until}` }
-    case 'closing-soon':
-      return { live: true, text: `Open · closes at ${state.until}` }
-    case 'closed':
-      if (!state.opensAt) return { live: false, text: 'Closed now' }
-      return {
-        live: false,
-        text: `Closed · opens ${state.opensDay === 'today' ? 'today' : state.opensDay === 'tomorrow' ? 'tomorrow' : state.opensDay} at ${state.opensAt}`,
-      }
-    default:
-      return null
+function describe(s: OpenState) {
+  if (s.status === 'open') return { live: true, text: s.closingSoon ? `Open · closes at ${s.until}` : `Open today until ${s.until}` }
+  if (s.status === 'closed') {
+    if (!s.opensAt) return { live: false, text: s.closure ? `Closed · ${s.closure}` : 'Closed' }
+    const when = s.opensDay === 'today' ? 'today' : s.opensDay === 'tomorrow' ? 'tomorrow' : s.opensDay
+    return { live: false, text: `${s.closure ? `Closed · ${s.closure} · ` : ''}Opens ${when} at ${s.opensAt}` }
   }
+  return null
 }
 
 /**
- * "Open now · until 9:30pm", computed in the browser from the structured
- * hours in the CMS and the restaurant's own timezone. Client-side on purpose:
- * a cached page must never claim the restaurant is open when it is not.
+ * "Open today until 9:30pm" — computed in the browser from Hours & Closures,
+ * in the restaurant's timezone, honouring closures. Client-side so a cached
+ * page can never claim the restaurant is open when it isn't.
  */
-export function OpenStatus({
-  hours,
-  className = '',
-  tone = 'ink',
-}: {
-  hours?: MachineHours[]
-  className?: string
-  tone?: 'ink' | 'cream'
-}) {
+export function OpenStatus({ schedule, className = '' }: { schedule: Schedule | null; className?: string }) {
   const [state, setState] = useState<OpenState | null>(null)
 
   useEffect(() => {
-    const tick = () => setState(getOpenState(hours))
+    const tick = () => setState(openState(schedule))
     tick()
     const t = window.setInterval(tick, 60_000)
     return () => window.clearInterval(t)
-  }, [hours])
+  }, [schedule])
 
   const info = state ? describe(state) : null
-  // Reserve the line's height before hydration so nothing shifts.
-  if (!info) return <p className={`eyebrow invisible ${className}`}>Open now</p>
-
-  const dot = info.live ? 'bg-[#6f8f3a]' : tone === 'cream' ? 'bg-mist' : 'bg-stone'
+  if (!info) return <p className={`label invisible ${className}`}>Open</p>
   return (
-    <p className={`eyebrow flex items-center gap-2.5 ${className}`} aria-live="polite">
-      <span className={`inline-block size-1.5 rounded-full ${dot}`} aria-hidden="true" />
+    <p className={`label flex items-center justify-center gap-3 ${className}`} aria-live="polite">
+      <span
+        aria-hidden="true"
+        className={`inline-block size-1.5 rounded-full ${info.live ? 'bg-[#8fae5a]' : 'bg-current opacity-50'}`}
+      />
       {info.text}
     </p>
   )

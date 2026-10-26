@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
-import { Instrument_Sans, Instrument_Serif } from 'next/font/google'
+import { Jost, Noto_Serif_Display } from 'next/font/google'
+import { stegaClean } from 'next-sanity'
 
 import { SITE_URL } from '@/lib/site'
 import { urlForImage } from '@/sanity/image'
@@ -7,19 +8,20 @@ import { getSettings } from '@/sanity/queries'
 
 import './globals.css'
 
-/** Display face. One weight with its italic — the italic carries the voice. */
-const serif = Instrument_Serif({
+/** Display: the restaurant's own display face, set light. */
+const serif = Noto_Serif_Display({
   subsets: ['latin'],
-  weight: '400',
+  weight: ['300', '400'],
   style: ['normal', 'italic'],
-  variable: '--font-instrument-serif',
+  variable: '--font-noto-serif-display',
   display: 'swap',
 })
 
-/** The UI and body face the restaurant's current site already uses. */
-const sans = Instrument_Sans({
+/** Labels, navigation and text: geometric, like the logo's wordmark. */
+const sans = Jost({
   subsets: ['latin'],
-  variable: '--font-instrument-sans',
+  weight: ['300', '400', '500'],
+  variable: '--font-jost',
   display: 'swap',
 })
 
@@ -34,7 +36,8 @@ export async function generateMetadata(): Promise<Metadata> {
     ? urlForImage(settings.ogImage).width(1200).height(630).fit('crop').url()
     : undefined
 
-  return {
+  // No click-to-edit markers in <head>, even in the Studio preview.
+  return stegaClean({
     metadataBase: new URL(SITE_URL),
     title: {
       default: `${name} — Modern American dining in Buckhead, Atlanta`,
@@ -57,7 +60,7 @@ export async function generateMetadata(): Promise<Metadata> {
       images: og ? [og] : undefined,
     },
     alternates: { canonical: '/' },
-  }
+  })
 }
 
 /** Document shell only. The site chrome lives in (site)/layout.tsx so the

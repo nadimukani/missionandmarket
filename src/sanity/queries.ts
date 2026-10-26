@@ -1,10 +1,12 @@
-import { groq } from 'next-sanity'
+import { groq, stegaClean } from 'next-sanity'
 
 import { restaurantToday } from '@/lib/opentable'
+import type { Schedule } from '@/lib/schedule'
 
-import { sanityFetch } from './client'
+import { client, sanityFetch } from './client'
 import type {
   Announcement,
+  FeaturedDish,
   GalleryImage,
   HomePage,
   JobPosting,
@@ -16,6 +18,18 @@ import type {
   Space,
   Special,
 } from './types'
+
+/**
+ * In the Studio preview every string carries invisible click-to-edit markers
+ * (stega). That is right for text people read, wrong for values the code
+ * compares or builds URLs from — `kind === 'seasonal'` would silently fail.
+ * Those fields are cleaned here, once, so components can trust them.
+ */
+function cleanKeys<T extends object>(item: T, keys: (keyof T)[]): T {
+  const out = { ...item }
+  for (const k of keys) if (out[k] != null) out[k] = stegaClean(out[k])
+  return out
+}
 
 /**
  * Every image projection goes through this.
@@ -35,15 +49,19 @@ const SETTINGS_QUERY = groq`*[_type == "siteSettings"][0]{
   name, tagline, shortDescription, phone, email, neighborhood, mapsUrl,
   parkingNote, address, hours, machineHours,
   openTableRid, openTableUrl, orderUrl, giftCardUrl,
-  privateEventsEmail, social, ogImage,
+  privateEventsEmail, social, ogImage, relatedAccounts,
   tripleseatLeadFormId, tripleseatPublicKey
 }`
 
-export function getSettings() {
-  return sanityFetch<SiteSettings | null>({
-    query: SETTINGS_QUERY,
-    tags: ['siteSettings'],
-  })
+export async function getSettings() {
+  const s = await sanityFetch<SiteSettings | null>({ query: SETTINGS_QUERY, tags: ['siteSettings'] })
+  if (!s) return s
+  // Values that become URLs, IDs or attributes rather than visible text.
+  return {
+    ...cleanKeys(s, ['openTableRid', 'mapsUrl', 'orderUrl', 'giftCardUrl', 'tripleseatLeadFormId', 'tripleseatPublicKey', 'phone']),
+    social: stegaClean(s.social),
+    relatedAccounts: stegaClean(s.relatedAccounts),
+  }
 }
 
 const ANNOUNCEMENT_QUERY = groq`*[_type == "announcement" && _id == "announcement"][0]{
@@ -60,31 +78,68 @@ export function getAnnouncement() {
 }
 
 const MENU_LIST_QUERY = groq`*[_type == "menu" && hidden != true] | order(order asc, title asc){
-  _id, title, "slug": slug.current, availability, order, image${IMAGE}
+  _id, title, "slug": slug.current, availability, services, order, image${IMAGE}
 }`
 
-export function getMenuList() {
-  return sanityFetch<MenuSummary[]>({
-    query: MENU_LIST_QUERY,
-    tags: ['menu'],
-  })
+/** Published slugs only — for generateStaticParams, which runs at build time
+ *  with no request (so no draft mode to check). */
+export function getMenuSlugs() {
+  return client.fetch<string[]>(
+    groq`*[_type == "menu" && hidden != true && defined(slug.current)].slug.current`,
+    {},
+    { perspective: 'published', stega: false, next: { revalidate: 60, tags: ['menu'] } },
+  )
+}
+
+export async function getMenuList() {
+  const menus = await sanityFetch<MenuSummary[]>({ query: MENU_LIST_QUERY, tags: ['menu'] })
+  return menus.map((m) => cleanKeys(m, ['slug', 'services']))
 }
 
 const MENU_QUERY = groq`*[_type == "menu" && slug.current == $slug && hidden != true][0]{
-  _id, title, "slug": slug.current, availability, intro, footnote, image${IMAGE},
-  "pdfUrl": pdf.asset->url,
+  _id, title, "slug": slug.current, availability, services, intro, footnote, image${IMAGE},
   sections[]{
-    title, note,
+    title, note, layout,
     items[]{ name, description, price, tags, soldOut, addOns[]{ label, price } }
   }
 }`
 
-export function getMenu(slug: string) {
-  return sanityFetch<Menu | null>({
-    query: MENU_QUERY,
-    params: { slug },
-    tags: ['menu', `menu:${slug}`],
-  })
+export async function getMenu(slug: string) {
+  const menu = await sanityFetch<Menu | null>({ query: MENU_QUERY, params: { slug }, tags: ['menu', `menu:${slug}`] })
+  if (!menu) return menu
+  return {
+    ...cleanKeys(menu, ['slug', 'services']),
+    sections: menu.sections?.map((sec) => cleanKeys(sec, ['layout'])),
+  }
+}
+
+/** Hours & Closures — the one schedule everything derives from. Cleaned of
+ *  stega markers: the site computes with these values (times, day codes),
+ *  it doesn't print them verbatim. */
+const SCHEDULE_QUERY = groq`*[_type == "hours" && _id == "hours"][0]{
+  services[]{ name, note, periods[]{ days, opens, closes } },
+  closures[]{ label, date, endDate, kind, opens, closes, message, showBanner, bannerDaysBefore }
+}`
+
+export async function getSchedule(): Promise<Schedule> {
+  const data = await sanityFetch<Schedule | null>({ query: SCHEDULE_QUERY, tags: ['hours'] })
+  return stegaClean(data ?? { services: [], closures: [] })
+}
+
+const FEATURED_QUERY = groq`*[_type == "menu" && hidden != true] | order(order asc){
+  title, "slug": slug.current,
+  "items": sections[].items[featured == true && defined(image) && soldOut != true]{
+    name, description, image${IMAGE}
+  }
+}`
+
+export async function getFeaturedDishes(): Promise<FeaturedDish[]> {
+  const menus = await sanityFetch<
+    { title: string; slug: string; items?: Omit<FeaturedDish, 'menuTitle' | 'menuSlug'>[] }[]
+  >({ query: FEATURED_QUERY, tags: ['menu'] })
+  return menus.flatMap((m) =>
+    (m.items ?? []).map((i) => ({ ...i, menuTitle: m.title, menuSlug: stegaClean(m.slug) })),
+  )
 }
 
 const HOME_QUERY = groq`*[_type == "homePage"][0]{
@@ -96,6 +151,7 @@ const HOME_QUERY = groq`*[_type == "homePage"][0]{
   barHeading, barBody, barImage${IMAGE},
   eventsHeading, eventsBody, eventsImage${IMAGE},
   patioHeading, patioBody, patioImages[]${IMAGE},
+  bandImage${IMAGE},
   seo
 }`
 
@@ -111,16 +167,17 @@ export function getHomePage() {
  *  event ending on the 31st should still show at 9pm in Atlanta. */
 const SPECIALS_QUERY = groq`*[_type == "special" && active == true &&
     (!defined(endDate) || endDate >= $today)] | order(order asc, startDate asc){
-  _id, title, kind, schedule, startDate, endDate, description, price,
+  _id, title, kind, service, schedule, startDate, endDate, description, price,
   ctaLabel, ctaUrl, image${IMAGE}
 }`
 
-export function getSpecials() {
-  return sanityFetch<Special[]>({
+export async function getSpecials() {
+  const list = await sanityFetch<Special[]>({
     query: SPECIALS_QUERY,
     params: { today: restaurantToday() },
     tags: ['special'],
   })
+  return list.map((s) => cleanKeys(s, ['kind', 'service', 'ctaUrl', 'startDate', 'endDate']))
 }
 
 const SPACES_QUERY = groq`*[_type == "space" && hidden != true] | order(order asc){
@@ -167,9 +224,7 @@ const GALLERY_QUERY = groq`*[_type == "galleryImage" && hidden != true] | order(
   _id, image${IMAGE}, alt, category
 }`
 
-export function getGallery() {
-  return sanityFetch<GalleryImage[]>({
-    query: GALLERY_QUERY,
-    tags: ['galleryImage'],
-  })
+export async function getGallery() {
+  const list = await sanityFetch<GalleryImage[]>({ query: GALLERY_QUERY, tags: ['galleryImage'] })
+  return list.map((g) => cleanKeys(g, ['category']))
 }

@@ -1,85 +1,83 @@
 import type { Metadata } from 'next'
 
+import { BreadcrumbsJsonLd } from '@/components/breadcrumbs-json-ld'
 import { HoursList } from '@/components/hours'
-import { PageIntro } from '@/components/page-intro'
 import { ReserveForm } from '@/components/reserve'
 import { SanityImage } from '@/components/sanity-image'
-import { Eyebrow, PlusLink } from '@/components/ui'
+import { Label, LineLink, Ornament } from '@/components/ui'
 import { telHref } from '@/lib/site'
-import { getGallery, getSettings } from '@/sanity/queries'
+import { getGallery, getSchedule, getSettings } from '@/sanity/queries'
 
 export const metadata: Metadata = {
   title: 'Reservations',
-  description: 'Book a table at Mission + Market in Buckhead, Atlanta — lunch, happy hour and dinner.',
+  description: 'Reserve a table at Mission + Market in Buckhead, Atlanta — lunch, happy hour and dinner.',
   alternates: { canonical: '/reservations' },
 }
 
 export default async function ReservationsPage() {
-  const [settings, gallery] = await Promise.all([getSettings(), getGallery()])
-  const photo = gallery.find((g) => g._id === 'gallery-mm-reel-booths') ?? gallery[0]
+  const [settings, schedule, gallery] = await Promise.all([getSettings(), getSchedule(), getGallery()])
+  const photo = gallery.find((g) => g._id === 'gallery-mm-reel-booths')
 
   return (
     <>
-      <PageIntro
-        eyebrow="Reservations"
-        title="Book a *table*"
-        intro="Choose your party, date and time — we’ll hand you to OpenTable with everything filled in."
-      />
-
-      <section className="page pb-(--section)">
-        <div className="grid gap-14 lg:grid-cols-12 lg:gap-10">
-          <div className="lg:col-span-7">
-            <div className="bg-cream p-6 sm:p-10">
-              <ReserveForm rid={settings?.openTableRid} phone={settings?.phone} hours={settings?.machineHours} idPrefix="page" />
-            </div>
-
-            <div className="mt-12 grid gap-8 sm:grid-cols-2">
-              <div>
-                <Eyebrow as="h2" className="text-bronze">
-                  Larger groups
-                </Eyebrow>
-                <p className="mt-3 text-[0.9375rem] text-stone">
-                  Private rooms, the patio and full buyouts for 20 to 140 guests.
-                </p>
-                <PlusLink href="/private-events" className="mt-4 text-ink">
-                  Private dining
-                </PlusLink>
-              </div>
-              {settings?.phone ? (
-                <div>
-                  <Eyebrow as="h2" className="text-bronze">
-                    By phone
-                  </Eyebrow>
-                  <p className="mt-3 text-[0.9375rem] text-stone">Prefer to call? We’re happy to help.</p>
-                  <a className="link mt-4 inline-block tabular" href={telHref(settings.phone)}>
-                    {settings.phone}
-                  </a>
-                </div>
-              ) : null}
-            </div>
-
-            <div className="mt-14">
-              <h2 className="eyebrow text-bronze">Hours</h2>
-              <HoursList hours={settings?.hours} className="mt-6" />
+      <section className="grid lg:min-h-[calc(92svh-var(--header-h))] lg:grid-cols-2">
+        <div className="flex flex-col items-center justify-center px-(--gutter) py-20 text-center sm:py-28">
+          <div className="rise w-full max-w-lg">
+            <Ornament className="h-10 text-bronze" />
+            <Label className="mt-8 text-bronze">Reservations</Label>
+            <h1 className="mt-6 font-display text-hero font-light">
+              Reserve a <em>Table</em>
+            </h1>
+            <p className="mx-auto mt-7 max-w-md text-lead font-light text-ink-soft">
+              Choose your party, date and time — we’ll take you to OpenTable with everything filled in.
+            </p>
+            <div className="mt-12 text-left">
+              <ReserveForm rid={settings?.openTableRid} phone={settings?.phone} schedule={schedule} idPrefix="page" />
             </div>
           </div>
+        </div>
+        {photo ? (
+          <div className="relative min-h-[60svh] overflow-hidden bg-ink lg:min-h-0">
+            <SanityImage
+              image={photo.image}
+              alt={photo.alt}
+              width={1400}
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="absolute inset-0 size-full object-cover"
+              priority
+            />
+          </div>
+        ) : null}
+      </section>
 
-          {photo ? (
-            <div className="hidden lg:col-span-4 lg:col-start-9 lg:block">
-              <div className="sticky top-[calc(var(--header-h)+2rem)] aspect-[9/16] overflow-hidden bg-cream">
-                <SanityImage
-                  image={photo.image}
-                  alt={photo.alt}
-                  width={700}
-                  height={1244}
-                  sizes="30vw"
-                  className="size-full object-cover"
-                />
-              </div>
-            </div>
-          ) : null}
+      <section className="bg-cream section-y">
+        <div className="page grid gap-14 text-center lg:grid-cols-3 lg:gap-10">
+          <div>
+            <Label className="text-bronze">Larger groups</Label>
+            <p className="mx-auto mt-5 max-w-xs text-lead font-light text-ink-soft">
+              Private rooms, the patio and full buyouts.
+            </p>
+            <LineLink href="/private-events" className="mt-6 text-ink">
+              Private Dining
+            </LineLink>
+          </div>
+          <div>
+            <Label className="text-bronze">By phone</Label>
+            {settings?.phone ? (
+              <p className="mt-5 font-display text-title font-light">
+                <a className="link-line tabular" href={telHref(settings.phone)}>
+                  {settings.phone}
+                </a>
+              </p>
+            ) : null}
+          </div>
+          <div>
+            <Label className="text-bronze">Hours</Label>
+            <HoursList schedule={schedule} compact className="mx-auto mt-5 max-w-xs text-left" />
+          </div>
         </div>
       </section>
+      <BreadcrumbsJsonLd trail={[{ name: 'Reservations', path: '/reservations' }]} />
     </>
   )
 }

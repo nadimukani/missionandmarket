@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from 'react'
 
+import { bannerClosure, closureLine, type Schedule } from '@/lib/schedule'
 import type { Announcement } from '@/sanity/types'
 
-function inWindow(a: Announcement, now = Date.now()) {
+function inWindow(a: Announcement, now: number) {
   if (!a.enabled || !a.message) return false
   if (a.startsAt && now < Date.parse(a.startsAt)) return false
   if (a.endsAt && now > Date.parse(a.endsAt)) return false
@@ -12,12 +13,21 @@ function inWindow(a: Announcement, now = Date.now()) {
 }
 
 /**
- * The sitewide banner from the "Announcement Banner" document. Rendered on the
- * server when it is live at build/revalidate time, then re-checked against the
- * visitor's clock — so a notice scheduled to end at midnight comes down at
- * midnight even if the cached page is a few minutes old.
+ * The thin line across the top of every page. Two sources, one place:
+ *  1. the "Announcement Banner" document, when it is switched on and in its
+ *     scheduled window;
+ *  2. otherwise, the next closure in "Hours & Closures" — so adding
+ *     "Thanksgiving: closed" there is all it takes to warn guests.
+ * Re-checked against the visitor's clock so it comes down on time even from
+ * a cached page.
  */
-export function AnnouncementBar({ announcement }: { announcement: Announcement | null }) {
+export function AnnouncementBar({
+  announcement,
+  schedule,
+}: {
+  announcement: Announcement | null
+  schedule: Schedule | null
+}) {
   const [now, setNow] = useState(() => Date.now())
 
   useEffect(() => {
@@ -25,21 +35,33 @@ export function AnnouncementBar({ announcement }: { announcement: Announcement |
     return () => window.clearInterval(t)
   }, [])
 
-  if (!announcement || !inWindow(announcement, now)) return null
+  let message: string | undefined
+  let link: { label: string; href: string } | undefined
+  if (announcement && inWindow(announcement, now)) {
+    message = announcement.message
+    if (announcement.linkLabel && announcement.linkUrl) {
+      link = { label: announcement.linkLabel, href: announcement.linkUrl }
+    }
+  } else {
+    const closure = bannerClosure(schedule, new Date(now))
+    if (closure) {
+      message = closureLine(closure)
+      link = { label: 'Hours', href: '/visit#hours' }
+    }
+  }
+  if (!message) return null
 
   return (
-    <div role="region" aria-label="Announcement" className="bg-moss text-cream">
-      <p className="page flex min-h-10 flex-wrap items-center justify-center gap-x-4 gap-y-1 py-2.5 text-center text-sm">
-        <span>{announcement.message}</span>
-        {announcement.linkUrl && announcement.linkLabel ? (
+    <div role="region" aria-label="Announcement" className="bg-ink text-cream">
+      <p className="page flex min-h-9 flex-wrap items-center justify-center gap-x-5 gap-y-1 py-2 text-center text-[0.8125rem] font-light tracking-wide">
+        <span>{message}</span>
+        {link ? (
           <a
-            href={announcement.linkUrl}
-            className="eyebrow link whitespace-nowrap"
-            {...(/^https?:/.test(announcement.linkUrl)
-              ? { target: '_blank', rel: 'noopener noreferrer' }
-              : {})}
+            href={link.href}
+            className="label link-line text-cream/80"
+            {...(/^https?:/.test(link.href) ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
           >
-            {announcement.linkLabel}
+            {link.label}
           </a>
         ) : null}
       </p>

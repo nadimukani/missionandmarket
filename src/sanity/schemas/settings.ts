@@ -22,7 +22,7 @@ export const siteSettings = defineType({
   groups: [
     { name: 'identity', title: 'Identity', default: true },
     { name: 'contact', title: 'Contact & Location' },
-    { name: 'hours', title: 'Hours' },
+    { name: 'hours', title: 'Hours (moved)', hidden: true },
     { name: 'booking', title: 'Reservations & Ordering' },
     { name: 'social', title: 'Social' },
     { name: 'seo', title: 'SEO' },
@@ -93,11 +93,14 @@ export const siteSettings = defineType({
         'Guests ask this more than anything else. Mention valet and self-park validation.',
     }),
 
+    // Superseded by the "Hours & Closures" singleton (hours.ts). Hidden; kept
+    // readable for the pre-redesign build.
     defineField({
       name: 'hours',
-      title: 'Service hours',
+      title: 'Service hours (legacy)',
       type: 'array',
       group: 'hours',
+      hidden: true,
       description:
         'One row per service. Group days that share hours, e.g. "Monday – Wednesday".',
       of: [
@@ -129,9 +132,10 @@ export const siteSettings = defineType({
     }),
     defineField({
       name: 'machineHours',
-      title: 'Structured hours for Google',
+      title: 'Structured hours for Google (legacy)',
       type: 'array',
       group: 'hours',
+      hidden: true,
       description:
         'Powers the rich result in Google Search. Use 24-hour times. Keep in sync with the rows above.',
       of: [
@@ -245,6 +249,24 @@ export const siteSettings = defineType({
             defineField({ name: 'url', type: 'url' }),
           ],
           preview: { select: { title: 'platform', subtitle: 'url' } },
+        }),
+      ],
+    }),
+
+    defineField({
+      name: 'relatedAccounts',
+      title: 'Sister restaurants on Instagram',
+      type: 'array',
+      group: 'social',
+      description: 'Listed in the footer, as on the printed menus.',
+      of: [
+        defineArrayMember({
+          type: 'object',
+          fields: [
+            defineField({ name: 'label', type: 'string', description: 'e.g. @treveleatl' }),
+            defineField({ name: 'url', type: 'url' }),
+          ],
+          preview: { select: { title: 'label', subtitle: 'url' } },
         }),
       ],
     }),

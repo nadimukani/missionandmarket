@@ -3,6 +3,7 @@
 import { BellIcon } from '@sanity/icons/Bell'
 import { CalendarIcon } from '@sanity/icons/Calendar'
 import { CaseIcon } from '@sanity/icons/Case'
+import { ClockIcon } from '@sanity/icons/Clock'
 import { DocumentsIcon } from '@sanity/icons/Documents'
 import { HomeIcon } from '@sanity/icons/Home'
 import { ImagesIcon } from '@sanity/icons/Images'
@@ -14,14 +15,14 @@ import { UsersIcon } from '@sanity/icons/Users'
 import type { StructureResolver } from 'sanity/structure'
 
 /** Documents that must only ever have one instance. */
-const SINGLETONS = ['siteSettings', 'homePage', 'announcement'] as const
+const SINGLETONS = ['siteSettings', 'homePage', 'announcement', 'hours'] as const
 
 export const singletonTypes = new Set<string>(SINGLETONS)
 
 /**
- * Ordered by how often a manager reaches for each thing. The three edits the
- * restaurant asked to own — a closure notice, the menus, what's on — sit at the
- * top; the things set once and rarely touched sit below the line.
+ * Ordered by how often a manager reaches for each thing. The edits the
+ * restaurant asked to own — closures and hours, the menus, what's on — sit at
+ * the top; the things set once and rarely touched sit below the line.
  */
 export const structure: StructureResolver = (S) =>
   S.list()
@@ -36,6 +37,10 @@ export const structure: StructureResolver = (S) =>
             .documentId('announcement')
             .title('Announcement Banner'),
         ),
+      S.listItem()
+        .title('Hours & Closures')
+        .icon(ClockIcon)
+        .child(S.document().schemaType('hours').documentId('hours').title('Hours & Closures')),
       S.documentTypeListItem('menu').title('Menus').icon(MenuIcon),
       S.documentTypeListItem('special').title('Happenings').icon(CalendarIcon),
       S.documentTypeListItem('space').title('Private Dining Rooms').icon(PresentationIcon),
@@ -43,13 +48,10 @@ export const structure: StructureResolver = (S) =>
       S.divider(),
 
       S.listItem()
-        .title('Hours & Restaurant Info')
+        .title('Restaurant Info')
         .icon(InfoOutlineIcon)
         .child(
-          S.document()
-            .schemaType('siteSettings')
-            .documentId('siteSettings')
-            .title('Hours & Restaurant Info'),
+          S.document().schemaType('siteSettings').documentId('siteSettings').title('Restaurant Info'),
         ),
       S.listItem()
         .title('Home Page')

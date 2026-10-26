@@ -1,3 +1,4 @@
+import { stegaClean } from 'next-sanity'
 import { SITE_URL } from '@/lib/site'
 import type { Menu } from '@/sanity/types'
 
@@ -70,7 +71,7 @@ export function MenuJsonLd({ menu }: { menu: Menu }) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(stegaClean(data)) }}
     />
   )
 }

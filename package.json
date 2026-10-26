@@ -15,7 +15,9 @@
     "food": "node --env-file=.env.local --experimental-strip-types scripts/add-food-photography.ts",
     "fix-content": "node --env-file=.env.local --experimental-strip-types scripts/fix-content.ts",
     "defaults": "node --env-file=.env.local --experimental-strip-types scripts/fill-defaults.ts",
-    "fall-2026": "node --env-file=.env.local --experimental-strip-types scripts/fall-2026.ts"
+    "fall-2026": "node --env-file=.env.local --experimental-strip-types scripts/fall-2026.ts",
+    "menus-2026": "node --env-file=.env.local --experimental-strip-types scripts/menus-2026.ts",
+    "content-v2": "node --env-file=.env.local --experimental-strip-types scripts/content-v2.ts"
   },
   "dependencies": {
     "@sanity/client": "^7.24.0",

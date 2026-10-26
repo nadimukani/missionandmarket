@@ -1,75 +1,62 @@
 @import 'tailwindcss';
 
 /* ==========================================================================
- * Mission + Market — fall 2026 design system
+ * Mission + Market — design system
  *
- * Palette is the restaurant's own, measured from missionandmarketatl.com's
- * stylesheets (client requirement: keep the current site's colours):
- *   moss  #464B20 · cream #F0E9D7 · paper #F7F5F0 · ink #231F1F
- *   bronze #8A6445 · teal #0B2F31 (their deep teal, used on the night/bar
- *   surfaces — it is the colour of the velvet banquettes in the photography)
+ * Palette: the restaurant's own (client requirement: keep the current site's
+ * colours) — moss, cream, paper, ink, bronze, and their deep teal.
  *
- * Type: Instrument Serif for display — same foundry as Instrument Sans, which
- * the current site already uses for everything else, so the pairing is a
- * family rather than a guess. Tracked uppercase sans for labels, echoing the
- * wordmark in the logo.
+ * Type: Noto Serif Display — the display face their current site already
+ * uses — set light and wide for headings; Jost, a geometric sans that echoes
+ * the logo's wordmark, for labels, navigation and text.
  *
- * Corners are square everywhere. Separation is by hairline and space, never
- * by boxes and shadows.
+ * Luxury here means restraint: few words, large photographs, generous space,
+ * centred compositions, hairlines instead of boxes, square corners.
  * ======================================================================== */
 
 @theme {
   --color-moss: #464b20;
-  --color-moss-deep: #353918;
   --color-cream: #f0e9d7;
   --color-paper: #f7f5f0;
   --color-ink: #231f1f;
   --color-bronze: #8a6445;
   --color-teal: #0b2f31;
-  --color-teal-soft: #14403f;
-  /* Muted text. 5.3:1 on paper, 4.9:1 on cream — passes AA for body copy. */
+  /* Text tints. ink-soft 8:1 on paper; stone 5.3:1; mist 7.9:1 on teal. */
+  --color-ink-soft: #4d4743;
   --color-stone: #6b635c;
-  /* Muted text on the dark surfaces. 7.9:1 on teal. */
-  --color-mist: #c9c2b0;
+  --color-mist: #d4ccb8;
 
-  --font-display: var(--font-instrument-serif), 'Iowan Old Style', Georgia, serif;
-  --font-sans: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-noto-serif-display), 'Didot', Georgia, serif;
+  --font-sans: var(--font-jost), ui-sans-serif, system-ui, sans-serif;
 
-  /* Fluid scale. Display sizes step 1.5 / 1.55 / 1.6 down to the card title. */
-  --text-hero: clamp(3rem, 1.9rem + 4.4vw, 6.75rem);
-  --text-hero--line-height: 0.98;
-  --text-hero--letter-spacing: -0.012em;
-  --text-display: clamp(2.375rem, 1.7rem + 2.7vw, 4.5rem);
-  --text-display--line-height: 1;
-  --text-display--letter-spacing: -0.01em;
-  --text-title: clamp(1.875rem, 1.5rem + 1.5vw, 3rem);
-  --text-title--line-height: 1.05;
-  --text-subtitle: clamp(1.5rem, 1.3rem + 0.8vw, 2.125rem);
-  --text-subtitle--line-height: 1.1;
-  --text-card: clamp(1.375rem, 1.25rem + 0.45vw, 1.75rem);
-  --text-card--line-height: 1.15;
-  --text-lead: clamp(1.0625rem, 1rem + 0.3vw, 1.3125rem);
-  --text-lead--line-height: 1.55;
-  --text-label: 0.75rem;
-  --text-label--line-height: 1.3;
-  --text-label--letter-spacing: 0.16em;
+  --text-hero: clamp(2.75rem, 1.5rem + 4.4vw, 5.75rem);
+  --text-hero--line-height: 1.04;
+  --text-display: clamp(2.25rem, 1.45rem + 2.8vw, 4.25rem);
+  --text-display--line-height: 1.08;
+  --text-title: clamp(1.75rem, 1.35rem + 1.45vw, 2.75rem);
+  --text-title--line-height: 1.12;
+  --text-subtitle: clamp(1.3125rem, 1.15rem + 0.6vw, 1.75rem);
+  --text-subtitle--line-height: 1.3;
+  --text-lead: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  --text-lead--line-height: 1.8;
+  --text-label: 0.6875rem;
+  --text-label--line-height: 1.4;
 
-  --container-page: 90rem; /* 1440 */
-  --container-prose: 38rem;
+  --container-page: 90rem;
 
-  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-lux: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 :root {
-  --gutter: clamp(1.25rem, 0.6rem + 3.2vw, 3.5rem);
-  --section: clamp(4.5rem, 2.5rem + 8vw, 9.5rem);
-  --header-h: 4rem;
+  --gutter: clamp(1.25rem, 0.5rem + 3.4vw, 4rem);
+  --section: clamp(5rem, 2.5rem + 9vw, 11rem);
+  --header-h: 4.25rem;
   color-scheme: light;
 }
 
 @media (min-width: 64rem) {
   :root {
-    --header-h: 4.75rem;
+    --header-h: 5.5rem;
   }
 }
 
@@ -77,7 +64,7 @@
   html {
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
-    scroll-padding-top: calc(var(--header-h) + 1rem);
+    scroll-padding-top: calc(var(--header-h) + 1.5rem);
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -90,11 +77,11 @@
     background: var(--color-paper);
     color: var(--color-ink);
     font-family: var(--font-sans);
+    font-weight: 400;
     font-size: 1rem;
-    line-height: 1.6;
+    line-height: 1.75;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-feature-settings: 'kern', 'liga';
   }
 
   ::selection {
@@ -103,29 +90,24 @@
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-bronze);
-    outline-offset: 3px;
+    outline: 1px solid currentColor;
+    outline-offset: 4px;
   }
 
   h1,
   h2,
   h3 {
     text-wrap: balance;
+    font-weight: 300;
   }
 
   p {
     text-wrap: pretty;
   }
-
-  /* Display italics are where the voice lives — "*flavor*" in the CMS. */
-  .font-display em {
-    font-style: italic;
-  }
 }
 
 /* ------------------------------------------------------------- Utilities */
 
-/** The page rail: 1440 max, fluid gutters. */
 @utility page {
   width: 100%;
   max-width: calc(var(--container-page) + 2 * var(--gutter));
@@ -137,12 +119,20 @@
   padding-block: var(--section);
 }
 
-/** Tracked uppercase label — the wordmark's voice at text size. */
-@utility eyebrow {
+/** Tracked capitals — the logo's wordmark at text size. */
+@utility label {
   font-family: var(--font-sans);
   font-size: var(--text-label);
   line-height: var(--text-label--line-height);
-  letter-spacing: var(--text-label--letter-spacing);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+@utility nav-link {
+  font-family: var(--font-sans);
+  font-size: 0.71875rem;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
   font-weight: 500;
 }
@@ -151,34 +141,30 @@
   font-variant-numeric: tabular-nums lining-nums;
 }
 
-@utility hairline {
-  border-color: color-mix(in srgb, currentColor 16%, transparent);
-}
-
 /* --------------------------------------------------------------- Controls */
 
 @utility btn {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
-  min-height: 3rem;
-  padding: 0.95rem 1.75rem;
+  min-height: 3.25rem;
+  padding: 0.9rem 2.25rem;
   font-family: var(--font-sans);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.16em;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
   line-height: 1;
   white-space: nowrap;
   border: 1px solid transparent;
   transition:
-    background-color 200ms var(--ease-out-soft),
-    color 200ms var(--ease-out-soft),
-    border-color 200ms var(--ease-out-soft);
+    background-color 300ms var(--ease-lux),
+    color 300ms var(--ease-lux),
+    border-color 300ms var(--ease-lux);
 }
 
-@utility btn-moss {
+@utility btn-solid {
   background: var(--color-moss);
   color: var(--color-cream);
   &:hover {
@@ -186,7 +172,7 @@
   }
 }
 
-@utility btn-cream {
+@utility btn-light {
   background: var(--color-cream);
   color: var(--color-ink);
   &:hover {
@@ -194,29 +180,64 @@
   }
 }
 
-@utility btn-line {
-  border-color: color-mix(in srgb, currentColor 45%, transparent);
+@utility btn-outline {
+  border-color: color-mix(in srgb, currentColor 55%, transparent);
   &:hover {
     border-color: currentColor;
+    background: color-mix(in srgb, currentColor 8%, transparent);
   }
 }
 
-/** Underlined text link that thickens on hover. */
+/** Text link with a hairline that draws in from the left on hover. */
+@utility link-line {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 0.3em;
+  background-image: linear-gradient(currentColor, currentColor),
+    linear-gradient(color-mix(in srgb, currentColor 30%, transparent), color-mix(in srgb, currentColor 30%, transparent));
+  background-size:
+    0% 1px,
+    100% 1px;
+  background-position:
+    0 100%,
+    0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 500ms var(--ease-lux);
+  &:hover {
+    background-size:
+      100% 1px,
+      100% 1px;
+  }
+}
+
+/** Same draw-in line, but nothing at rest — for navigation, where a row of
+ *  permanent underlines reads as clutter. */
+@utility link-hover {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 0.3em;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 500ms var(--ease-lux);
+  &:hover,
+  &[aria-current='page'] {
+    background-size: 100% 1px;
+  }
+}
+
+/** Plain underline for links inside running text. */
 @utility link {
   text-decoration-line: underline;
   text-decoration-thickness: 1px;
-  text-underline-offset: 0.3em;
+  text-underline-offset: 0.28em;
   text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
-  transition: text-decoration-color 200ms;
   &:hover {
     text-decoration-color: currentColor;
   }
 }
 
-/* ---------------------------------------------------------------- Logo */
-
-/** The logo files are the restaurant's own cream-on-transparent PNGs. Used
- *  as masks so one asset renders in any brand colour via `currentColor`. */
 @utility logo-mask {
   display: block;
   background-color: currentColor;
@@ -230,26 +251,19 @@
 
 /* ---------------------------------------------------------------- Motion */
 /*
- * Motion is limited to things that cannot strand content: the video loops,
- * the ticker, hover states. There is deliberately no scroll-reveal — the
- * previous build tried two and both left sections invisible.
+ * Entrance motion only on first paint, never tied to scrolling (the earlier
+ * build's scroll-reveals left sections invisible). If an animation doesn't
+ * run, the element simply renders in its final state.
  */
-
-@keyframes ticker {
+@keyframes rise {
   from {
-    transform: translate3d(0, 0, 0);
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
   }
   to {
-    transform: translate3d(-50%, 0, 0);
+    opacity: 1;
+    transform: none;
   }
-}
-
-.ticker-track {
-  animation: ticker 48s linear infinite;
-}
-
-.ticker:hover .ticker-track {
-  animation-play-state: paused;
 }
 
 @keyframes fade-in {
@@ -261,10 +275,44 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .ticker-track {
-    animation: none;
+@keyframes scroll-cue {
+  0% {
+    transform: scaleY(0);
+    transform-origin: top;
   }
+  45% {
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+  55% {
+    transform: scaleY(1);
+    transform-origin: bottom;
+  }
+  100% {
+    transform: scaleY(0);
+    transform-origin: bottom;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .rise {
+    animation: rise 1100ms var(--ease-lux) both;
+  }
+  .rise-1 {
+    animation-delay: 150ms;
+  }
+  .rise-2 {
+    animation-delay: 300ms;
+  }
+  .rise-3 {
+    animation-delay: 450ms;
+  }
+  .scroll-cue {
+    animation: scroll-cue 2.4s var(--ease-lux) infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
@@ -274,10 +322,9 @@
 
 /* ------------------------------------------------- Tripleseat inquiry form */
 /*
- * Tripleseat's embed injects its own table-based form and a stylesheet keyed
- * on #tripleseat_embed_form. We keep their markup (it carries reCAPTCHA and
- * posts leads straight into the restaurant's Tripleseat account) and restyle
- * it onto the site's system. ID selectors are needed to win specificity.
+ * Tripleseat's embed injects its own table-based form (with reCAPTCHA) and a
+ * stylesheet keyed on #tripleseat_embed_form. We keep their markup so leads
+ * land in the restaurant's Tripleseat account, and restyle it here.
  */
 .ts-form #tripleseat_embed_form {
   font-family: var(--font-sans);
@@ -291,16 +338,15 @@
 
 .ts-form #tripleseat_embed_form table td {
   display: block;
-  padding: 0 0 1.25rem;
+  padding: 0 0 1.4rem;
 }
 
 .ts-form #tripleseat_embed_form label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
-  margin-bottom: 0.5rem;
-  color: var(--color-ink);
+  margin-bottom: 0.6rem;
 }
 
 .ts-form #tripleseat_embed_form label span.required {
@@ -314,13 +360,14 @@
 .ts-form #tripleseat_embed_form select,
 .ts-form #tripleseat_embed_form textarea {
   width: 100% !important;
-  min-height: 3rem;
-  padding: 0.75rem 0.9rem;
+  min-height: 3.25rem;
+  padding: 0.85rem 0;
   font: inherit;
   font-size: 1rem;
   color: var(--color-ink);
-  background: var(--color-paper);
-  border: 1px solid color-mix(in srgb, var(--color-ink) 22%, transparent);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 28%, transparent);
   border-radius: 0;
   box-shadow: none;
   appearance: none;
@@ -330,28 +377,29 @@
   background-image: linear-gradient(45deg, transparent 50%, var(--color-ink) 50%),
     linear-gradient(135deg, var(--color-ink) 50%, transparent 50%);
   background-position:
-    calc(100% - 1.15rem) 50%,
-    calc(100% - 0.8rem) 50%;
+    calc(100% - 0.65rem) 55%,
+    calc(100% - 0.3rem) 55%;
   background-size: 0.35rem 0.35rem;
   background-repeat: no-repeat;
-  padding-right: 2.5rem;
+  padding-right: 2rem;
 }
 
 .ts-form #tripleseat_embed_form textarea {
-  min-height: 7.5rem;
+  min-height: 7rem;
+  border: 1px solid color-mix(in srgb, var(--color-ink) 22%, transparent);
+  padding: 0.85rem;
 }
 
 .ts-form #tripleseat_embed_form input:focus,
 .ts-form #tripleseat_embed_form select:focus,
 .ts-form #tripleseat_embed_form textarea:focus {
-  outline: 2px solid var(--color-moss);
-  outline-offset: 0;
+  outline: none;
   border-color: var(--color-moss);
 }
 
 .ts-form #tripleseat_embed_form input.error,
 .ts-form #tripleseat_embed_form .errorExplanation {
-  background: #f6ece4;
+  background: transparent;
   border-color: var(--color-bronze);
 }
 
@@ -359,6 +407,7 @@
   width: auto;
   padding: 1rem;
   margin-bottom: 1.25rem;
+  border: 1px solid var(--color-bronze);
 }
 
 .ts-form #tripleseat_embed_form input[type='submit'],
@@ -369,11 +418,11 @@
   align-items: center;
   justify-content: center;
   min-height: 3.25rem;
-  padding: 1rem 2rem;
+  padding: 1rem 2.5rem;
   font-family: var(--font-sans);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.16em;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
   color: var(--color-cream);
   background: var(--color-moss);
@@ -402,6 +451,16 @@
   font-size: 0.9375rem;
 }
 
-.ts-form .ui-datepicker {
-  font-family: var(--font-sans);
+/* ------------------------------------------------------------------ Print */
+/* The printable menus are the web menus — one source, never out of step. */
+@media print {
+  @page {
+    margin: 14mm 12mm;
+  }
+  body {
+    background: #fff;
+  }
+  .no-print {
+    display: none !important;
+  }
 }

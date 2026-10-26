@@ -12,47 +12,81 @@ client-editing side the restaurant asked for (menus, events, closure notices).
 **Rule: nothing invented.** Every fact on the site traces to a source below;
 anything unsourced is a labelled placeholder.
 
-## The concept
+## The concept (second pass)
 
-**Light, editorial, warm — the room in daylight, the bar at night.**
+**Quiet luxury in warm light: few words, big photographs, generous space.**
+The first pass read too editorial ("like a blog") and its condensed display
+face was too narrow; this pass is immersive and image-led, organised as
+dedicated pages for search rather than one long scroll.
 
-- **Palette is the restaurant's own**, measured from missionandmarketatl.com
-  (client requirement: keep the current site's colours): moss `#464B20`,
-  cream `#F0E9D7`, paper `#F7F5F0`, ink `#231F1F`, bronze `#8A6445`, and their
-  deep teal `#0B2F31` — which is also the colour of the velvet banquettes in
-  the photography. The competitive scan found this palette is unoccupied in
-  the Atlanta set (everyone else is dark-and-gold or plain white).
-- **Type:** Instrument Serif (display, with its italic carrying the voice) +
-  Instrument Sans (UI/body, already on their current site). Tracked uppercase
-  labels echo the logo's wordmark.
-- **The "+" is the brand device** — it is in the name, the tagline
-  ("Flavor + Fusion") and even their print happy-hour menu ("Bar + Patio").
-  Used as the ticker separator, list bullets and link markers.
-- **Square corners, hairlines, no boxes.** Motion is limited to things that
-  cannot strand content: video loops, the ticker, hover states. No
-  scroll-reveal (the previous build's two attempts left sections invisible).
-- **Voice:** short, concrete, a little wry, numbers doing the work —
-  "*California light*, Buckhead address." · "Trees indoors, *fire pits*
-  outdoors." · "Forty seats, two walls of glass and curtains to draw."
+- **Palette is the restaurant's own** (client requirement: keep the current
+  site's colours): moss `#464B20`, cream `#F0E9D7`, paper `#F7F5F0`, ink
+  `#231F1F`, bronze `#8A6445`, deep teal `#0B2F31`. The competitive scan found
+  it unoccupied in the Atlanta set (everyone else is dark-and-gold or white).
+- **Type:** Noto Serif Display, light — the display face their current site
+  already uses, wide and high-contrast — with Jost, a geometric sans that
+  echoes the logo's wordmark, for labels, navigation and text.
+- **Signature details:** the logo's chevron mark as a section ornament;
+  centred compositions; tracked capitals; hairlines; square corners; menus set
+  like the printed menu (tracked names, italic serif descriptions).
+- **Motion:** the reels, slow photographic hover zoom, a once-only entrance
+  fade on page openings. No scroll-triggered reveals.
 
-## Site map
+## Site map (SEO)
 
 | Route | Purpose |
 | --- | --- |
-| `/` | Split hero (headline + two vertical reels; full-bleed reel on mobile) · "+" ticker · seasonal strip (holiday parties) · introduction · kitchen (dish loop + 4 dishes + Lunch/Happy Hour/Dinner) · the bar (teal, cocktail reel) · private dining with capacities · happenings · patio · visit |
-| `/menus`, `/menus/[slug]` | HTML menus (Lunch, Happy Hour, Dinner), section jump links, cover photo, PDF link when present |
-| `/private-events` | Labelled "Private Dining". Seasonal band · capacity table · a row per room · Tripleseat inquiry form (`#inquire`) |
-| `/happenings` | CMS "Happenings" (replaces `/specials`, which redirects) |
-| `/about` | Story · the room (reel stills) · chef (placeholder until headshots) · Diners' Choice 2024 |
-| `/contact` | Labelled "Visit". Hours, live open status, parking, map, driving directions |
-| `/reservations` | Inline booking form → OpenTable |
-| `/gallery`, `/careers` | Footer-level |
-| `/studio` | Sanity Studio, full-screen (moved out of the site chrome via the `(site)` route group) |
+| `/` | Full-screen opening: three vertical reels edge to edge (one on phones), logo, "Modern American Restaurant · Buckhead, Atlanta" as the H1 · welcome · menu gateway (Lunch, Dinner, Happy Hour) · the bar (teal) · signature dishes · private dining with capacities · seasonal band · happenings · gallery mosaic · visit |
+| `/menus` + `/menus/{dinner,lunch,happy-hour,drinks,dessert}` | Each menu is its own page with its own title/description and Menu structured data |
+| `/menus/[slug]/print` | Printable menu generated from the same data (no separate PDF to keep in sync) |
+| `/private-events` | Private dining: rooms, capacities, Tripleseat inquiry |
+| `/holiday-parties` | Seasonal landing page; exists only while the seasonal happening is live, then redirects to private dining |
+| `/happenings` | Happy hour, tasting menu, Beef Wellington, holiday parties |
+| `/about`, `/visit`, `/reservations`, `/gallery`, `/careers` | `/contact` and `/contact-us` redirect to `/visit` |
+| `/studio` | Sanity Studio, full-screen, with **Live preview** |
 
-Booking: every "Reserve" opens an on-brand panel (party, date, time — times
-generated from the CMS opening hours for that day) and hands off to OpenTable
-`rid 1005016` with everything prefilled. Only 2 of 12 Atlanta competitors keep
-this first step on-brand.
+Every interior page has one descriptive H1, a unique title and description,
+canonical URL and BreadcrumbList data; the home page carries Restaurant data
+with opening hours **and holiday hours** from the schedule.
+
+## Owner editing — one source for every fact
+
+The brief: when the restaurant changes something, it must change everywhere,
+and the site must never show a stale copy.
+
+- **Hours & Closures** (new singleton). Services with days + times picked from
+  dropdowns; closures with a date, "closed" or special hours, and an optional
+  banner. Everything derives from it: footer and Visit hours, each menu's
+  "served" line, "Open now", the booking panel's times (closed days are
+  disabled), Google's opening hours and holiday hours, and an automatic
+  closure banner a week ahead.
+- **Menus.** The HTML menu is the only menu. The print version is generated
+  from it; the old PDF upload is retired. Each menu links to its service for
+  its hours. Any dish can carry a photograph and "Feature on the home page" —
+  the home page's signature dishes come from there, so a dish removed from the
+  menu disappears from the home page too. Sections can be a framed "feature"
+  (Dinner for Two, M+M Express).
+- **Happenings** can take their hours from a service (Happy Hour) or their own
+  wording; one-time events hide themselves after their date.
+- **Live preview.** Inside the Studio, the owner sees the real site, clicks
+  any text to open the field behind it, edits, and publishes. Published
+  changes reach the public site within a minute without any webhook (instantly
+  with it).
+
+## Menus (2026)
+
+Transcribed from the restaurant's Dinner 2026 and Lunch 2026 PDFs (Aug 2026):
+Dinner 30 items, Lunch 29, Drinks 40, Dessert 8 (+ Happy Hour 9 from the 2026
+happy-hour sheet). Drinks + desserts are one shared menu each, taken from the
+Dinner PDF's back page (client decision). Spelling corrected from the print,
+pending the restaurant's confirmation: Gigandes → Gigantes, Parmagiano →
+Parmigiano, Anchioves → Anchovies, Mayonaise → Mayonnaise, Spritzs →
+Spritzes, Brulée → Brûlée, Bokchoy → Bok Choy, a la Brava → à la Brava.
+
+The Lunch PDF's back page differs from the Dinner one in four places — the
+Evora spritz's ingredients, Monday Night 404 Lager on draft, Espresso gelato,
+and the tasting menu ("Saturdays at 4 PM" vs "Sat + Sun dinner"). The site
+follows the Dinner version; confirm with the restaurant.
 
 ## Media
 
@@ -142,14 +176,17 @@ the documents it manages, so don't re-run it after the client starts editing.
    at the deployment's `/api/revalidate` with the filter in
    `src/app/api/revalidate/route.ts`, or edits wait out the 5-minute floor.
 
-## Demo script (≈90 seconds)
+## Demo script (≈2 minutes)
 
-1. `/studio` → **Announcement Banner** → switch on, type "Closed Thursday,
-   November 26 for Thanksgiving", set "Stop showing" to Nov 27 → Publish →
-   refresh the site: banner across the top.
-2. **Menus → Dinner** → edit a price, or toggle "Temporarily unavailable" on a
-   dish → Publish → show the dinner menu.
-3. **Happenings → New** → "Wine Dinner", one-time event, date, "hide after"
-   date → Publish → it appears on `/happenings` and the home page.
-4. **Private Dining Rooms → Semi-Private** → drop in a photo → the placeholder
-   is replaced.
+1. `/studio` → **Live preview** → the home page appears inside the Studio.
+   Click "Signatures" or any dish name → the field opens → edit → the page
+   updates in place → Publish.
+2. **Hours & Closures** → add a closure: "Thanksgiving", Nov 26, closed →
+   Publish → the banner appears (within a week of the date), Visit lists it,
+   "Open now" and the booking panel skip the day.
+3. **Menus → Dinner** → change a price or tick "Temporarily unavailable" →
+   Publish → the dinner page and its printable version both change.
+4. **Happenings → New** → a one-time event with a date and "hide after" →
+   Publish → it appears on Happenings and the home page.
+5. **Private Dining Rooms → Semi-Private** → add a photograph → the
+   "coming soon" panel is replaced.

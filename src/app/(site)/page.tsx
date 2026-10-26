@@ -1,402 +1,375 @@
 import type { Metadata } from 'next'
-import { PortableText } from 'next-sanity'
+import Link from 'next/link'
+import { PortableText, stegaClean } from 'next-sanity'
 
-import { HappeningCard } from '@/components/happening-card'
+import { HappeningsList } from '@/components/happenings'
+import { HeroReels } from '@/components/hero-reels'
 import { HoursList } from '@/components/hours'
+import { Lockup } from '@/components/logo'
 import { OpenStatus } from '@/components/open-status'
 import { PortableBody } from '@/components/portable-body'
 import { ReserveButton } from '@/components/reserve'
+import { CapacityTable } from '@/components/rooms'
 import { SanityImage } from '@/components/sanity-image'
-import { Ticker } from '@/components/ticker'
-import { ButtonLink, Emphasis, Eyebrow, Plus, PlusLink } from '@/components/ui'
-import { VideoLoop } from '@/components/video-loop'
-import { formatAddress, telHref } from '@/lib/site'
-import { getHomePage, getMenuList, getSettings, getSpaces, getSpecials } from '@/sanity/queries'
+import { Signatures } from '@/components/signatures'
+import { ButtonLink, Emphasis, Label, LineLink, Ornament, SectionIntro } from '@/components/ui'
+import { servedShort } from '@/lib/menus'
+import { findService, serviceSummary } from '@/lib/schedule'
+import { telHref } from '@/lib/site'
+import {
+  getFeaturedDishes,
+  getGallery,
+  getHomePage,
+  getMenuList,
+  getSchedule,
+  getSettings,
+  getSpaces,
+  getSpecials,
+} from '@/sanity/queries'
 
 export async function generateMetadata(): Promise<Metadata> {
-  const home = await getHomePage()
-  return {
-    description: home?.seo?.description ?? undefined,
+  const [home, settings] = await Promise.all([getHomePage(), getSettings()])
+  // No click-to-edit markers in <head>, even in the Studio preview.
+  return stegaClean({
+    title: { absolute: 'Mission + Market — Modern American Restaurant in Buckhead, Atlanta' },
+    description: home?.heroSubheading ?? home?.seo?.description ?? settings?.shortDescription,
     alternates: { canonical: '/' },
-  }
+  })
+}
+
+const REELS = [
+  { src: '/media/atmosphere.mp4', poster: '/media/atmosphere.jpg' },
+  { src: '/media/fall-cocktails.mp4', poster: '/media/fall-cocktails.jpg' },
+  { src: '/media/new-dishes.mp4', poster: '/media/new-dishes.jpg' },
+]
+
+function splitFirstSentence(text = '') {
+  const m = /^(.+?[.!?])\s+(.+)$/.exec(text)
+  return m ? [m[1], m[2]] : [text, '']
 }
 
 export default async function HomePage() {
-  const [home, settings, menus, specials, rooms] = await Promise.all([
+  const [home, settings, schedule, menus, dishes, specials, rooms, gallery] = await Promise.all([
     getHomePage(),
     getSettings(),
+    getSchedule(),
     getMenuList(),
+    getFeaturedDishes(),
     getSpecials(),
     getSpaces(),
+    getGallery(),
   ])
 
-  const dishes = (home?.featuredDishes ?? []).filter((d) => d.image)
-  const happyHour = specials.find((s) => /happy hour/i.test(s.title))
-  // A live seasonal push (the holiday-party season) gets a strip right under
-  // the opening; it disappears with the happening's own "hide after" date.
+  const bySlug = (slug: string) => menus.find((m) => m.slug === slug)
+  const gateway = ['lunch', 'dinner', 'happy-hour'].map(bySlug).filter((m): m is NonNullable<typeof m> => Boolean(m))
+  const happyHour = findService(schedule, 'Happy Hour')
   const seasonal = specials.find((s) => s.kind === 'seasonal' && s.ctaUrl)
-  const roomsWithCapacity = rooms.filter((r) => r.seated || r.reception)
+  const weekly = specials.filter((s) => s.kind !== 'seasonal').slice(0, 4)
+  const mosaic = gallery.slice(0, 5)
+  const instagram = settings?.social?.find((s) => s.platform === 'Instagram')?.url
+  const [seasonHeadline, seasonText] = splitFirstSentence(seasonal?.description)
+  const a = settings?.address
 
   return (
     <>
-      {/* ───────────────────────────── Opening ───────────────────────────── */}
-      <section className="relative isolate overflow-hidden lg:overflow-visible">
-        <div className="lg:page lg:grid lg:grid-cols-12 lg:items-center lg:gap-x-10 lg:py-10 xl:py-14">
-          <div className="absolute inset-0 -z-10 lg:static lg:z-auto lg:order-2 lg:col-span-7 lg:col-start-6 lg:flex lg:items-start lg:justify-end lg:gap-4 xl:gap-5">
-            <VideoLoop
-              src="/media/atmosphere.mp4"
-              poster="/media/atmosphere.jpg"
-              label="the dining room, the bar and guests at Mission + Market"
-              className="size-full lg:aspect-[9/16] lg:h-auto lg:w-[52%]"
-              controlPosition="top-right"
-              priority
-            />
-            <VideoLoop
-              src="/media/fall-cocktails.mp4"
-              poster="/media/fall-cocktails.jpg"
-              label="fall cocktails being poured"
-              className="hidden lg:mt-28 lg:block lg:aspect-[9/16] lg:w-[40%]"
-            />
-            <div
-              aria-hidden="true"
-              className="absolute inset-0 bg-linear-to-t from-ink/90 via-ink/60 to-ink/15 lg:hidden"
-            />
-          </div>
+      {/* ─────────────────────────────── Opening ─────────────────────────────── */}
+      <section className="relative h-svh min-h-[640px] overflow-hidden bg-ink text-cream">
+        <HeroReels reels={REELS} label="the dining room, cocktails and dishes at Mission + Market" />
+        <div aria-hidden="true" className="absolute inset-0 bg-ink/45" />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgb(35_31_31/0.5),transparent_65%)]"
+        />
+        <div aria-hidden="true" className="absolute inset-x-0 top-0 h-56 bg-linear-to-b from-ink/70 to-transparent" />
 
-          <div className="page flex min-h-[calc(92svh-var(--header-h))] flex-col justify-end pt-40 pb-10 text-cream [text-shadow:0_1px_18px_rgb(35_31_31/0.45)] lg:order-1 lg:col-span-5 lg:min-h-0 lg:justify-center lg:p-0 lg:text-ink lg:[text-shadow:none]">
-            <Eyebrow className="text-cream/85 lg:text-bronze">
-              {home?.heroEyebrow ?? 'Buckhead · Atlanta'}
-            </Eyebrow>
-            <h1 className="mt-5 font-display text-hero">
-              <Emphasis text={home?.heroHeading ?? 'Mission + Market'} />
-            </h1>
-            {home?.heroSubheading ? (
-              <p className="mt-6 max-w-[34rem] text-lead text-cream/90 lg:text-stone">{home.heroSubheading}</p>
+        <div className="relative z-10 flex h-full flex-col items-center justify-center px-(--gutter) text-center">
+          <Lockup className="rise w-[200px] sm:w-[240px] lg:w-[252px]" title="Mission + Market" />
+          <h1 className="rise rise-1 label mt-10 text-cream/90">
+            {/* Break at the "·" on phones rather than mid-phrase. */}
+            {(home?.heroEyebrow ?? 'Modern American Restaurant · Buckhead, Atlanta').split(' · ').map((part, i) => (
+              <span key={i} className="block sm:inline">
+                {i > 0 ? <span className="hidden sm:inline"> · </span> : null}
+                {part}
+              </span>
+            ))}
+          </h1>
+          <div className="rise rise-2 mt-12 flex flex-wrap justify-center gap-3">
+            <ReserveButton className="btn btn-light">Reserve a Table</ReserveButton>
+            <ButtonLink href="/menus" tone="outline">
+              View Menus
+            </ButtonLink>
+          </div>
+        </div>
+
+        <div className="absolute inset-x-0 bottom-8 z-10 flex flex-col items-center gap-5 px-16">
+          <OpenStatus schedule={schedule} className="text-cream/85" />
+          <span aria-hidden="true" className="scroll-cue block h-10 w-px bg-cream/60" />
+        </div>
+      </section>
+
+      {/* ─────────────────────────────── Welcome ─────────────────────────────── */}
+      <section className="page section-y text-center">
+        <Ornament className="h-12 text-bronze" />
+        <h2 className="mx-auto mt-10 max-w-4xl font-display text-display font-light">
+          <Emphasis text={home?.heroHeading} />
+        </h2>
+        {home?.storyBody ? (
+          <div className="mx-auto mt-10 grid max-w-2xl gap-5 text-lead font-light text-ink-soft">
+            <PortableText value={home.storyBody} components={PortableBody} />
+          </div>
+        ) : null}
+        <LineLink href="/about" className="mt-12 text-ink">
+          Our Story
+        </LineLink>
+      </section>
+
+      {/* ──────────────────────────────── Menus ──────────────────────────────── */}
+      <section aria-labelledby="menus-h">
+        <div className="page pb-14 text-center">
+          <Label className="text-bronze">The Menus</Label>
+          <h2 id="menus-h" className="sr-only">
+            Menus
+          </h2>
+        </div>
+        <div className="grid lg:grid-cols-3">
+          {gateway.map((m) => (
+            <Link
+              key={m._id}
+              href={`/menus/${m.slug}`}
+              className="group relative block h-[72svh] min-h-[460px] overflow-hidden bg-ink lg:h-[88svh]"
+            >
+              {m.image ? (
+                <SanityImage
+                  image={m.image}
+                  width={1000}
+                  sizes="(min-width: 1024px) 34vw, 100vw"
+                  className="absolute inset-0 size-full object-cover transition-transform duration-[1600ms] ease-(--ease-lux) group-hover:scale-[1.045]"
+                />
+              ) : null}
+              <div aria-hidden="true" className="absolute inset-0 bg-linear-to-t from-ink/85 via-ink/25 to-ink/5" />
+              <div className="absolute inset-x-0 bottom-0 px-8 pb-14 text-center text-cream">
+                <p className="label text-cream/75">{servedShort(m, schedule)}</p>
+                <h3 className="mt-5 font-display text-display font-light">{m.title}</h3>
+                <span className="label link-line mt-7">View Menu</span>
+              </div>
+            </Link>
+          ))}
+        </div>
+        <div className="page flex flex-wrap justify-center gap-x-12 gap-y-4 py-12">
+          {bySlug('drinks') ? <LineLink href="/menus/drinks">Drinks + Wine</LineLink> : null}
+          {bySlug('dessert') ? <LineLink href="/menus/dessert">Dessert</LineLink> : null}
+        </div>
+      </section>
+
+      {/* ──────────────────────────────── The Bar ────────────────────────────── */}
+      <section className="grid lg:min-h-[92svh] lg:grid-cols-2" aria-labelledby="bar-h">
+        <div className="relative min-h-[66svh] overflow-hidden bg-ink lg:min-h-0">
+          {home?.barImage ? (
+            <SanityImage
+              image={home.barImage}
+              width={1400}
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="absolute inset-0 size-full object-cover"
+            />
+          ) : null}
+        </div>
+        <div className="flex items-center justify-center bg-teal px-(--gutter) py-24 text-center text-cream sm:py-32">
+          <div className="max-w-md">
+            <Ornament className="h-10 text-cream/45" />
+            <Label className="mt-8 text-cream/70">Cocktails + Wine</Label>
+            <h2 id="bar-h" className="mt-6 font-display text-display font-light">
+              <Emphasis text={home?.barHeading ?? 'The Bar'} />
+            </h2>
+            {home?.barBody ? <p className="mt-7 text-lead font-light text-mist">{home.barBody}</p> : null}
+            {happyHour ? (
+              <div className="mt-12 border-t border-cream/15 pt-10">
+                <p className="font-display text-subtitle font-light italic">Happy Hour</p>
+                <p className="label mt-4 text-cream/85">{serviceSummary(happyHour)}</p>
+                {happyHour.note ? <p className="mt-3 text-sm font-light text-mist">{happyHour.note}</p> : null}
+              </div>
             ) : null}
-            <div className="mt-9 flex flex-wrap gap-3">
-              <ReserveButton className="btn btn-cream lg:btn-moss">Reserve a table</ReserveButton>
-              <ButtonLink href="/menus" tone="line">
-                See the menus
-              </ButtonLink>
+            <div className="mt-10 flex flex-wrap justify-center gap-3">
+              {bySlug('happy-hour') ? (
+                <ButtonLink href="/menus/happy-hour" tone="light">
+                  Happy Hour Menu
+                </ButtonLink>
+              ) : null}
+              {bySlug('drinks') ? (
+                <ButtonLink href="/menus/drinks" tone="outline">
+                  Drinks Menu
+                </ButtonLink>
+              ) : null}
             </div>
-            <OpenStatus hours={settings?.machineHours} className="mt-8 text-cream/85 lg:text-stone" tone="cream" />
           </div>
         </div>
       </section>
 
-      <Ticker items={home?.ticker} />
+      {/* ────────────────────────────── Signatures ───────────────────────────── */}
+      {dishes.length ? (
+        <section className="section-y overflow-hidden" aria-labelledby="sig-h">
+          <div className="page">
+            <div className="mx-auto max-w-3xl text-center">
+              <Label className="text-bronze">From the Kitchen</Label>
+              <h2 id="sig-h" className="mt-6 font-display text-display font-light">
+                <Emphasis text={home?.kitchenHeading ?? 'Signatures'} />
+              </h2>
+            </div>
+          </div>
+          <div className="mt-16">
+            <Signatures dishes={dishes} />
+          </div>
+        </section>
+      ) : null}
 
-      {seasonal ? (
-        <section className="bg-cream" aria-label={seasonal.title}>
-          <div className="page flex flex-col gap-5 py-9 sm:flex-row sm:items-center sm:justify-between sm:gap-10">
-            <p className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:gap-6">
-              <span className="eyebrow shrink-0 text-bronze">{seasonal.title}</span>
-              <span className="font-display text-subtitle">{seasonal.description}</span>
-            </p>
-            <ButtonLink href={seasonal.ctaUrl!} className="shrink-0 self-start sm:self-center">
+      {/* ──────────────────────────── Private dining ─────────────────────────── */}
+      <section className="grid lg:min-h-[92svh] lg:grid-cols-2" aria-labelledby="events-h">
+        <div className="order-2 flex items-center justify-center bg-moss px-(--gutter) py-24 text-center text-cream sm:py-32 lg:order-1">
+          <div className="w-full max-w-md">
+            <Ornament className="h-10 text-cream/45" />
+            <Label className="mt-8 text-cream/70">Private Dining</Label>
+            <h2 id="events-h" className="mt-6 font-display text-display font-light">
+              <Emphasis text={home?.eventsHeading ?? 'Private Dining & Events'} />
+            </h2>
+            {home?.eventsBody ? <p className="mt-7 text-lead font-light text-mist">{home.eventsBody}</p> : null}
+            <div className="mt-12 text-left">
+              <CapacityTable rooms={rooms} tone="cream" linkBase="/private-events" />
+            </div>
+            <div className="mt-12 flex flex-wrap justify-center gap-3">
+              <ButtonLink href="/private-events#inquire" tone="light">
+                Plan Your Event
+              </ButtonLink>
+              <ButtonLink href="/private-events" tone="outline">
+                The Spaces
+              </ButtonLink>
+            </div>
+          </div>
+        </div>
+        <div className="relative order-1 min-h-[66svh] overflow-hidden bg-ink lg:order-2 lg:min-h-0">
+          {home?.eventsImage ? (
+            <SanityImage
+              image={home.eventsImage}
+              width={1400}
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="absolute inset-0 size-full object-cover"
+            />
+          ) : null}
+        </div>
+      </section>
+
+      {/* ───────────────────────────── Seasonal band ─────────────────────────── */}
+      {seasonal && home?.bandImage ? (
+        <section className="relative isolate overflow-hidden text-cream" aria-label={seasonal.title}>
+          <SanityImage
+            image={home.bandImage}
+            width={2048}
+            sizes="100vw"
+            className="absolute inset-0 -z-10 size-full object-cover"
+          />
+          <div aria-hidden="true" className="absolute inset-0 -z-10 bg-ink/60" />
+          <div className="page flex min-h-[80svh] flex-col items-center justify-center py-28 text-center">
+            <Label className="text-cream/80">{seasonal.title}</Label>
+            <h2 className="mt-7 max-w-3xl font-display text-display font-light">{seasonHeadline}</h2>
+            {seasonText ? <p className="mx-auto mt-7 max-w-xl text-lead font-light text-cream/85">{seasonText}</p> : null}
+            <ButtonLink href={seasonal.ctaUrl!} tone="light" className="mt-12">
               {seasonal.ctaLabel ?? 'Find out more'}
             </ButtonLink>
           </div>
         </section>
       ) : null}
 
-      {/* ─────────────────────────── Introduction ────────────────────────── */}
-      <section className="page section-y">
-        <div className="grid gap-12 lg:grid-cols-12 lg:gap-10">
-          <div className="lg:col-span-10">
-            <Eyebrow className="text-bronze">Flavor + Fusion</Eyebrow>
-            <h2 className="mt-6 font-display text-display">
-              <Emphasis text={home?.storyHeading} />
-            </h2>
+      {/* ────────────────────────────── Happenings ───────────────────────────── */}
+      {weekly.length ? (
+        <section className="page section-y">
+          <SectionIntro label="Happenings" title="Every week at Mission + Market" />
+          <div className="mt-16">
+            <HappeningsList items={weekly} schedule={schedule} />
           </div>
-        </div>
-        <div className="mt-14 grid gap-12 lg:mt-20 lg:grid-cols-12 lg:items-center lg:gap-10">
-          {home?.storyImage ? (
-            <div className="lg:col-span-6">
-              <div className="aspect-[4/5] overflow-hidden bg-cream">
+          <div className="mt-14 text-center">
+            <LineLink href="/happenings" className="text-ink">
+              All Happenings
+            </LineLink>
+          </div>
+        </section>
+      ) : null}
+
+      {/* ─────────────────────────────── Gallery ─────────────────────────────── */}
+      {mosaic.length >= 5 ? (
+        <section aria-labelledby="gallery-h" className="pb-(--section)">
+          <h2 id="gallery-h" className="sr-only">
+            Gallery
+          </h2>
+          <div className="grid grid-cols-2 gap-1 lg:h-[92svh] lg:grid-cols-4 lg:grid-rows-2">
+            {mosaic.map((g, i) => (
+              <div
+                key={g._id}
+                className={`relative overflow-hidden bg-cream ${
+                  i === 0 ? 'col-span-2 aspect-[4/3] lg:col-span-1 lg:row-span-2 lg:aspect-auto' : 'aspect-square lg:aspect-auto'
+                } ${i === 1 || i === 4 ? 'lg:col-span-2' : ''}`}
+              >
                 <SanityImage
-                  image={home.storyImage}
+                  image={g.image}
+                  alt={g.alt}
                   width={1100}
-                  height={1375}
-                  sizes="(min-width: 1024px) 45vw, 100vw"
-                  className="size-full object-cover"
+                  sizes="(min-width: 1024px) 50vw, 50vw"
+                  className="absolute inset-0 size-full object-cover"
                 />
               </div>
-            </div>
-          ) : null}
-          <div className="grid gap-5 text-lead text-stone lg:col-span-5 lg:col-start-8">
-            {home?.storyBody ? <PortableText value={home.storyBody} components={PortableBody} /> : null}
-            <div className="mt-4">
-              <PlusLink href="/about" className="text-ink">
-                About Mission + Market
-              </PlusLink>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ───────────────────────────── Kitchen ───────────────────────────── */}
-      <section className="section-y border-t border-ink/10" aria-labelledby="kitchen-h">
-        <div className="page flex flex-wrap items-end justify-between gap-6">
-          <div>
-            <Eyebrow className="text-bronze">Lunch + Dinner</Eyebrow>
-            <h2 id="kitchen-h" className="mt-4 font-display text-display">
-              <Emphasis text={home?.kitchenHeading ?? 'From the kitchen'} />
-            </h2>
-          </div>
-          <ButtonLink href="/menus" tone="line">
-            All menus
-          </ButtonLink>
-        </div>
-
-        <div className="mt-12 flex snap-x snap-mandatory gap-4 overflow-x-auto px-(--gutter) pb-2 [scrollbar-width:none] sm:gap-5 lg:page lg:grid lg:grid-cols-5 lg:overflow-visible lg:pb-0">
-          <figure className="w-[68vw] shrink-0 snap-start sm:w-[40vw] lg:w-auto">
-            <VideoLoop
-              src="/media/dishes-overhead.mp4"
-              poster="/media/dishes-overhead.jpg"
-              label="plates from the menu, seen from above"
-              className="aspect-[4/5]"
-            />
-            <figcaption className="mt-4 text-[0.9375rem] text-stone">A few plates, from above.</figcaption>
-          </figure>
-          {dishes.map((d, i) => (
-            <figure key={i} className="w-[68vw] shrink-0 snap-start sm:w-[40vw] lg:w-auto">
-              <div className="aspect-[4/5] overflow-hidden bg-cream">
-                <SanityImage
-                  image={d.image!}
-                  width={700}
-                  height={875}
-                  sizes="(min-width: 1024px) 19vw, 68vw"
-                  className="size-full object-cover"
-                />
-              </div>
-              <figcaption className="mt-4">
-                <span className="block font-display text-card">{d.name}</span>
-                {d.description ? <span className="mt-1 block text-[0.9375rem] text-stone">{d.description}</span> : null}
-              </figcaption>
-            </figure>
-          ))}
-        </div>
-
-        {menus.length ? (
-          <div className="page mt-16 lg:mt-24">
-            <ul className="grid border-t border-ink/10 sm:grid-cols-3">
-              {menus.map((m, i) => (
-                <li
-                  key={m._id}
-                  className={`border-b border-ink/10 sm:border-b-0 ${i > 0 ? 'sm:border-l sm:pl-8' : ''} ${i < menus.length - 1 ? 'sm:pr-8' : ''}`}
-                >
-                  <a href={`/menus/${m.slug}`} className="group block py-7 sm:py-9">
-                    <span className="flex items-center justify-between">
-                      <span className="font-display text-title">{m.title}</span>
-                      <Plus className="size-3.5 text-bronze transition-transform duration-300 group-hover:rotate-90" />
-                    </span>
-                    {m.availability ? (
-                      <span className="mt-3 block text-[0.9375rem] text-stone">{m.availability}</span>
-                    ) : null}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ) : null}
-      </section>
-
-      {/* ─────────────────────────────── Bar ─────────────────────────────── */}
-      <section className="bg-teal text-cream" aria-labelledby="bar-h">
-        <div className="page section-y grid gap-14 lg:grid-cols-12 lg:items-center lg:gap-10">
-          <div className="relative lg:col-span-5">
-            <VideoLoop
-              src="/media/fall-cocktails.mp4"
-              poster="/media/fall-cocktails.jpg"
-              label="fall cocktails being poured at the bar"
-              className="mx-auto aspect-[9/16] w-full max-w-[26rem] lg:mx-0"
-            />
-          </div>
-          <div className="lg:col-span-6 lg:col-start-7">
-            <Eyebrow className="text-mist">The bar</Eyebrow>
-            <h2 id="bar-h" className="mt-5 font-display text-display">
-              <Emphasis text={home?.barHeading ?? 'The bar'} />
-            </h2>
-            {home?.barBody ? <p className="mt-6 max-w-prose text-lead text-mist">{home.barBody}</p> : null}
-
-            {happyHour ? (
-              <div className="mt-10 grid gap-1 border-t border-cream/15 pt-8 sm:grid-cols-[auto_1fr] sm:gap-x-10">
-                <p className="font-display text-title">{happyHour.title}</p>
-                <div className="sm:self-center">
-                  {happyHour.schedule ? <p className="eyebrow text-cream">{happyHour.schedule}</p> : null}
-                  <p className="mt-1 text-[0.9375rem] text-mist">At the bar + on the patio</p>
-                </div>
-              </div>
-            ) : null}
-
-            <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
-              {menus.some((m) => m.slug === 'happy-hour') ? (
-                <ButtonLink href="/menus/happy-hour" tone="cream">
-                  Happy hour menu
-                </ButtonLink>
-              ) : null}
-              <PlusLink href="/happenings" className="text-cream">
-                What’s on
-              </PlusLink>
-            </div>
-
-            {home?.barImage ? (
-              <div className="mt-14 hidden w-1/2 lg:block">
-                <div className="aspect-[4/5] overflow-hidden">
-                  <SanityImage
-                    image={home.barImage}
-                    width={700}
-                    height={875}
-                    sizes="22vw"
-                    className="size-full object-cover"
-                  />
-                </div>
-              </div>
-            ) : null}
-          </div>
-        </div>
-      </section>
-
-      {/* ─────────────────────────── Private dining ──────────────────────── */}
-      <section className="page section-y" aria-labelledby="events-h">
-        <div className="grid gap-12 lg:grid-cols-12 lg:items-center lg:gap-10">
-          {home?.eventsImage ? (
-            <div className="lg:col-span-6">
-              <div className="aspect-[4/5] overflow-hidden bg-cream">
-                <SanityImage
-                  image={home.eventsImage}
-                  width={1100}
-                  height={1375}
-                  sizes="(min-width: 1024px) 45vw, 100vw"
-                  className="size-full object-cover"
-                />
-              </div>
-            </div>
-          ) : null}
-          <div className="lg:col-span-5 lg:col-start-8">
-            <Eyebrow className="text-bronze">Private dining + events</Eyebrow>
-            <h2 id="events-h" className="mt-5 font-display text-display">
-              <Emphasis text={home?.eventsHeading ?? 'Private dining'} />
-            </h2>
-            {home?.eventsBody ? <p className="mt-6 text-lead text-stone">{home.eventsBody}</p> : null}
-
-            {roomsWithCapacity.length ? (
-              <ul className="mt-10 border-t border-ink/10">
-                {roomsWithCapacity.map((r) => (
-                  <li key={r._id} className="flex items-baseline justify-between gap-6 border-b border-ink/10 py-4">
-                    <span className="font-display text-card">{r.name}</span>
-                    <span className="text-[0.9375rem] text-stone tabular">
-                      {[r.seated ? `${r.seated} seated` : null, r.reception ? `${r.reception} reception` : null]
-                        .filter(Boolean)
-                        .join(' · ')}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-
-            <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
-              <ButtonLink href="/private-events#inquire">Plan an event</ButtonLink>
-              <PlusLink href="/private-events" className="text-ink">
-                See the rooms
-              </PlusLink>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ──────────────────────────── Happenings ─────────────────────────── */}
-      {specials.length ? (
-        <section className="section-y border-t border-ink/10" aria-labelledby="happenings-h">
-          <div className="page flex flex-wrap items-end justify-between gap-6">
-            <div>
-              <Eyebrow className="text-bronze">What’s on</Eyebrow>
-              <h2 id="happenings-h" className="mt-4 font-display text-display">
-                Happenings
-              </h2>
-            </div>
-            <ButtonLink href="/happenings" tone="line">
-              Everything on
-            </ButtonLink>
-          </div>
-          <div className="page mt-12 grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
-            {specials.slice(0, 3).map((s) => (
-              <HappeningCard key={s._id} item={s} />
             ))}
           </div>
-        </section>
-      ) : null}
-
-      {/* ─────────────────────────────── Patio ───────────────────────────── */}
-      {home?.patioImages?.length ? (
-        <section className="bg-cream" aria-labelledby="patio-h">
-          <div className="page section-y grid gap-12 lg:grid-cols-12 lg:gap-10">
-            <div className="lg:col-span-4 lg:pt-8">
-              <Eyebrow className="text-bronze">Outside</Eyebrow>
-              <h2 id="patio-h" className="mt-5 font-display text-display">
-                <Emphasis text={home.patioHeading ?? 'The patio'} />
-              </h2>
-              {home.patioBody ? <p className="mt-6 text-lead text-stone">{home.patioBody}</p> : null}
-              <div className="mt-10">
-                <PlusLink href="/private-events#patio" className="text-ink">
-                  Book the patio for an event
-                </PlusLink>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4 sm:gap-5 lg:col-span-7 lg:col-start-6">
-              {home.patioImages.slice(0, 3).map((img, i) => (
-                <div
-                  key={i}
-                  className={`overflow-hidden bg-paper ${
-                    i === 0 ? 'col-span-2 aspect-[5/4] sm:aspect-[16/10]' : 'aspect-[4/5]'
-                  }`}
-                >
-                  <SanityImage
-                    image={img}
-                    width={i === 0 ? 1400 : 700}
-                    height={i === 0 ? 875 : 875}
-                    sizes={i === 0 ? '(min-width: 1024px) 55vw, 100vw' : '(min-width: 1024px) 27vw, 50vw'}
-                    className="size-full object-cover"
-                  />
-                </div>
-              ))}
-            </div>
+          <div className="page mt-12 flex flex-wrap justify-center gap-x-12 gap-y-4">
+            {instagram ? <LineLink href={instagram}>@missionandmkt</LineLink> : null}
+            <LineLink href="/gallery">The Gallery</LineLink>
           </div>
         </section>
       ) : null}
 
-      {/* ─────────────────────────────── Visit ───────────────────────────── */}
-      <section className="page section-y" aria-labelledby="visit-h">
-        <div className="grid gap-14 lg:grid-cols-12 lg:gap-10">
-          <div className="lg:col-span-5">
-            <Eyebrow className="text-bronze">Visit</Eyebrow>
-            <h2 id="visit-h" className="mt-5 font-display text-display">
+      {/* ──────────────────────────────── Visit ──────────────────────────────── */}
+      <section className="bg-cream section-y" aria-labelledby="visit-h">
+        <div className="page">
+          <div className="mx-auto max-w-3xl text-center">
+            <Label className="text-bronze">Visit</Label>
+            <h2 id="visit-h" className="mt-6 font-display text-display font-light">
               Find us in <em>Buckhead</em>
             </h2>
-            {settings?.address ? (
-              <p className="mt-6 text-lead text-stone">{formatAddress(settings.address)}</p>
-            ) : null}
-            {settings?.parkingNote ? <p className="mt-4 text-[0.9375rem] text-stone">{settings.parkingNote}</p> : null}
-            <div className="mt-9 flex flex-wrap gap-3">
-              <ReserveButton>Reserve a table</ReserveButton>
-              {settings?.mapsUrl ? (
-                <ButtonLink href={settings.mapsUrl} tone="line">
-                  Directions
-                </ButtonLink>
+          </div>
+          <div className="mt-16 grid gap-14 text-center lg:grid-cols-3 lg:gap-10">
+            <div>
+              <Label className="text-bronze">Address</Label>
+              {a ? (
+                <address className="mt-5 font-display text-subtitle font-light not-italic">
+                  <span className="block">{a.street}</span>
+                  {a.street2 ? <span className="block text-[1.0625rem] text-ink-soft">{a.street2}</span> : null}
+                  <span className="block text-[1.0625rem] text-ink-soft">
+                    {[a.city, a.state].filter(Boolean).join(', ')} {a.zip}
+                  </span>
+                </address>
+              ) : null}
+              {settings?.parkingNote ? (
+                <p className="mx-auto mt-5 max-w-xs text-sm font-light text-stone">{settings.parkingNote}</p>
               ) : null}
             </div>
-            {settings?.phone ? (
-              <p className="mt-8 text-[0.9375rem]">
-                <a className="link tabular" href={telHref(settings.phone)}>
-                  {settings.phone}
-                </a>
+            <div>
+              <Label className="text-bronze">Hours</Label>
+              <HoursList schedule={schedule} compact showClosures={false} className="mx-auto mt-5 max-w-xs text-left" />
+            </div>
+            <div>
+              <Label className="text-bronze">Reservations</Label>
+              <p className="mt-5 font-display text-subtitle font-light">
+                {settings?.phone ? (
+                  <a className="link-line tabular" href={telHref(settings.phone)}>
+                    {settings.phone}
+                  </a>
+                ) : null}
               </p>
-            ) : null}
-          </div>
-          <div className="lg:col-span-6 lg:col-start-7">
-            <OpenStatus hours={settings?.machineHours} className="text-stone" />
-            <HoursList hours={settings?.hours} className="mt-6" />
+              <div className="mt-8 flex flex-wrap justify-center gap-3">
+                <ReserveButton className="btn btn-solid">Reserve a Table</ReserveButton>
+                {settings?.mapsUrl ? (
+                  <ButtonLink href={settings.mapsUrl} tone="outline">
+                    Directions
+                  </ButtonLink>
+                ) : null}
+              </div>
+            </div>
           </div>
         </div>
       </section>

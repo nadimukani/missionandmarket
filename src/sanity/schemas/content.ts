@@ -115,9 +115,23 @@ export const special = defineType({
       initialValue: 'weekly',
     }),
     defineField({
+      name: 'service',
+      title: 'Use the hours of',
+      type: 'string',
+      description:
+        'Optional. Pick a service and the card shows its hours from Hours & Closures — e.g. Happy Hour.',
+      options: {
+        list: [
+          { title: 'Lunch', value: 'Lunch' },
+          { title: 'Happy Hour', value: 'Happy Hour' },
+          { title: 'Dinner', value: 'Dinner' },
+        ],
+      },
+    }),
+    defineField({
       name: 'schedule',
       type: 'string',
-      description: 'e.g. "Monday – Friday, 3 – 6pm" or "Every Saturday"',
+      description: 'e.g. "Saturday + Sunday dinner". Not needed if you picked a service above.',
     }),
     defineField({
       name: 'startDate',
@@ -415,28 +429,27 @@ export const homePage = defineType({
   fields: [
     defineField({
       name: 'heroEyebrow',
-      title: 'Small line above the headline',
+      title: 'Line under the logo',
       type: 'string',
       group: 'hero',
-      description: 'e.g. "Buckhead · Atlanta"',
+      description:
+        'Short and descriptive — it is also the page headline Google reads, e.g. "Modern American Restaurant · Buckhead, Atlanta".',
     }),
-    defineField({ name: 'heroHeading', title: 'Headline', type: 'string', group: 'hero' }),
+    defineField({
+      name: 'heroHeading',
+      title: 'Introduction headline',
+      type: 'string',
+      group: 'intro',
+      description: 'Wrap a word in *asterisks* to set it in italics.',
+    }),
     defineField({
       name: 'heroSubheading',
-      title: 'Sentence under the headline',
+      title: 'Short description (search + sharing)',
       type: 'text',
       rows: 2,
-      group: 'hero',
+      group: 'seo',
     }),
-    defineField({
-      name: 'ticker',
-      title: 'Moving strip',
-      type: 'array',
-      group: 'hero',
-      description:
-        'Short phrases that scroll across the band under the opening, joined by "+". Keep each one to a few words.',
-      of: [defineArrayMember({ type: 'string' })],
-    }),
+    defineField({ name: 'ticker', type: 'array', hidden: true, of: [defineArrayMember({ type: 'string' })] }),
     defineField({
       name: 'heroImages',
       title: 'Opening photographs',
@@ -455,26 +468,28 @@ export const homePage = defineType({
 
     defineField({
       name: 'storyHeading',
-      title: 'Introduction',
+      title: 'Introduction (legacy)',
       type: 'string',
       group: 'intro',
-      description: 'The large statement under the opening.',
+      hidden: true,
     }),
     defineField({ name: 'storyBody', title: 'Introduction body', type: 'richText', group: 'intro' }),
     photo('storyImage', 'Introduction photograph', undefined, 'intro'),
 
     defineField({
       name: 'kitchenHeading',
-      title: 'Kitchen heading',
+      title: 'Signatures heading',
       type: 'string',
       group: 'kitchen',
+      description:
+        'The dishes themselves come from the menus — open a menu and tick "Feature on the home page" on any dish with a photograph.',
     }),
     defineField({
       name: 'featuredDishes',
-      title: 'Featured dishes',
+      title: 'Featured dishes (legacy)',
       type: 'array',
       group: 'kitchen',
-      description: 'Four works best. Name each plate the way the menu does.',
+      hidden: true,
       of: [
         defineArrayMember({
           type: 'object',
@@ -529,12 +544,12 @@ export const homePage = defineType({
       ],
     }),
 
-    // Used by the pre-redesign layout only; hidden so the Studio stays tidy.
     defineField({
       name: 'bandImage',
-      title: 'Full-width band image (legacy)',
+      title: 'Wide photograph for the seasonal band',
       type: 'image',
-      hidden: true,
+      group: 'events',
+      description: 'A landscape photograph. Shown behind the seasonal happening (e.g. holiday parties).',
       options: { hotspot: true },
       fields: [altField],
     }),
