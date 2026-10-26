@@ -16,6 +16,8 @@ const eslintConfig = defineConfig([
     // August, and CMS dataset backups.
     "preview/**",
     "backups/**",
+    // pdf.js's worker, copied in by scripts/copy-pdf-worker.mjs (gitignored).
+    "public/pdf.worker.min.mjs",
   ]),
 ]);
 
