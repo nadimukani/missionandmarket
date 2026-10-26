@@ -3,60 +3,57 @@
 _Updated: 2026-10-26_
 
 ## Where we left off
-Built the **fall 2026 redesign** — new visual system, the Sept 25 shoot, a
-client-editable CMS — on branch `redesign/fall-2026-site` (one clean commit on
-`master`). Built, linted and screenshot-verified locally at 1440 and 390.
-**Not pushed yet**: the push needs the user's go-ahead (the repo is public).
-`master` and the live demo are untouched. Full rationale in
-`docs/REDESIGN-FALL-2026.md`; competitor research in
+Second design pass done: immersive luxury layout (no ticker), wider type
+(Noto Serif Display + Jost), SEO page structure, 2026 menus, and a single
+source for every fact (Hours & Closures, menus with print versions, featured
+dishes from the menus, Studio Live preview). Built, linted, tested and
+screenshot-verified at 1440 and 390 on `localhost:3333`. **Not pushed** — the
+push needs the user's go-ahead (public repo). `master` and the live demo are
+untouched. Rationale in `docs/REDESIGN-FALL-2026.md`; research in
 `docs/COMPETITIVE-SCAN-2026-10.md`.
 
 ## State
-- **Branch:** `redesign/fall-2026-site` — clean, not pushed. The local branch
-  `redesign/fall-2026` holds the same tree with working history; it must
-  **not** be pushed (its first commit carried private notes, scrubbed after).
-- **CMS (production dataset — shared with the live demo):** written by
-  `scripts/fall-2026.ts`. Backup first at `backups/sanity-production-20261025-2305.ndjson`
-  (local, gitignored). Changes are additive/hides; the old build keeps working.
-- **Secrets:** `SANITY_API_WRITE_TOKEN` and `TRIPLESEAT_PUBLIC_KEY` live only
-  in `.env.local` (gitignored). Neither appears in any commit.
+- **Branch:** `redesign/fall-2026-site` — 3 local commits on `master`, clean
+  (no private notes, no secrets). The other local branch `redesign/fall-2026`
+  must **never** be pushed (its first commit carried private notes).
+- **CMS (production dataset, shared with the live demo):** written by
+  `scripts/fall-2026.ts`, `scripts/menus-2026.ts`, `scripts/content-v2.ts`.
+  Backups first: `backups/sanity-production-20261025-2305.ndjson` and
+  `…20261026-0012.ndjson` (local, gitignored). Additive/hides only.
+- **Env (.env.local only):** `SANITY_API_WRITE_TOKEN`, `SANITY_API_READ_TOKEN`
+  (same Editor robot — swap for a Viewer token), `TRIPLESEAT_PUBLIC_KEY`.
+- **Untracked `web/`** appeared 2026-10-26 00:36 (a create-next-app scaffold) —
+  not created by this session; left untouched and uncommitted.
 
 ## Verified
-- `pnpm build` green (20 routes) · `eslint src scripts` clean · `tsc` clean
-- All pages 200; old WordPress URLs and `/menus/brunch` redirect; 404 works
-- Headless Chrome: no horizontal overflow and no console errors on all 10
-  pages at 1440×900 and 390×844; all images load; hero reels autoplay, off-
-  screen loops stay paused; mobile action bar shows/hides correctly
-- Tripleseat form (lead form 16159) renders restyled; reCAPTCHA renders
-  (we load it — Tripleseat's `document.write` is ignored by browsers)
-- Studio boots to the Sanity login on `localhost:3333` (the only allowed CORS origin)
+- `pnpm build` green (30 pages) · eslint + tsc clean · `scripts/schedule-check.ts` passes
+- All routes 200; `/contact` → `/visit`; brunch/old WP URLs redirect; 404 ok
+- No overflow / console errors on every page at 1440×900 and 390×844
+- Tripleseat form 16159 + reCAPTCHA render (private events + holiday parties)
+- Draft-mode enable route rejects missing/bad secrets (401); Studio boots
 
 ## Not verified
-- **No real Tripleseat submission** — it would create a lead in the
-  restaurant's account. Coordinate a test with them.
-- **Studio editing end-to-end** — needs a Sanity login (user's account).
-- Safari / Firefox, real iOS devices
-- Anything on a deployed URL — no preview exists yet
+- Logged-in Studio + Live preview (needs the user's Sanity login)
+- A real Tripleseat submission (would create a lead — coordinate with client)
+- Safari / Firefox / real devices; any deployed URL
 
-## Blockers before the client demo
-1. Push `redesign/fall-2026-site` (user decision) → Vercel preview.
-2. **Sanity CORS**: add the preview origin with "Allow credentials" at
-   sanity.io/manage → x2izrrun → API → CORS. Only `localhost:3333` is allowed
-   today, so the Studio has never worked on any deployed URL.
-3. Invite the restaurant's editors in Sanity; check the revalidate webhook.
+## Before the client demo
+1. User approves push of `redesign/fall-2026-site` → Vercel preview.
+2. Vercel env (Preview): `SANITY_API_READ_TOKEN` (ideally a Viewer token).
+3. Sanity CORS: add the preview origin **with credentials** (only
+   `localhost:3333` is allowed today).
+4. Invite the restaurant's editors; optionally set the revalidate webhook.
 
 ## Caveats
-- `scripts/fall-2026.ts` **overwrites** the docs it manages — don't re-run once
-  the client edits in Studio.
-- `@sanity/icons` v5: import per icon (`@sanity/icons/Bell`); root named
-  imports type-check but fail at runtime.
-- Full-page Playwright captures show the fixed mobile bar mid-page — capture
-  artifact, behaviour verified separately.
+- The content scripts **overwrite** the docs they manage — don't re-run once
+  the restaurant edits in the Studio.
+- Draft mode adds stega markers to strings: clean anything compared or put in
+  URLs/metadata (`cleanKeys` in queries.ts; `stegaClean` in metadata/JSON-LD).
+- `draftMode()` can't run in `generateStaticParams` — use `getMenuSlugs()`.
+- Full-page Playwright captures misplace fixed elements; verify the header and
+  mobile bar with viewport screenshots.
+- `@sanity/icons` v5: import per icon (`@sanity/icons/Bell`).
 - Keep private-conversation details out of the repo — it is public.
 
-## Next best slice
-Get the push approved, add the preview origin to Sanity CORS, log into the
-Studio on the preview and rehearse the demo script in the redesign doc.
-
 ## Resume keyword
-`mm-fall-redesign-2026-10-26`
+`mm-luxury-pass-2026-10-26`
