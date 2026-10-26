@@ -16,10 +16,13 @@ import type { Menu } from '@/sanity/types'
  */
 
 /** Pulls a single numeric price out of the free-text price field.
- *  Deliberately conservative: "$19" yields 19, while "6 pc. $24 · 12 pc. $42"
- *  and "MP" yield nothing rather than a misleading half-truth. */
+ *  Deliberately conservative: "19" and "$19" yield 19, while
+ *  "6 pc. $24 · 12 pc. $42" and "MP" yield nothing rather than a misleading
+ *  half-truth. */
 function parsePrice(price?: string): string | undefined {
   if (!price) return undefined
+  const bare = price.trim().match(/^\$?\s?(\d+(?:\.\d{2})?)$/)
+  if (bare) return bare[1]
   const matches = price.match(/\$\s?(\d+(?:\.\d{2})?)/g)
   if (!matches || matches.length !== 1) return undefined
   return matches[0].replace(/[^\d.]/g, '')

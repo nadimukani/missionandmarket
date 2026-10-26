@@ -9,7 +9,6 @@ export const resolve: PresentationPluginOptions['resolve'] = {
   mainDocuments: defineDocuments([
     { route: '/', filter: `_type == "homePage" && _id == "homePage"` },
     { route: '/menus/:slug', filter: `_type == "menu" && slug.current == $slug` },
-    { route: '/menus/:slug/print', filter: `_type == "menu" && slug.current == $slug` },
     { route: '/private-events', filter: `_type == "page" && slug.current == "private-events"` },
     { route: '/about', filter: `_type == "page" && slug.current == "about"` },
   ]),
