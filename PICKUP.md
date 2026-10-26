@@ -5,23 +5,23 @@ _Updated: 2026-10-26_
 ## Where we left off
 The fall 2026 redesign is **live** on production
 (`https://missionandmarket.vercel.app`, Vercel auto-deploys `master`), pushed
-2026-10-26 with the user's go-ahead. This branch, `menus-ux` (off `master`),
-reworks the menus and drops the home page's Visit section, which repeated the
-footer. **The uploaded PDF is the menu** (client decision: the manager won't
-retype menus): a chooser, a pinned switcher, each PDF drawn in the page with
-tap-to-zoom, a text version read from the PDF on the server, and the menu
-notices under every menu. Built, linted, tested and click-tested on
-`localhost:3333`; **not pushed** — pushing `master` deploys production, so it
-needs the user's go-ahead. Rationale and the Georgia food-code findings in
-`docs/REDESIGN-FALL-2026.md` → "Menus on the site — research and decision".
+2026-10-26 with the user's go-ahead, then the menus rework (`menus-ux`,
+live as `2a3a92c`): **the uploaded PDF is the menu** (client decision: the
+manager won't retype menus) — a chooser, a pinned switcher, each PDF drawn in
+the page with tap-to-zoom, a text version read from the PDF on the server,
+the menu notices under every menu — and the home page's Visit section, which
+repeated the footer, is gone. Verified on production. Rationale and the
+Georgia food-code findings in `docs/REDESIGN-FALL-2026.md` → "Menus on the
+site — research and decision".
 
 ## State
-- **`master` = `b6cb4d8`** (live). `menus-ux` is a fast-forward of it.
+- **`master` = live production** (Vercel auto-deploys it). Pushes go out as
+  exact SHAs built and tested in a separate worktree first.
 - **Branch `redesign/fall-2026-site`** also carries `315ee78` (sanity → 6.20,
   made by a second Claude session working in the main folder) and that
   session's uncommitted dependency upgrades (Next 16.4.3, React 19.3.1,
   TypeScript 6, ESLint 10, @sanity/client 8). Unverified here; not on
-  `master`. The other local branch `redesign/fall-2026` must **never** be
+  `master`, and now behind it — rebase/merge onto `master` before shipping. The other local branch `redesign/fall-2026` must **never** be
   pushed (its first commit carried private notes).
 - **CMS (production dataset, shared with the live site):** written by
   `scripts/fall-2026.ts`, `menus-2026.ts`, `content-v2.ts` and now
@@ -54,9 +54,8 @@ needs the user's go-ahead. Rationale and the Georgia food-code findings in
 - Safari / Firefox / real devices
 
 ## Before the client demo
-1. User approves pushing `menus-ux` to `master` (production).
-2. Invite the restaurant's editors; optionally set the revalidate webhook.
-3. From the kitchen: the major-allergen list (for the PDFs and Restaurant
+1. Invite the restaurant's editors; optionally set the revalidate webhook.
+2. From the kitchen: the major-allergen list (for the PDFs and Restaurant
    Info → Menu notices) and which dishes are raw/undercooked (asterisks in
    the PDFs); notices on the Happy Hour sheet; PDF spellings.
 
@@ -71,6 +70,10 @@ needs the user's go-ahead. Rationale and the Georgia food-code findings in
 - pdf.js runs in two places: the browser viewer (worker copied to
   `public/pdf.worker.min.mjs` by `scripts/copy-pdf-worker.mjs`, run by
   `dev`/`build`) and the server text reader (`serverExternalPackages`).
+- Vercel + Turbopack: never mark packages external (`serverExternalPackages`)
+  — with pnpm it symlinks them into `.next` and Vercel rejects the bundle.
+  A one-off font error ("next/font/google queries have exactly one entry")
+  cleared on a plain redeploy; if it recurs, self-host the two fonts.
 - Full-page Playwright captures misplace fixed elements; verify the header and
   mobile bar with viewport screenshots.
 - `@sanity/icons` v5: import per icon (`@sanity/icons/Bell`).
