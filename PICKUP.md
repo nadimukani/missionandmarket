@@ -99,7 +99,7 @@ sees only Menus, Happenings and Closures) unless marked **code**:
   `scripts/schedule-check.ts` passes
 - All routes 200; all 398 live WordPress URLs land on their intended page,
   query strings kept; no current route caught by a redirect
-- Speed Insights in the bundle, its script served
+- Web Analytics and Speed Insights load on the live site (both scripts 200)
 
 ## Not verified
 - Live preview (administrators) with the read-only token, once Vercel has
@@ -126,6 +126,10 @@ sees only Menus, Happenings and Closures) unless marked **code**:
   run, so old WordPress uploads can't be redirected.
 - Hours on Google Maps come from the Business Profile, not the site's
   structured data.
+- Web Analytics and Speed Insights load from project-specific paths
+  (`/<hash>/script.js`), not `/_vercel/…`, and skip automated browsers
+  (`navigator.webdriver`): to check them with Playwright, hide that flag and
+  block the event calls so no test visit is recorded.
 - Full-page Playwright captures misplace fixed elements; verify the header and
   mobile bar with viewport screenshots.
 - `@sanity/icons` v5: import per icon (`@sanity/icons/Bell`).
