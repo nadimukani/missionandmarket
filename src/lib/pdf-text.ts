@@ -13,7 +13,13 @@ export async function readPdf(url: string): Promise<PdfPage[] | null> {
     const res = await fetch(url, { cache: 'force-cache' })
     if (!res.ok) return null
     const data = new Uint8Array(await res.arrayBuffer())
-    const { getDocument } = await import('pdfjs-dist/legacy/build/pdf.mjs')
+    const [{ getDocument }] = await Promise.all([
+      import('pdfjs-dist/legacy/build/pdf.mjs'),
+      // pdf.js's worker, run in this process: importing it registers it, so
+      // pdf.js never resolves a worker file at run time (and it bundles like
+      // any other module — no external package, no symlinks in the build).
+      import('pdfjs-dist/legacy/build/pdf.worker.mjs'),
+    ])
     const task = getDocument({ data, disableFontFace: true, useSystemFonts: false, verbosity: 0 })
     const doc = await task.promise
     const pages: PdfPage[] = []

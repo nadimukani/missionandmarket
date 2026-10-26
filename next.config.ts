@@ -1,15 +1,6 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  // Loaded from node_modules at run time, not bundled: the menu pages read each
-  // uploaded PDF's text on the server, and pdf.js brings its own worker file.
-  serverExternalPackages: ['pdfjs-dist'],
-  // pdf.js loads its worker by a path the file tracer can't follow; ship it
-  // with the menu pages so their background refreshes can read each PDF too.
-  outputFileTracingIncludes: {
-    // A glob: `[slug]` would be read as a character class.
-    '**/menus/*': ['./node_modules/pdfjs-dist/legacy/build/pdf.worker.mjs'],
-  },
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'cdn.sanity.io', pathname: '/images/**' },
