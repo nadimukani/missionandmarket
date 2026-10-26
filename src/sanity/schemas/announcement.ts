@@ -1,6 +1,6 @@
 import { defineField, defineType } from 'sanity'
 
-import { adminOnly } from '../access'
+import { developerOnly } from '../access'
 
 /**
  * Singleton. The one-line banner across the top of every page — closures,
@@ -15,7 +15,7 @@ export const announcement = defineType({
   name: 'announcement',
   title: 'Announcement Banner',
   type: 'document',
-  readOnly: adminOnly,
+  readOnly: developerOnly,
   fields: [
     defineField({
       name: 'enabled',

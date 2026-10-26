@@ -1,6 +1,6 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
 
-import { adminOnly } from '../access'
+import { developerOnly } from '../access'
 
 /**
  * A bookable room for private events. Capacity is the first thing a planner
@@ -11,7 +11,7 @@ export const space = defineType({
   name: 'space',
   title: 'Private Dining Room',
   type: 'document',
-  readOnly: adminOnly,
+  readOnly: developerOnly,
   fields: [
     defineField({
       name: 'name',

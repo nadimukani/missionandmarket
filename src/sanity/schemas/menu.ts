@@ -1,6 +1,6 @@
 import { defineArrayMember, defineField, defineType } from 'sanity'
 
-import { adminOnly } from '../access'
+import { developerOnly } from '../access'
 
 export const DIETARY_TAGS = [
   { title: 'Vegetarian', value: 'vegetarian' },
@@ -151,21 +151,21 @@ const menu = defineType({
   fields: [
     defineField({
       name: 'title',
-      hidden: adminOnly,
+      hidden: developerOnly,
       type: 'string',
       description: 'e.g. Dinner, Lunch, Happy Hour',
       validation: (r) => r.required(),
     }),
     defineField({
       name: 'slug',
-      hidden: adminOnly,
+      hidden: developerOnly,
       type: 'slug',
       options: { source: 'title', maxLength: 64 },
       validation: (r) => r.required(),
     }),
     defineField({
       name: 'order',
-      hidden: adminOnly,
+      hidden: developerOnly,
       title: 'Display order',
       type: 'number',
       description: 'Lower numbers appear first in the menu switcher.',
@@ -173,7 +173,7 @@ const menu = defineType({
     }),
     defineField({
       name: 'hidden',
-      hidden: adminOnly,
+      hidden: developerOnly,
       title: 'Hide from website',
       type: 'boolean',
       description:
@@ -182,7 +182,7 @@ const menu = defineType({
     }),
     defineField({
       name: 'image',
-      hidden: adminOnly,
+      hidden: developerOnly,
       title: 'Cover photograph',
       type: 'image',
       description: 'Shown on the Menus page, where guests pick a menu.',
@@ -191,7 +191,7 @@ const menu = defineType({
     }),
     defineField({
       name: 'services',
-      hidden: adminOnly,
+      hidden: developerOnly,
       title: 'Served during',
       type: 'array',
       description:
@@ -208,7 +208,7 @@ const menu = defineType({
     }),
     defineField({
       name: 'availability',
-      hidden: adminOnly,
+      hidden: developerOnly,
       title: 'Served — custom wording (optional)',
       type: 'string',
       description: 'Leave blank to show the hours automatically.',
@@ -226,7 +226,7 @@ const menu = defineType({
     }),
     defineField({
       name: 'intro',
-      hidden: adminOnly,
+      hidden: developerOnly,
       type: 'text',
       rows: 2,
       description: 'Optional line under the title — e.g. "With cocktails, wine, beer and desserts."',

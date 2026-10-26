@@ -14,7 +14,7 @@ import { StarIcon } from '@sanity/icons/Star'
 import { UsersIcon } from '@sanity/icons/Users'
 import type { StructureBuilder, StructureResolver } from 'sanity/structure'
 
-import { isAdmin } from './access'
+import { isDeveloper } from './access'
 import { apiVersion } from './env'
 
 /** Documents that must only ever have one instance. */
@@ -22,9 +22,9 @@ const SINGLETONS = ['siteSettings', 'homePage', 'announcement', 'hours'] as cons
 
 export const singletonTypes = new Set<string>(SINGLETONS)
 
-/** The restaurant sees only what it asked to change (see access.ts). */
+/** The restaurant sees only what it asked to change; developers see everything (access.ts). */
 export const structure: StructureResolver = (S, { currentUser }) =>
-  isAdmin(currentUser) ? everything(S) : restaurant(S)
+  isDeveloper(currentUser) ? everything(S) : restaurant(S)
 
 /**
  * Menu updates, events and closure notices — the three things the restaurant
