@@ -1,4 +1,5 @@
-import Image, { type ImageProps } from 'next/image'
+import { Image } from 'next-sanity/image'
+import type { ImageProps } from 'next/image'
 
 import { urlForImage } from '@/sanity/image'
 import type { SanityImage as SanityImageType } from '@/sanity/types'
@@ -12,8 +13,10 @@ type Props = Omit<ImageProps, 'src' | 'alt' | 'loader'> & {
 
 /**
  * Next/Image over Sanity's CDN. Sanity already handles format negotiation and
- * resizing, so we hand it the transform directly rather than paying for
- * Vercel's optimizer on top — meaningful on a photo-heavy restaurant site.
+ * resizing, so next-sanity's loader asks it for each width in the srcset
+ * rather than paying for Vercel's optimizer on top — meaningful on a
+ * photo-heavy restaurant site. The `sizes` each caller passes decides which
+ * width a browser takes: a phone gets a phone-sized file.
  */
 /**
  * Sanity encodes an asset's real pixel dimensions in its `_ref`, e.g.
@@ -54,9 +57,6 @@ export function SanityImage({
       // next/image requires a height, so the guess survives only as a last
       // resort for a ref that does not parse — which no Sanity asset produces.
       height={height ?? Math.round(width * (aspect ?? 0.66))}
-      // Sanity's CDN has already produced the exact width and format, so the
-      // Vercel optimizer would re-encode an already-optimal file.
-      unoptimized
       // The blur thumbnail ships inside the HTML, so it is on screen at first
       // paint and dissolves into the real file rather than the photograph
       // snapping in from blank. Only when the CMS actually returned one —
