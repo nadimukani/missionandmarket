@@ -65,7 +65,14 @@ export function SiteFooter({ settings, schedule }: { settings: SiteSettings | nu
 
           <div>
             <h2 className="label text-cream/60">Hours</h2>
-            <HoursList schedule={schedule} tone="cream" compact showClosures={false} className="mx-auto mt-5 max-w-xs sm:mx-0" />
+            <HoursList
+              schedule={schedule}
+              tone="cream"
+              compact
+              align="center sm:start"
+              showClosures={false}
+              className="mx-auto mt-5 max-w-xs sm:mx-0"
+            />
           </div>
 
           <nav aria-label="Footer">

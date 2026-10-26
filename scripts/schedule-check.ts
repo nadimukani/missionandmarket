@@ -44,13 +44,9 @@ assert.equal(formatDays(['sat', 'sun']), 'Saturday + Sunday')
 assert.equal(formatDays(['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']), 'Every day')
 assert.equal(serviceSummary(schedule.services![0]), 'Monday – Friday, 11:30am – 3pm')
 assert.equal(serviceSummary(schedule.services![2]), 'Monday – Friday from 3pm · Saturday + Sunday from 5pm')
-// Timetable rows carry each end separately, so tables can align on the dash.
-assert.deepEqual(serviceRows(schedule.services![2], true)[0], {
-  days: 'Mon – Wed',
-  opens: '3pm',
-  closes: '9:30pm',
-  time: '3pm – 9:30pm',
-})
+// Timetable rows: short day names for the compact lists, in week order.
+assert.deepEqual(serviceRows(schedule.services![2], true)[0], { days: 'Mon – Wed', time: '3pm – 9:30pm' })
+assert.deepEqual(serviceRows(schedule.services![2], true).at(-1), { days: 'Sun', time: '5pm – 8pm' })
 
 // Lunch + happy hour + dinner merge into one open stretch on weekdays.
 assert.deepEqual(weeklyIntervals(schedule).mon, [{ opens: 690, closes: 1290 }])

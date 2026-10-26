@@ -1,23 +1,39 @@
 import { closureLine, serviceRows, upcomingClosures, type Schedule } from '@/lib/schedule'
 
 /**
- * Hours, printed from "Hours & Closures" as one timetable. Every service
- * shares the same four columns (a grid, subgridded per service and row), so
- * the days line up and every range shares one dash: opening times
- * right-align against it, closing times left-align after it. The days column
- * fits its longest entry and wraps only when the screen is too narrow.
- * Upcoming closures follow.
+ * How the timetable sits in its column. "start": days, then times, in two
+ * left-aligned columns. "center", for centred columns: service names centred,
+ * days right-aligned and times left-aligned either side of the centre line.
+ * "center sm:start": centred on phones, start-aligned from sm up.
+ */
+const ALIGN = {
+  start: { root: 'text-left', grid: 'grid-cols-[auto_1fr] gap-x-8', days: '' },
+  center: { root: 'text-center', grid: 'grid-cols-[1fr_1fr] gap-x-6', days: 'text-right' },
+  'center sm:start': {
+    root: 'text-center sm:text-left',
+    grid: 'grid-cols-[1fr_1fr] gap-x-6 sm:grid-cols-[auto_1fr] sm:gap-x-8',
+    days: 'text-right sm:text-left',
+  },
+} as const
+
+/**
+ * Hours, printed from "Hours & Closures" as one timetable: every service
+ * shares the same two columns (a grid, subgridded per service and row), so
+ * all the days and all the times line up. A long day entry wraps rather than
+ * overflowing. Upcoming closures follow.
  */
 export function HoursList({
   schedule,
   tone = 'ink',
   compact = false,
+  align = 'start',
   showClosures = true,
   className = '',
 }: {
   schedule: Schedule | null
   tone?: 'ink' | 'cream'
   compact?: boolean
+  align?: keyof typeof ALIGN
   showClosures?: boolean
   className?: string
 }) {
@@ -26,17 +42,13 @@ export function HoursList({
   const muted = tone === 'cream' ? 'text-cream/70' : 'text-stone'
   const rule = tone === 'cream' ? 'border-cream/15' : 'border-ink/10'
   const closures = showClosures ? upcomingClosures(schedule).slice(0, 4) : []
+  const a = ALIGN[align]
   const sub = 'col-span-full grid grid-cols-subgrid'
 
   return (
-    // Always left-aligned inside; compact lists size to their contents, so a
-    // caller's mx-auto centres the whole block.
-    <div className={`text-left ${compact ? 'w-fit' : ''} ${className}`}>
-      <div
-        className={`grid grid-cols-[auto_auto_auto_1fr] font-light ${
-          compact ? 'gap-y-5 text-sm' : 'gap-y-7 text-[0.9375rem]'
-        }`}
-      >
+    // Compact lists size to their contents, so a caller's mx-auto centres them.
+    <div className={`${a.root} ${compact ? 'w-fit' : ''} ${className}`}>
+      <div className={`grid ${a.grid} font-light ${compact ? 'gap-y-5 text-sm' : 'gap-y-7 text-[0.9375rem]'}`}>
         {services.map((s) => (
           <div key={s.name} className={`${sub} ${compact ? 'gap-y-2' : `gap-y-3 border-t pt-5 ${rule}`}`}>
             <p className="col-span-full">
@@ -46,17 +58,8 @@ export function HoursList({
             <dl className={`${sub} ${compact ? 'gap-y-0.5' : 'gap-y-1'}`}>
               {serviceRows(s, compact).map((r, i) => (
                 <div key={i} className={sub}>
-                  <dt className={`pr-8 ${muted}`}>{r.days}</dt>
-                  <dd className="col-span-3 grid grid-cols-subgrid whitespace-nowrap tabular">
-                    <span className="text-right">{r.opens}</span>
-                    <span className={`px-2 ${muted}`} aria-hidden="true">
-                      –
-                    </span>
-                    <span>
-                      <span className="sr-only">to </span>
-                      {r.closes}
-                    </span>
-                  </dd>
+                  <dt className={`${a.days} ${muted}`}>{r.days}</dt>
+                  <dd className="text-left whitespace-nowrap tabular">{r.time}</dd>
                 </div>
               ))}
             </dl>

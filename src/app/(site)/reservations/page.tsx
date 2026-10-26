@@ -73,7 +73,7 @@ export default async function ReservationsPage() {
           </div>
           <div>
             <Label className="text-bronze">Hours</Label>
-            <HoursList schedule={schedule} compact className="mx-auto mt-5 max-w-xs" />
+            <HoursList schedule={schedule} compact align="center" className="mx-auto mt-5 max-w-xs" />
           </div>
         </div>
       </section>
