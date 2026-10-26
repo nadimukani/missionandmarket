@@ -96,7 +96,6 @@ export function MenuPdf({ url, title, pages }: { url: string; title: string; pag
             size={size}
             label={`${title} menu, page ${i + 1} of ${sizes.length}. Open full screen to zoom.`}
             onOpen={() => open(i)}
-            hint={i === 0}
           />
         ))
       ) : (
@@ -129,14 +128,12 @@ function PdfPage({
   size,
   label,
   onOpen,
-  hint,
 }: {
   doc: PDFDocumentProxy | null
   number: number
   size: PageSize
   label: string
   onOpen: () => void
-  hint: boolean
 }) {
   const box = useRef<HTMLButtonElement>(null)
   const canvas = useRef<HTMLCanvasElement>(null)
@@ -195,7 +192,7 @@ function PdfPage({
       type="button"
       onClick={onOpen}
       aria-label={label}
-      className="group relative block w-full cursor-zoom-in overflow-hidden bg-white shadow-[0_1px_2px_rgb(35_31_31/0.06),0_12px_40px_-12px_rgb(35_31_31/0.18)]"
+      className="relative block w-full cursor-zoom-in overflow-hidden bg-white shadow-[0_1px_2px_rgb(35_31_31/0.06),0_12px_40px_-12px_rgb(35_31_31/0.18)]"
       style={{ aspectRatio: `${size.width} / ${size.height}` }}
     >
       <canvas
@@ -204,15 +201,6 @@ function PdfPage({
         className={`absolute inset-0 size-full transition-opacity duration-500 ${drawn ? 'opacity-100' : 'opacity-0'}`}
       />
       {!drawn ? <span className="absolute inset-0 animate-pulse bg-mist/30" aria-hidden="true" /> : null}
-      {hint ? (
-        <span
-          aria-hidden="true"
-          className="label pointer-events-none absolute right-3 bottom-3 bg-ink/80 px-3 py-2 text-cream opacity-90 transition-opacity group-hover:opacity-100 sm:right-4 sm:bottom-4"
-        >
-          <span className="pointer-fine:hidden">Tap to zoom</span>
-          <span className="hidden pointer-fine:inline">Click to zoom</span>
-        </span>
-      ) : null}
     </button>
   )
 }
