@@ -1,3 +1,4 @@
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import { draftMode } from 'next/headers'
 import { VisualEditing } from 'next-sanity/visual-editing'
 
@@ -50,6 +51,8 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <MobileActionBar phone={settings?.phone} mapsUrl={settings?.mapsUrl} />
       <ReserveDialog rid={settings?.openTableRid} phone={settings?.phone} schedule={schedule} />
       <RestaurantJsonLd settings={settings} schedule={schedule} menus={menus} />
+      {/* Real visitors' page speed (Core Web Vitals), in the Vercel dashboard. */}
+      <SpeedInsights />
 
       {draft.isEnabled ? (
         <>
