@@ -246,10 +246,12 @@ the documents it manages, so don't re-run it after the client starts editing.
 2. **Invite the restaurant's login** at sanity.io/manage → Members, as
    Administrator (the free plan's only editing role). The Studio still shows
    them only Menus, Happenings and Closures.
-3. **Revalidation webhook** — create it at sanity.io/manage → API → Webhooks
-   with the settings in `src/app/api/revalidate/route.ts` (its secret is the
-   value Vercel Production already has, also in `.env.local`), or edits wait
-   out the 1-minute floor.
+3. **Revalidation webhook** — done 2026-10-26: "Website refresh on publish"
+   at sanity.io/manage → API → Webhooks, with the settings in
+   `src/app/api/revalidate/route.ts` and the secret Vercel Production has
+   (also in `.env.local`). A publish should show on the next visit (checked
+   with a signed call; a real publish is still to test — `PICKUP.md`);
+   without the webhook, edits would wait out the 1-minute floor.
 
 ## Demo script (≈2 minutes)
 

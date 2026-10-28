@@ -1,13 +1,24 @@
 # PICKUP — Mission + Market
 
-_Updated: 2026-10-26_
+_Updated: 2026-10-28_
 
 ## Start here
 1. Read this file, then `docs/LAUNCH-CHECKLIST.md` (the domain move) and,
    for design and content decisions, `docs/REDESIGN-FALL-2026.md`.
 2. `git status` and `git log -3` first — another Claude session has worked in
    this folder before (see State).
-3. Working files that aren't in git are in `local/` (see `local/README.md`).
+3. Working files that aren't in git are in `local/` (see `local/README.md`),
+   including the checks run against production (`local/tools/`).
+
+## Next up
+1. **Test the publish webhook.** It exists (see State), but no publish has
+   gone through it yet — none delivered on 2026-10-28. In the Studio, change
+   one word in a happening, publish, reload `/happenings` after ~5 s, change
+   it back; then `python3 -I local/tools/webhook-deliveries.py` should list
+   the deliveries with status 200.
+2. **The account owner's steps** below: the read-only token in Vercel, and
+   the Pro plan before launch.
+3. **The client's answers** as they arrive — see "Waiting on the client".
 
 ## Where we left off
 The fall 2026 redesign is **live** on production
@@ -34,9 +45,9 @@ WordPress site. On `master`:
   same 1-minute refresh as the rest.
 - **Polish:** each page previews as itself when shared (its own address,
   title and description); photos come at the size the screen needs; a
-  publish expires the cached pages at once (once the webhook exists — see
-  below); WCAG AA contrast on every page; the home reel's still frame loads
-  first.
+  publish expires the cached pages at once (through the webhook — its first
+  real publish is Next up 1); WCAG AA contrast on every page; the home
+  reel's still frame loads first.
 - **`docs/LAUNCH-CHECKLIST.md`** — moving the domain over, step by step.
 
 ## Waiting on the client
@@ -45,7 +56,8 @@ All three Word documents have been sent (on the Desktop; sources in
 dish: allergens, raw/undercooked, spellings), the **Studio quick-start
 guide** (Menus, Happenings, Closures) and the **content request** (13
 items). The restaurant's logins are invited (Administrator, the free plan's
-only editing role).
+only editing role); none of the three invitations had been accepted on
+2026-10-28 (sanity.io/manage → Members).
 
 Where each answer goes — in the Studio (as the developer: the restaurant
 sees only Menus, Happenings and Closures) unless marked **code**:
@@ -65,19 +77,15 @@ sees only Menus, Happenings and Closures) unless marked **code**:
 | Domain, Google access, printed QR codes | `docs/LAUNCH-CHECKLIST.md`. |
 
 ## Needs the account owner
-- **Create the Sanity webhook** "Website refresh on publish"
-  (sanity.io/manage → `x2izrrun` → API → Webhooks) with the settings in
-  `src/app/api/revalidate/route.ts`. Its secret is `SANITY_REVALIDATE_SECRET`
-  in `.env.local`, the value Vercel Production already has (checked
-  2026-10-26 with a signed call that changes nothing). Until it exists, a
-  publish shows within the 1-minute floor.
 - **Vercel Production → `SANITY_API_READ_TOKEN`:** replace it with the
   read-only token now in `.env.local` (Sanity token "Website preview
   (read-only)", Viewer role, created 2026-10-26), then redeploy. Until then
-  production still uses the Editor robot token; nothing is broken.
+  production still uses the Editor robot token; nothing is broken. Not yet
+  changed on 2026-10-28.
 - **Move the project off the Hobby plan before launch:** Vercel limits Hobby
   to non-commercial personal use; the restaurant's site needs a Pro (or the
-  client's own) team — `docs/LAUNCH-CHECKLIST.md`.
+  client's own) team — `docs/LAUNCH-CHECKLIST.md`. Still Hobby on
+  2026-10-28.
 - The domain move.
 
 ## Backlog
@@ -91,12 +99,27 @@ sees only Menus, Happenings and Closures) unless marked **code**:
   second session's upgrade (TypeScript 6, ESLint 10, @sanity/client 8, …).
   Unverified and behind `master`: rebase onto `master` in a worktree, build,
   test, ship on its own.
+- **`priority` on images** is deprecated in Next 16 for `preload` (still
+  works): `page-hero.tsx`, `menus/page.tsx`, `reservations/page.tsx`,
+  `holiday-parties/page.tsx`. (`video-loop.tsx` has its own `priority`
+  prop.)
+- **Home reel weight:** `public/media/atmosphere.mp4` is 1.7 MB of the home
+  page's ~2.4 MB. x264 `-preset veryslow -crf 26` (high profile, yuv420p,
+  faststart, no audio) makes it 1.23 MB at VMAF 95.9; CRF 28, 0.97 MB at
+  VMAF 93. Not shipped — compare on a phone first.
 
 ## State
 - **`master` = live production.** Pushes go out as exact SHAs, built and
   tested in a separate worktree first. The main folder is on `master`.
 - The local branch `redesign/fall-2026` must **never** be pushed (its first
   commit carried private notes).
+- **Publish webhook** "Website refresh on publish" (created 2026-10-26, on):
+  production dataset → `https://missionandmarket.vercel.app/api/revalidate`,
+  with the trigger, filter and projection in the route's docblock. Its
+  secret is `SANITY_REVALIDATE_SECRET` — `.env.local` matches Vercel
+  Production (checked again 2026-10-28 with
+  `local/tools/revalidate-check.cjs`). At launch, point it at the domain
+  (`docs/LAUNCH-CHECKLIST.md`, step 5).
 - **CMS (production dataset, shared with the live site):** written by
   `scripts/fall-2026.ts`, `menus-2026.ts`, `content-v2.ts` and `menus-pdf.ts`.
   Backups: `backups/sanity-production-20261025-2305`, `…20261026-0012` and
@@ -115,13 +138,24 @@ sees only Menus, Happenings and Closures) unless marked **code**:
 - All routes 200; all 398 live WordPress URLs land on their intended page,
   query strings kept; no current route caught by a redirect
 - Web Analytics and Speed Insights load on the live site (both scripts 200)
+- Each page shares as itself (og:url, title, description); every photo has
+  a srcset
+- Lighthouse, mobile, analytics blocked — performance: home 86, menus 98,
+  dinner menu 77, private events 92, happenings 97, visit 94–97;
+  accessibility 100 on every page (baseline in `local/lighthouse/`)
+- A signed call to `/api/revalidate` refreshed `/visit` at once
+  (`x-vercel-cache: REVALIDATED`); the Studio boots on production (sign-in
+  screen, no console errors)
 
 ## Not verified
-- The restaurant's view signed in (any login but the developer's), and Live
-  preview with the read-only token once Vercel has it. The access rules are
-  checked against the real schemas for the developer and for a restaurant
-  Administrator.
-- Safari / Firefox / real devices
+- A real publish through the webhook (Next up 1).
+- The restaurant's view signed in (any login but the developer's; no
+  invitation accepted yet), and Live preview with the read-only token once
+  Vercel has it. The access rules are checked against the real schemas for
+  the developer and for a restaurant Administrator.
+- Safari / Firefox / real devices. On an iPhone: the home reel, each menu
+  (zoom, download), Reserve a Table, the private-events form loading (don't
+  submit it), the Toast order and gift-card links.
 
 ## Caveats
 - The content scripts **overwrite** the docs they manage — don't re-run once
@@ -155,4 +189,4 @@ sees only Menus, Happenings and Closures) unless marked **code**:
 - Keep private-conversation details out of the repo — it is public.
 
 ## Resume keyword
-`mm-launch-prep-2026-10-26`
+`mm-launch-prep-2026-10-28`
